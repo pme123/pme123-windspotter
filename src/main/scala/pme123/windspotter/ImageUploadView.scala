@@ -96,7 +96,15 @@ object ImageUploadView:
                       className := "webcam-image",
                       alt       := "Live webcam feed",
                       onClick --> { _ =>
-                        showImageOverlay(imageData.dataUrl)
+                        val history = imageHistoryVar.now()
+                        val currentIndex = history.indexWhere(_.dataUrl == imageData.dataUrl)
+                        val index = if (currentIndex >= 0) Some(currentIndex) else None
+                        showImageOverlay(
+                          imageData.dataUrl,
+                          if (history.nonEmpty) Some(history) else None,
+                          index,
+                          if (history.nonEmpty) Some((newImage: ImageData) => selectedImageVar.set(Some(newImage))) else None
+                        )
                       }
                     )
                   )
@@ -109,7 +117,7 @@ object ImageUploadView:
               }
             ),
             // Thumbnail gallery component
-            ThumbnailGallery(imageHistoryVar, selectedImageVar),
+            ThumbnailGallery(imageHistoryVar, selectedImageVar, showImageOverlay),
             div(
               className := "webcam-footer",
               a(
@@ -302,7 +310,17 @@ object ImageUploadView:
     scheduleNext()
   end setupAutoRefresh
 
-  private def showImageOverlay(imageUrl: String): Unit =
+  private def showImageOverlay(
+    imageUrl: String,
+    images: Option[List[ImageData]] = None,
+    currentIndex: Option[Int] = None,
+    onImageChange: Option[ImageData => Unit] = None
+  ): Unit =
+    dom.console.log(s"🔍 showImageOverlay called with:")
+    dom.console.log(s"   - imageUrl: $imageUrl")
+    dom.console.log(s"   - images count: ${images.map(_.length).getOrElse(0)}")
+    dom.console.log(s"   - currentIndex: $currentIndex")
+    dom.console.log(s"   - onImageChange provided: ${onImageChange.isDefined}")
     // Create overlay container
     val overlay = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
     overlay.className = "image-overlay"
@@ -320,17 +338,80 @@ object ImageUploadView:
     fullImage.src = imageUrl
     fullImage.alt = "Full size webcam image"
 
-    // Add click to close functionality
+    // Create slideshow controls if images are provided
+    val slideshowControls = (images, currentIndex) match
+      case (Some(imageList), Some(initialIndex)) if imageList.length > 1 =>
+        dom.console.log(s"✅ Creating slideshow controls for ${imageList.length} images, starting at index $initialIndex")
+        val controlsDiv = dom.document.createElement("div").asInstanceOf[dom.HTMLDivElement]
+        controlsDiv.className = "overlay-slideshow-controls"
+
+        // Track current index in overlay
+        var currentOverlayIndex = initialIndex
+
+        // Previous button
+        val prevButton = dom.document.createElement("button").asInstanceOf[dom.HTMLButtonElement]
+        prevButton.className = "overlay-nav-button overlay-prev-button"
+        prevButton.textContent = "‹"
+
+        // Next button
+        val nextButton = dom.document.createElement("button").asInstanceOf[dom.HTMLButtonElement]
+        nextButton.className = "overlay-nav-button overlay-next-button"
+        nextButton.textContent = "›"
+
+        // Slide counter
+        val counterSpan = dom.document.createElement("span").asInstanceOf[dom.HTMLSpanElement]
+        counterSpan.className = "overlay-slide-counter"
+        counterSpan.textContent = s"${initialIndex + 1} / ${imageList.length}"
+
+        // Set up navigation
+        prevButton.onclick = (_: dom.Event) =>
+          dom.console.log(s"⬅️ Previous button clicked, current index: $currentOverlayIndex")
+          currentOverlayIndex = if currentOverlayIndex > 0 then currentOverlayIndex - 1 else imageList.length - 1
+          val newImage = imageList(currentOverlayIndex)
+          dom.console.log(s"🔄 Changing to image: ${newImage.name}")
+          dom.console.log(s"🔗 New image URL: ${newImage.dataUrl.take(50)}...")
+          fullImage.src = newImage.dataUrl
+          counterSpan.textContent = s"${currentOverlayIndex + 1} / ${imageList.length}"
+          onImageChange.foreach(_(newImage))
+          dom.console.log(s"✅ Updated to image ${currentOverlayIndex + 1}/${imageList.length}")
+
+        nextButton.onclick = (_: dom.Event) =>
+          dom.console.log(s"➡️ Next button clicked, current index: $currentOverlayIndex")
+          currentOverlayIndex = if currentOverlayIndex < imageList.length - 1 then currentOverlayIndex + 1 else 0
+          val newImage = imageList(currentOverlayIndex)
+          dom.console.log(s"🔄 Changing to image: ${newImage.name}")
+          dom.console.log(s"🔗 New image URL: ${newImage.dataUrl.take(50)}...")
+          fullImage.src = newImage.dataUrl
+          counterSpan.textContent = s"${currentOverlayIndex + 1} / ${imageList.length}"
+          onImageChange.foreach(_(newImage))
+          dom.console.log(s"✅ Updated to image ${currentOverlayIndex + 1}/${imageList.length}")
+
+        controlsDiv.appendChild(prevButton)
+        controlsDiv.appendChild(counterSpan)
+        controlsDiv.appendChild(nextButton)
+        dom.console.log(s"✅ Slideshow controls created and assembled")
+        Some(controlsDiv)
+      case _ =>
+        dom.console.log(s"❌ No slideshow controls created - not enough images or missing parameters")
+        None
+
+    // Add click to close functionality (only on overlay background)
     overlay.onclick = (_: dom.Event) =>
       dom.document.body.removeChild(overlay)
 
-    // Prevent image click from closing overlay
+    // Prevent image and controls click from closing overlay
     fullImage.onclick = (e: dom.Event) =>
       e.stopPropagation()
+
+    slideshowControls.foreach(controls =>
+      controls.onclick = (e: dom.Event) =>
+        e.stopPropagation()
+    )
 
     // Assemble overlay
     overlay.appendChild(closeButton)
     overlay.appendChild(fullImage)
+    slideshowControls.foreach(overlay.appendChild)
 
     // Add to page
     dom.document.body.appendChild(overlay)

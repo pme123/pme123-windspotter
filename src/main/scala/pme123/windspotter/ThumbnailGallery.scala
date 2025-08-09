@@ -15,7 +15,8 @@ object ThumbnailGallery {
 
   def apply(
     imageHistoryVar: Var[List[ImageData]],
-    selectedImageVar: Var[Option[ImageData]]
+    selectedImageVar: Var[Option[ImageData]],
+    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
     val isPlayingVar = Var(false)
     val playIndexVar = Var(0)
@@ -41,6 +42,17 @@ object ThumbnailGallery {
                       onClick --> { _ =>
                         isPlayingVar.set(false) // Stop playing when manually selecting
                         selectedImageVar.set(Some(imageData))
+                        // Open overlay with slideshow capability
+                        dom.console.log(s"🖼️ Opening overlay for image ${index + 1}/${history.length}")
+                        showImageOverlay(
+                          imageData.dataUrl,
+                          Some(history),
+                          Some(index),
+                          Some((newImage: ImageData) => {
+                            dom.console.log(s"🔄 Overlay changed to: ${newImage.name}")
+                            selectedImageVar.set(Some(newImage))
+                          })
+                        )
                       }
                     ),
                     p(
