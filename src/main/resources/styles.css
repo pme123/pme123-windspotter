@@ -246,14 +246,17 @@ body {
 .webcam-footer {
   text-align: right;
   margin-top: 6px;
+}
+
+.webcam-footer a {
   color: #666;
   text-decoration: none;
   font-size: 12px;
 }
 
-.webcam-footer:hover {
+.webcam-footer a:hover {
   color: #888;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
 .webcam-footer .ui5-button {

@@ -13,11 +13,16 @@ object WebcamView {
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
 
-    // Start auto-refresh immediately
-    dom.window.setTimeout(() => {
-      dom.console.log(s"🚀 Starting automatic loading for ${webcam.name}...")
-      WebcamService.startAutoRefresh(webcam, stateVar)
-    }, 100)
+    // Only start auto-refresh if this webcam doesn't have any images yet
+    val currentState = stateVar.now()
+    if (currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {
+      dom.window.setTimeout(() => {
+        dom.console.log(s"🚀 Starting automatic loading for ${webcam.name}...")
+        WebcamService.startAutoRefresh(webcam, stateVar)
+      }, 100)
+    } else {
+      dom.console.log(s"📋 ${webcam.name} already has ${currentState.imageHistory.length} images, not reloading")
+    }
 
     Card(
       className := "webcam-card",
@@ -91,54 +96,13 @@ object WebcamView {
               }
             },
             
-            // Status display
-            div(
-              className := "webcam-status",
-              child <-- Signal.combine(
-                stateVar.signal.map(_.isAutoRefresh),
-                stateVar.signal.map(_.lastUpdate),
-                stateVar.signal.map(_.currentUrl)
-              ).map { 
-                case (isActive, lastUpdate, currentUrl) =>
-                  if (isActive) {
-                    div(
-                      className := "status-active",
-                      s"🟢 Auto-refresh active (every ${webcam.reloadInMin} min)",
-                      lastUpdate.map(time => p(className := "last-update", s"Last update: $time")).getOrElse(emptyNode),
-                      currentUrl.map(url => 
-                        div(
-                          className := "current-url",
-                          p(className := "url-label", "Current URL:"),
-                          p(className := "url-text", url)
-                        )
-                      ).getOrElse(emptyNode)
-                    )
-                  } else if (lastUpdate.isDefined || currentUrl.isDefined) {
-                    div(
-                      className := "status-inactive",
-                      "⚫ Auto-refresh stopped",
-                      lastUpdate.map(time => p(className := "last-update", s"Last update: $time")).getOrElse(emptyNode),
-                      currentUrl.map(url => 
-                        div(
-                          className := "current-url",
-                          p(className := "url-label", "Current URL:"),
-                          p(className := "url-text", url)
-                        )
-                      ).getOrElse(emptyNode)
-                    )
-                  } else {
-                    div(className := "status-inactive", "⚫ No image loaded")
-                  }
-              }
-            ),
-            
             // Footer with webcam info
             div(
               className := "webcam-footer",
               a(
-                href := webcam.url,
+                href := webcam.footer,
                 target := "_blank",
-                s"${webcam.url.split("/").take(3).mkString("/")} (Auto-updates every ${webcam.reloadInMin} minutes)"
+                webcam.footer
               )
             )
           )

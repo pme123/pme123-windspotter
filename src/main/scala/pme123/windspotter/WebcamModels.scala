@@ -3,7 +3,8 @@ package pme123.windspotter
 case class Webcam(
   name: String,
   url: String,
-  reloadInMin: Int
+  reloadInMin: Int,
+  footer: String
 )
 
 case class ImageData(
@@ -27,17 +28,20 @@ object WebcamData {
     Webcam(
       name = "Webcam Sisikon",
       url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
-      reloadInMin = 1
+      reloadInMin = 2,
+      footer = "https://www.bhs.swiss"
     ),
     Webcam(
       name = "Webcam Brunnen",
       url = "https://www.foto-webcam.eu/webcam/include/dlimg.php?wc=brunnen&img=2025/08/09/1320&h=7276&res=hd",
-      reloadInMin = 10
+      reloadInMin = 10,
+      footer = "https://www.foto-webcam.eu"
     ),
     Webcam(
       name = "Test Webcam",
       url = "https://picsum.photos/800/600",
-      reloadInMin = 2
+      reloadInMin = 1,
+      footer = "https://picsum.photos"
     )
   )
   
