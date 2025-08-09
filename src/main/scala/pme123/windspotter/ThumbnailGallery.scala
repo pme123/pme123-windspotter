@@ -5,17 +5,12 @@ import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 
-case class ImageData(
-  name: String,
-  url: String,
-  dataUrl: String
-)
-
 object ThumbnailGallery {
 
   def apply(
-    imageHistoryVar: Var[List[ImageData]],
-    selectedImageVar: Var[Option[ImageData]],
+    imageHistory: List[ImageData],
+    selectedImage: Option[ImageData],
+    onImageSelect: ImageData => Unit,
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
     val isPlayingVar = Var(false)
@@ -23,15 +18,14 @@ object ThumbnailGallery {
 
     div(
       className := "thumbnail-gallery",
-      child <-- imageHistoryVar.signal.map { history =>
-        if (history.nonEmpty) {
+      if (imageHistory.nonEmpty) {
           div(
             className := "thumbnail-container",
             div(
               className := "thumbnail-header",
               div(
                 className := "thumbnail-grid",
-                history.zipWithIndex.map { case (imageData, index) =>
+                imageHistory.zipWithIndex.map { case (imageData, index) =>
                   div(
                     className := "thumbnail-item",
                     img(
@@ -41,16 +35,16 @@ object ThumbnailGallery {
                       title := imageData.name,
                       onClick --> { _ =>
                         isPlayingVar.set(false) // Stop playing when manually selecting
-                        selectedImageVar.set(Some(imageData))
+                        onImageSelect(imageData)
                         // Open overlay with slideshow capability
-                        dom.console.log(s"🖼️ Opening overlay for image ${index + 1}/${history.length}")
+                        dom.console.log(s"🖼️ Opening overlay for image ${index + 1}/${imageHistory.length}")
                         showImageOverlay(
                           imageData.dataUrl,
-                          Some(history),
+                          Some(imageHistory),
                           Some(index),
                           Some((newImage: ImageData) => {
                             dom.console.log(s"🔄 Overlay changed to: ${newImage.name}")
-                            selectedImageVar.set(Some(newImage))
+                            onImageSelect(newImage)
                           })
                         )
                       }
@@ -74,26 +68,25 @@ object ThumbnailGallery {
                     isPlayingVar.set(false)
                   } else {
                     // Start playing
-                    if (history.nonEmpty) {
+                    if (imageHistory.nonEmpty) {
                       isPlayingVar.set(true)
                       playIndexVar.set(0)
-                      startSlideshow(history, selectedImageVar, isPlayingVar, playIndexVar)
+                      startSlideshow(imageHistory, onImageSelect, isPlayingVar, playIndexVar)
                     }
                   }
                 }
               )
             )
           )
-        } else {
-          emptyNode
-        }
+      } else {
+        emptyNode
       }
     )
   }
 
   private def startSlideshow(
     images: List[ImageData],
-    selectedImageVar: Var[Option[ImageData]],
+    onImageSelect: ImageData => Unit,
     isPlayingVar: Var[Boolean],
     playIndexVar: Var[Int]
   ): Unit = {
@@ -105,7 +98,7 @@ object ThumbnailGallery {
         val nextIndex = (currentIndex + 1) % images.length
         
         // Show the current image
-        selectedImageVar.set(Some(images(currentIndex)))
+        onImageSelect(images(currentIndex))
         playIndexVar.set(nextIndex)
         
         dom.console.log(s"🎬 Playing image ${currentIndex + 1}/${images.length}")

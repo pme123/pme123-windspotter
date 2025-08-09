@@ -117,7 +117,19 @@ object ImageUploadView:
               }
             ),
             // Thumbnail gallery component
-            ThumbnailGallery(imageHistoryVar, selectedImageVar, showImageOverlay),
+            child <-- Signal.combine(imageHistoryVar.signal, selectedImageVar.signal).map {
+              case (history, selectedImage) =>
+                if (history.nonEmpty) {
+                  ThumbnailGallery(
+                    history,
+                    selectedImage,
+                    (newImage: ImageData) => selectedImageVar.set(Some(newImage)),
+                    showImageOverlay
+                  )
+                } else {
+                  emptyNode
+                }
+            },
             div(
               className := "webcam-footer",
               a(
@@ -310,7 +322,7 @@ object ImageUploadView:
     scheduleNext()
   end setupAutoRefresh
 
-  private def showImageOverlay(
+  def showImageOverlay(
     imageUrl: String,
     images: Option[List[ImageData]] = None,
     currentIndex: Option[Int] = None,

@@ -66,6 +66,26 @@ body {
   margin: 20px 0;
 }
 
+/* Webcam Selector Styles */
+.webcam-selector {
+  margin-bottom: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.webcam-select {
+  min-width: 200px;
+}
+
+.webcam-card {
+  margin-top: 20px;
+}
+
 /* Card Styling */
 .ui5-card {
   background-color: var(--card-background);
