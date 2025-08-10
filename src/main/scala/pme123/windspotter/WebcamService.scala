@@ -11,6 +11,13 @@ object WebcamService {
       case url if url.contains("foto-webcam.eu") =>
         // Handle time-based webcam URLs
         generateTimeBasedUrl(url)
+      case url if url.contains("api.codetabs.com") =>
+        // Handle codetabs proxy URLs - add timestamp and URL encode
+        val timestamp = new Date().getTime().toLong
+        val originalUrl = url.split("quest=").last
+        val proxiedUrlWithTimestamp = s"$originalUrl?t=$timestamp"
+        val encodedUrl = java.net.URLEncoder.encode(proxiedUrlWithTimestamp, "UTF-8")
+        url.replace(originalUrl, encodedUrl)
       case url =>
         // Handle simple URLs with cache busting
         val timestamp = new Date().getTime().toLong
