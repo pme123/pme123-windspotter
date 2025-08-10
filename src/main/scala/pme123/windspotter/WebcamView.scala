@@ -24,11 +24,6 @@ object WebcamView {
     } else {
       dom.console.log(s"📋 ${webcam.name} already has ${currentState.imageHistory.length} images, not reloading")
     }
-
-    Card(
-      className := "webcam-card",
-      div(
-        className := "card-content",
         div(
           className := "image-upload-section",
 
@@ -109,7 +104,5 @@ object WebcamView {
             )
           )
         )
-      )
-    )
   }
 }

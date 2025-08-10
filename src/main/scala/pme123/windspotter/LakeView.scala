@@ -14,26 +14,30 @@ object LakeView {
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
 
-    div(
-      className := "lake-view",
-      
-      // Webcams displayed vertically
+    // Single card containing all webcams for this lake
+    Card(
+      className := "lake-card",
       div(
-        className := "webcams-vertical",
-        lake.webcams.map { webcam =>
-          (webcamStates.get(webcam), slideshowControls.get(webcam)) match {
-            case (Some(stateVar), Some(slideshowControlVar)) =>
-              div(
-                className := "webcam-vertical-item",
-                WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
-              )
-            case _ =>
-              div(
-                className := "webcam-error",
-                s"Error: State not found for ${webcam.name}"
-              )
+        className := "card-content",
+
+        // All webcams listed in this single card
+        div(
+          className := "webcams-list",
+          lake.webcams.map { webcam =>
+            (webcamStates.get(webcam), slideshowControls.get(webcam)) match {
+              case (Some(stateVar), Some(slideshowControlVar)) =>
+                div(
+                  className := "webcam-item",
+                  WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
+                )
+              case _ =>
+                div(
+                  className := "webcam-error",
+                  s"Error: State not found for ${webcam.name}"
+                )
+            }
           }
-        }
+        )
       )
     )
   }
