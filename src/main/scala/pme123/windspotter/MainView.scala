@@ -30,9 +30,9 @@ object MainView:
     div(
       className := "main-container",
 
-      // Wrapper to constrain TabContainer width
+      // Constrained wrapper for entire TabContainer
       div(
-        className := "tab-container-wrapper",
+        className := "constrained-wrapper",
         // Lake tabs
         TabContainer(
           className := "lake-tabs",

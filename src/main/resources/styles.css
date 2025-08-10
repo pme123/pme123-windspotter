@@ -63,13 +63,13 @@ body {
 .main-content {
   flex: 1;
   max-width: 1200px;
-  margin: 20px 0;
+  margin: 20px 0 0 0;
   width: 100%;
   box-sizing: border-box;
 }
 
-/* Tab Container Wrapper - matches card width */
-.tab-container-wrapper {
+/* Constrained wrapper for TabContainer */
+.constrained-wrapper {
   width: 100%;
   max-width: 1000px;
   margin: 0 auto 20px auto;
@@ -86,10 +86,10 @@ body {
   width: 100% !important;
 }
 
-/* Force the tab strip to match wrapper */
-.tab-container-wrapper ui5-tabcontainer::part(tabstrip) {
-  width: 100% !important;
-}
+/* Force tab content area */
+.constrained-wrapper ui5-tabcontainer::part(content) {
+    padding: 1em 0 0 0;
+    }
 
 /* Lake View Styles */
 .lake-view {
@@ -100,7 +100,6 @@ body {
 .webcams-vertical {
   display: flex;
   flex-direction: column;
-  gap: 40px;
 }
 
 .webcam-vertical-item {
@@ -148,11 +147,11 @@ body {
 
 /* Footer */
 .footer {
-  padding: 20px;
+  padding: 15px;
   text-align: center;
-  background-color: var(--card-background);
+  background-color: white;
   border-top: 1px solid var(--border-color);
-  margin-top: auto;
+
 }
 
 .footer p {
