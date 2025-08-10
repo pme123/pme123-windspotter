@@ -6,11 +6,11 @@ import com.raquo.laminar.api.L.{*, given}
 import com.raquo.airstream.ownership.OneTimeOwner
 import org.scalajs.dom
 
-object MainView {
+object MainView:
 
-  def apply(): HtmlElement = {
+  def apply(): HtmlElement =
     // Initialize webcam states and slideshow controls for all webcams
-    val allWebcams = WebcamData.getAllWebcams
+    val allWebcams   = WebcamData.getAllWebcams
     val webcamStates = allWebcams.map { webcam =>
       webcam -> Var(WebcamState(webcam))
     }.toMap
@@ -37,14 +37,16 @@ object MainView {
         TabContainer(
           className := "lake-tabs",
           WebcamData.lakes.map { lake =>
-            Tab(
-              _.text := lake.name,
-              _.selected := (lake == WebcamData.getDefaultLake),
-              LakeView(lake, webcamStates, slideshowControls, ImageUploadView.showImageOverlay)
+            Seq(
+              Tab(
+                _.text     := lake.name,
+                _.selected := (lake == WebcamData.getDefaultLake),
+                LakeView(lake, webcamStates, slideshowControls, ImageUploadView.showImageOverlay)
+              )
             )
           }
         )
       )
     )
-  }
-}
+  end apply
+end MainView

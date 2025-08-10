@@ -2,7 +2,7 @@
   --primary-color: #2196F3;
   --secondary-color: #FFC107;
   --background-color: #f5f5f5;
-  --card-background: #ffffff;
+  --card-background: #f5f5f5;
   --text-color: #333333;
   --border-color: #e0e0e0;
   --success-color: #4CAF50;
@@ -45,6 +45,14 @@ body {
   text-decoration: underline;
 }
 
+:host([media-range="M"]) .ui5-tc__content, :host([media-range="L"]) .ui5-tc__content {
+    padding: 1rem 0;
+}
+
+.ui5-tc__content, :host([media-range="L"]) .ui5-tc__content {
+    padding: 1rem 0;
+}
+
 /* Main Content */
 .app-container {
   display: flex;
@@ -54,16 +62,10 @@ body {
 
 .main-content {
   flex: 1;
-  padding: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 20px 0;
   width: 100%;
   box-sizing: border-box;
-}
-
-/* Hello World Container */
-.main-container {
-  margin: 20px 0;
 }
 
 /* Tab Container Wrapper - matches card width */
@@ -91,13 +93,7 @@ body {
 
 /* Lake View Styles */
 .lake-view {
-  padding: 20px;
-}
 
-.lake-title {
-  margin-bottom: 30px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Vertical Webcam Layout */
@@ -125,17 +121,17 @@ body {
 /* Card Styling */
 .ui5-card {
   background-color: var(--card-background);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin-bottom: 20px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  margin-bottom: 8px;
   overflow: hidden;
 }
 
 .card-content {
-  padding: 24px;
+  background-color: var(--card-background);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
 /* Input Styling */
@@ -352,10 +348,10 @@ body {
 
 /* Webcam Image Styles */
 .webcam-image-section {
-  margin-top: 20px;
-  padding: 16px;
+  margin-top: 8px;
+  padding: 8px;
   background-color: rgba(255, 255, 255, 0.5);
-  border-radius: 8px;
+  border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -513,13 +509,13 @@ body {
 
 /* Thumbnail Gallery Styles */
 .thumbnail-gallery {
-  margin-top: 20px;
+  margin-top: 8px;
 }
 
 .thumbnail-container {
   background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 4px;
+  padding: 8px;
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
@@ -533,7 +529,7 @@ body {
 
 .thumbnail-grid {
   display: flex;
-  gap: 12px;
+  gap: 6px;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-start;
@@ -543,7 +539,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .thumbnail-time {
@@ -579,26 +575,64 @@ body {
 
 /* Play Button Styles */
 .play-button {
-  background: rgba(170, 170, 170, 0.2);
-  border: 2px solid rgba(170, 170, 170, 0.4);
+  background: rgba(170, 170, 170, 0.15);
+  border: 1px solid rgba(170, 170, 170, 0.3);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.2s ease;
+  font-size: 0;
+  transition: all 0.3s ease;
   position: absolute;
   right: 0;
-  top: 10px;
+  top: 6px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.play-button::before {
+  content: '';
+  width: 0;
+  height: 0;
+  border-style: solid;
+  transition: all 0.2s ease;
+}
+
+/* Play icon (triangle) */
+.play-button:not(.playing)::before {
+  border-left: 8px solid #aaa;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  margin-left: 0;
+  transform: translateX(2px);
+}
+
+/* Pause icon (two bars) */
+.play-button.playing::before {
+  width: 2px;
+  height: 10px;
+  background: #aaa;
+  box-shadow: 4px 0 0 #aaa;
+  border: none;
+  margin-left: 0;
 }
 
 .play-button:hover {
-  background: rgba(170, 170, 170, 0.3);
-  border-color: rgba(170, 170, 170, 0.6);
-  transform: scale(1.1);
+  background: rgba(170, 170, 170, 0.25);
+  border-color: rgba(170, 170, 170, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.play-button:hover::before {
+  opacity: 0.9;
+}
+
+.play-button:active {
+  transform: scale(0.95);
 }
 
 .play-button:active {

@@ -57,9 +57,8 @@ object ThumbnailGallery {
                 }
               ),
               button(
-                className := "play-button",
-                child <-- slideshowControlVar.signal.map { isPlaying =>
-                  if (isPlaying) "⏸️" else "▶️"
+                className <-- slideshowControlVar.signal.map { isPlaying =>
+                  if (isPlaying) "play-button playing" else "play-button"
                 },
                 onClick --> { _ =>
                   val currentlyPlaying = slideshowControlVar.now()

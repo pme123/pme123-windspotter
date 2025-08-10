@@ -15,8 +15,6 @@ object LakeView {
   ): HtmlElement = {
 
     // Single card containing all webcams for this lake
-    Card(
-      className := "lake-card",
       div(
         className := "card-content",
 
@@ -39,6 +37,5 @@ object LakeView {
           }
         )
       )
-    )
   }
 }
