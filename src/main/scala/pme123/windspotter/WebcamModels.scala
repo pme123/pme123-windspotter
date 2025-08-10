@@ -31,14 +31,14 @@ object WebcamData {
   
   val lakes = List(
     Lake(
-      name = "Lake Lucerne",
+      name = "Urnersee",
       webcams = List(
-      /*  Webcam(
+        Webcam(
           name = "Webcam Sisikon",
           url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
-        ),*/
+        ),
         Webcam(
           name = "Webcam Isleten",
           url = "http://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
