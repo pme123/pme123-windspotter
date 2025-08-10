@@ -33,22 +33,28 @@ object WebcamData {
     Lake(
       name = "Lake Lucerne",
       webcams = List(
-        Webcam(
+      /*  Webcam(
           name = "Webcam Sisikon",
           url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
+        ),*/
+        Webcam(
+          name = "Webcam Isleten",
+          url = "http://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
+          reloadInMin = 2,
+          footer = "http://windsurfing-urnersee.ch"
         ),
         Webcam(
           name = "Webcam Gruonbach",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_bucht.jpg",
-          reloadInMin = 10,
+          reloadInMin = 2,
           footer = "https://surfclub-uri.ch"
         ),
         Webcam(
           name = "Webcam Axenegg",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
-          reloadInMin = 10,
+          reloadInMin = 2,
           footer = "https://surfclub-uri.ch"
         )
       )

@@ -400,8 +400,8 @@ body {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.3);
-  border-top: 4px solid rgba(255, 255, 255, 0.8);
+  border: 4px solid rgba(170, 170, 170, 0.3);
+  border-top: 4px solid rgba(170, 170, 170, 0.8);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -474,12 +474,12 @@ body {
 }
 
 .overlay-nav-button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(170, 170, 170, 0.2);
+  border: 2px solid rgba(170, 170, 170, 0.4);
   border-radius: 50%;
   width: 50px;
   height: 50px;
-  color: white;
+  color: #aaa;
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
@@ -490,8 +490,8 @@ body {
 }
 
 .overlay-nav-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(170, 170, 170, 0.3);
+  border-color: rgba(170, 170, 170, 0.6);
   transform: scale(1.1);
 }
 
@@ -500,15 +500,15 @@ body {
 }
 
 .overlay-slide-counter {
-  color: white;
+  color: #aaa;
   font-size: 16px;
   font-weight: 500;
   min-width: 60px;
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(170, 170, 170, 0.1);
   padding: 8px 16px;
   border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(170, 170, 170, 0.2);
 }
 
 /* Thumbnail Gallery Styles */
@@ -549,7 +549,7 @@ body {
 .thumbnail-time {
   margin: 0;
   font-size: 10px;
-  color: #666;
+  color: #aaa;
   font-weight: 500;
   text-align: center;
   line-height: 1;
@@ -579,8 +579,8 @@ body {
 
 /* Play Button Styles */
 .play-button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  background: rgba(170, 170, 170, 0.2);
+  border: 2px solid rgba(170, 170, 170, 0.4);
   border-radius: 50%;
   width: 40px;
   height: 40px;
@@ -596,8 +596,8 @@ body {
 }
 
 .play-button:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(170, 170, 170, 0.3);
+  border-color: rgba(170, 170, 170, 0.6);
   transform: scale(1.1);
 }
 
