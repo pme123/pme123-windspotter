@@ -35,7 +35,7 @@ object WebcamData {
       webcams = List(
         Webcam(
           name = "Webcam Sisikon",
-          url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
+          url = "https://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
         ),
