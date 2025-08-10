@@ -69,8 +69,9 @@ object WebcamView {
                 case None =>
                   div(
                     className := "webcam-loading",
-                    p(s"🔄 Loading ${webcam.name}..."),
-                    p("The live webcam feed will appear here automatically.")
+                    div(
+                      className := "loading-spinner"
+                    )
                   )
               }
             ),
