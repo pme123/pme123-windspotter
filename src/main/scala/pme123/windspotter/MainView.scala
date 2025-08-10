@@ -9,54 +9,42 @@ import org.scalajs.dom
 object MainView {
 
   def apply(): HtmlElement = {
-    // Initialize webcam states and slideshow controls
-    val webcamStates = WebcamData.availableWebcams.map { webcam =>
+    // Initialize webcam states and slideshow controls for all webcams
+    val allWebcams = WebcamData.getAllWebcams
+    val webcamStates = allWebcams.map { webcam =>
       webcam -> Var(WebcamState(webcam))
     }.toMap
 
-    val slideshowControls = WebcamData.availableWebcams.map { webcam =>
+    val slideshowControls = allWebcams.map { webcam =>
       webcam -> Var(false)
     }.toMap
 
-    val selectedWebcamVar = Var(WebcamData.getDefaultWebcam)
+    val selectedLakeVar = Var(WebcamData.getDefaultLake)
 
-    // Stop all slideshows when switching webcams
-    selectedWebcamVar.signal.foreach { newWebcam =>
+    // Stop all slideshows when switching lakes
+    selectedLakeVar.signal.foreach { newLake =>
       slideshowControls.values.foreach(_.set(false))
-      dom.console.log(s"🛑 Stopped all slideshows when switching to ${newWebcam.name}")
+      dom.console.log(s"🛑 Stopped all slideshows when switching to ${newLake.name}")
     }(OneTimeOwner(() => ()))
 
     div(
       className := "main-container",
 
-      // Webcam selector
+      // Wrapper to constrain TabContainer width
       div(
-        className := "webcam-selector",
-        Label("Select Webcam:"),
-        select(
-          className := "webcam-select",
-          onChange.mapToValue --> { value =>
-            WebcamData.findWebcamByName(value).foreach(selectedWebcamVar.set)
-          },
-          WebcamData.availableWebcams.map { webcam =>
-            option(
-              value := webcam.name,
-              selected := (webcam == WebcamData.getDefaultWebcam),
-              webcam.name
+        className := "tab-container-wrapper",
+        // Lake tabs
+        TabContainer(
+          className := "lake-tabs",
+          WebcamData.lakes.map { lake =>
+            Tab(
+              _.text := lake.name,
+              _.selected := (lake == WebcamData.getDefaultLake),
+              LakeView(lake, webcamStates, slideshowControls, ImageUploadView.showImageOverlay)
             )
           }
         )
-      ),
-
-      // Dynamic webcam view
-      child <-- selectedWebcamVar.signal.map { selectedWebcam =>
-        (webcamStates.get(selectedWebcam), slideshowControls.get(selectedWebcam)) match {
-          case (Some(stateVar), Some(slideshowControlVar)) =>
-            WebcamView(selectedWebcam, stateVar, ImageUploadView.showImageOverlay, slideshowControlVar)
-          case _ =>
-            div("Error: Webcam not found")
-        }
-      }
+      )
     )
   }
 }

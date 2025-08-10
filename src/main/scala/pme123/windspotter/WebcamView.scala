@@ -31,7 +31,7 @@ object WebcamView {
         className := "card-content",
         div(
           className := "image-upload-section",
-          
+
           // Webcam section
           div(
             className := "upload-method webcam-section",
@@ -42,7 +42,7 @@ object WebcamView {
                 webcam.name
               )
             ),
-            
+
             // Webcam image display
             div(
               className := "webcam-image-section",
@@ -60,7 +60,7 @@ object WebcamView {
                         val currentIndex = history.indexWhere(_.dataUrl == imageData.dataUrl)
                         val index = if (currentIndex >= 0) Some(currentIndex) else None
                         showImageOverlay(
-                          imageData.dataUrl, 
+                          imageData.dataUrl,
                           if (history.nonEmpty) Some(history) else None,
                           index,
                           if (history.nonEmpty) Some((newImage: ImageData) => {
@@ -79,7 +79,7 @@ object WebcamView {
                   )
               }
             ),
-            
+
             // Thumbnail gallery component
             child <-- stateVar.signal.map { state =>
               if (state.imageHistory.nonEmpty) {
@@ -97,7 +97,7 @@ object WebcamView {
                 emptyNode
               }
             },
-            
+
             // Footer with webcam info
             div(
               className := "webcam-footer",

@@ -7,6 +7,11 @@ case class Webcam(
   footer: String
 )
 
+case class Lake(
+  name: String,
+  webcams: List[Webcam]
+)
+
 case class ImageData(
   name: String,
   url: String,
@@ -24,29 +29,53 @@ case class WebcamState(
 
 object WebcamData {
   
-  val availableWebcams = List(
-    Webcam(
-      name = "Webcam Sisikon",
-      url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
-      reloadInMin = 2,
-      footer = "https://www.bhs.swiss"
+  val lakes = List(
+    Lake(
+      name = "Lake Lucerne",
+      webcams = List(
+        Webcam(
+          name = "Webcam Sisikon",
+          url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
+          reloadInMin = 2,
+          footer = "https://www.bhs.swiss"
+        ),
+        Webcam(
+          name = "Webcam Gruonbach",
+          url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_bucht.jpg",
+          reloadInMin = 10,
+          footer = "https://surfclub-uri.ch"
+        ),
+        Webcam(
+          name = "Webcam Axenegg",
+          url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
+          reloadInMin = 10,
+          footer = "https://surfclub-uri.ch"
+        )
+      )
     ),
-    Webcam(
-      name = "Webcam Brunnen",
-      url = "https://www.foto-webcam.eu/webcam/include/dlimg.php?wc=brunnen&img=2025/08/09/1320&h=7276&res=hd",
-      reloadInMin = 10,
-      footer = "https://www.foto-webcam.eu"
-    ),
-    Webcam(
-      name = "Test Webcam",
-      url = "https://picsum.photos/800/600",
-      reloadInMin = 1,
-      footer = "https://picsum.photos"
+    Lake(
+      name = "Test Lake",
+      webcams = List(
+        Webcam(
+          name = "Test Webcam 1",
+          url = "https://picsum.photos/800/600",
+          reloadInMin = 2,
+          footer = "https://picsum.photos"
+        ),
+        Webcam(
+          name = "Test Webcam 2",
+          url = "https://picsum.photos/900/700",
+          reloadInMin = 3,
+          footer = "https://picsum.photos"
+        )
+      )
     )
   )
-  
-  def getDefaultWebcam: Webcam = availableWebcams.head
-  
-  def findWebcamByName(name: String): Option[Webcam] = 
-    availableWebcams.find(_.name == name)
+
+  def getDefaultLake: Lake = lakes.head
+
+  def getAllWebcams: List[Webcam] = lakes.flatMap(_.webcams)
+
+  def findLakeByName(name: String): Option[Lake] =
+    lakes.find(_.name == name)
 }
