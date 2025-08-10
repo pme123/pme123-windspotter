@@ -124,7 +124,8 @@ object ImageUploadView:
                     history,
                     selectedImage,
                     (newImage: ImageData) => selectedImageVar.set(Some(newImage)),
-                    showImageOverlay
+                    showImageOverlay,
+                    Var(false) // Local slideshow control for old ImageUploadView
                   )
                 } else {
                   emptyNode

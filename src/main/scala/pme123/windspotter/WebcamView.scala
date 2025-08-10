@@ -10,7 +10,8 @@ object WebcamView {
   def apply(
     webcam: Webcam,
     stateVar: Var[WebcamState],
-    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
+    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit,
+    slideshowControlVar: Var[Boolean] = Var(false)
   ): HtmlElement = {
 
     // Only start auto-refresh if this webcam doesn't have any images yet
@@ -89,7 +90,8 @@ object WebcamView {
                     val currentState = stateVar.now()
                     stateVar.set(currentState.copy(selectedImage = Some(newImage)))
                   },
-                  showImageOverlay
+                  showImageOverlay,
+                  slideshowControlVar
                 )
               } else {
                 emptyNode

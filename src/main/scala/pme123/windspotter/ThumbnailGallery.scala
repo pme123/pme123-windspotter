@@ -11,9 +11,9 @@ object ThumbnailGallery {
     imageHistory: List[ImageData],
     selectedImage: Option[ImageData],
     onImageSelect: ImageData => Unit,
-    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
+    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit,
+    slideshowControlVar: Var[Boolean]
   ): HtmlElement = {
-    val isPlayingVar = Var(false)
     val playIndexVar = Var(0)
 
     div(
@@ -34,7 +34,7 @@ object ThumbnailGallery {
                       alt := s"Image ${index + 1}",
                       title := imageData.name,
                       onClick --> { _ =>
-                        isPlayingVar.set(false) // Stop playing when manually selecting
+                        slideshowControlVar.set(false) // Stop playing when manually selecting
                         onImageSelect(imageData)
                         // Open overlay with slideshow capability
                         dom.console.log(s"🖼️ Opening overlay for image ${index + 1}/${imageHistory.length}")
@@ -58,20 +58,20 @@ object ThumbnailGallery {
               ),
               button(
                 className := "play-button",
-                child <-- isPlayingVar.signal.map { isPlaying =>
+                child <-- slideshowControlVar.signal.map { isPlaying =>
                   if (isPlaying) "⏸️" else "▶️"
                 },
                 onClick --> { _ =>
-                  val currentlyPlaying = isPlayingVar.now()
+                  val currentlyPlaying = slideshowControlVar.now()
                   if (currentlyPlaying) {
                     // Stop playing
-                    isPlayingVar.set(false)
+                    slideshowControlVar.set(false)
                   } else {
                     // Start playing
                     if (imageHistory.nonEmpty) {
-                      isPlayingVar.set(true)
+                      slideshowControlVar.set(true)
                       playIndexVar.set(0)
-                      startSlideshow(imageHistory, onImageSelect, isPlayingVar, playIndexVar)
+                      startSlideshow(imageHistory, onImageSelect, slideshowControlVar, playIndexVar)
                     }
                   }
                 }
@@ -87,13 +87,13 @@ object ThumbnailGallery {
   private def startSlideshow(
     images: List[ImageData],
     onImageSelect: ImageData => Unit,
-    isPlayingVar: Var[Boolean],
+    slideshowControlVar: Var[Boolean],
     playIndexVar: Var[Int]
   ): Unit = {
     dom.console.log(s"🎬 Starting slideshow with ${images.length} images")
     
     def playNext(): Unit = {
-      if (isPlayingVar.now() && images.nonEmpty) {
+      if (slideshowControlVar.now() && images.nonEmpty) {
         val currentIndex = playIndexVar.now()
         val nextIndex = (currentIndex + 1) % images.length
         
@@ -115,7 +115,7 @@ object ThumbnailGallery {
       playNext()
     } else {
       dom.console.log("🎬 No images to play")
-      isPlayingVar.set(false)
+      slideshowControlVar.set(false)
     }
   }
 }
