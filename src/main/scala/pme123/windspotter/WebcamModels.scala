@@ -35,7 +35,7 @@ object WebcamData {
       webcams = List(
         Webcam(
           name = "Sisikon",
-          url = "https://cors-anywhere.herokuapp.com/http://bhsboots.myhostpoint.ch/kamera04.jpg",
+          url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
         ),
