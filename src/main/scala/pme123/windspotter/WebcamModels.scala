@@ -34,7 +34,7 @@ object WebcamData {
       name = "Urnersee",
       webcams = List(
         Webcam(
-          name = "Sisikon",
+          name = "Sisikon Bootshafen Nord",
           url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
@@ -56,6 +56,18 @@ object WebcamData {
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
           reloadInMin = 2,
           footer = "https://surfclub-uri.ch"
+        ),
+        Webcam(
+          name = "Bolzbach",
+          url = "https://www.energieuri.ch/wp-content/uploads/webcam/live.jpg",
+          reloadInMin = 2,
+          footer = "https://www.seedorf-uri.ch"
+        ),
+        Webcam(
+          name = "Sisikon Bootshafen Süd",
+          url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera05.jpg",
+          reloadInMin = 2,
+          footer = "https://www.bhs.swiss"
         ),
         Webcam(
           name = "Windsurfing Urnersee",
