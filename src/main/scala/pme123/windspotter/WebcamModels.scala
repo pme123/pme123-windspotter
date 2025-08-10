@@ -34,34 +34,34 @@ object WebcamData {
       name = "Urnersee",
       webcams = List(
         Webcam(
-          name = "Webcam Sisikon",
-          url = "https://bhsboots.myhostpoint.ch/kamera04.jpg",
+          name = "Sisikon",
+          url = "https://cors-anywhere.herokuapp.com/http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
         ),
         Webcam(
-          name = "Webcam Sisikon 2",
-          url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
-          reloadInMin = 2,
-          footer = "https://www.bhs.swiss"
-        ),
-        Webcam(
-          name = "Webcam Isleten",
+          name = "Isleten",
           url = "https://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
           reloadInMin = 2,
           footer = "https://windsurfing-urnersee.ch"
         ),
         Webcam(
-          name = "Webcam Gruonbach",
+          name = "Gruonbach",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_bucht.jpg",
           reloadInMin = 2,
           footer = "https://surfclub-uri.ch"
         ),
         Webcam(
-          name = "Webcam Axenegg",
+          name = "Axenegg",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
           reloadInMin = 2,
           footer = "https://surfclub-uri.ch"
+        ),
+        Webcam(
+          name = "Windsurfing Urnersee",
+          url = "https://meteo.windsurfing-urnersee.ch/webcam_rechts.jpg",
+          reloadInMin = 2,
+          footer = "https://windsurfing-urnersee.ch"
         )
       )
     ),
