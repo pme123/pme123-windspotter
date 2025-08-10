@@ -35,15 +35,21 @@ object WebcamData {
       webcams = List(
         Webcam(
           name = "Webcam Sisikon",
+          url = "https://bhsboots.myhostpoint.ch/kamera04.jpg",
+          reloadInMin = 2,
+          footer = "https://www.bhs.swiss"
+        ),
+        Webcam(
+          name = "Webcam Sisikon 2",
           url = "http://bhsboots.myhostpoint.ch/kamera04.jpg",
           reloadInMin = 2,
           footer = "https://www.bhs.swiss"
         ),
         Webcam(
           name = "Webcam Isleten",
-          url = "http://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
+          url = "https://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
           reloadInMin = 2,
-          footer = "http://windsurfing-urnersee.ch"
+          footer = "https://windsurfing-urnersee.ch"
         ),
         Webcam(
           name = "Webcam Gruonbach",
