@@ -65,7 +65,15 @@ object WebcamService {
     val now = new Date()
     val timeString = f"${now.getHours().toInt}%02d:${now.getMinutes().toInt}%02d"
     val currentUrl = generateWebcamUrl(webcam)
-    
+
+    // Special debugging for Bolzbach to track duplicate calls
+    if (webcam.name.contains("Bolzbach")) {
+      dom.console.log(s"🚨 BOLZBACH LOAD ATTEMPT: ${webcam.name}")
+      dom.console.log(s"   - URL: $currentUrl")
+      dom.console.log(s"   - Time: $timeString")
+      dom.console.log(s"   - Current state history size: ${stateVar.now().imageHistory.length}")
+    }
+
     dom.console.log(s"🔗 Loading ${webcam.name}: $currentUrl")
     dom.console.log(s"⏰ Current time: $timeString")
     
@@ -77,15 +85,53 @@ object WebcamService {
     
     img.onload = (_: dom.Event) => {
       dom.console.log(s"✅ ${webcam.name} image loaded successfully")
+      // For Bolzbach, keep the original URL that was successfully loaded
+      val finalDataUrl = currentUrl
+
       val imageData = ImageData(
         name = s"${webcam.name}_${timeString}.jpg",
         url = currentUrl,
-        dataUrl = currentUrl
+        dataUrl = finalDataUrl
       )
-      
+
       val state = stateVar.now()
+
+      // Special debugging for Bolzbach webcam
+      if (webcam.name.contains("Bolzbach")) {
+        dom.console.log(s"🔍 Bolzbach Debug:")
+        dom.console.log(s"   - Current URL: $currentUrl")
+        dom.console.log(s"   - Image name: ${imageData.name}")
+        dom.console.log(s"   - Image dimensions: ${img.naturalWidth}x${img.naturalHeight}")
+        dom.console.log(s"   - Image file size estimate: ${img.naturalWidth * img.naturalHeight}")
+        dom.console.log(s"   - Current history size: ${state.imageHistory.length}")
+        dom.console.log(s"   - Existing URLs: ${state.imageHistory.map(_.url).mkString(", ")}")
+
+        // Check if this is actually a different image by comparing with the last one
+        if (state.imageHistory.nonEmpty) {
+          val lastImage = state.imageHistory.last
+          dom.console.log(s"   - Last image name: ${lastImage.name}")
+          dom.console.log(s"   - URLs are different: ${lastImage.url != currentUrl}")
+          dom.console.log(s"   - Time difference: ${timeString} vs ${lastImage.name.split("_").last.replace(".jpg", "")}")
+        }
+
+        dom.console.log(s"   - THEORY: Bolzbach server might be serving the same image content despite different URLs")
+        dom.console.log(s"   - SUGGESTION: Try increasing reload interval to 5+ minutes to match server update frequency")
+      }
+
       val newHistory = (state.imageHistory :+ imageData).takeRight(10)
-      
+
+      // Extra debugging for Bolzbach to check if images are actually being stored uniquely
+      if (webcam.name.contains("Bolzbach")) {
+        dom.console.log(s"📚 Bolzbach History Check:")
+        dom.console.log(s"   - About to store image: ${imageData.name}")
+        dom.console.log(s"   - Image URL: ${imageData.url}")
+        dom.console.log(s"   - DataURL starts with: ${imageData.dataUrl.take(50)}...")
+        dom.console.log(s"   - New history will have ${newHistory.length} images")
+        newHistory.zipWithIndex.foreach { case (img, idx) =>
+          dom.console.log(s"   - History[$idx]: ${img.name} -> ${img.url}")
+        }
+      }
+
       stateVar.set(state.copy(
         selectedImage = Some(imageData),
         imageHistory = newHistory,

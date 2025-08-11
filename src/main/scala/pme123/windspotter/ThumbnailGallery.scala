@@ -26,6 +26,12 @@ object ThumbnailGallery {
               div(
                 className := "thumbnail-grid",
                 imageHistory.zipWithIndex.map { case (imageData, index) =>
+                  // Debug Bolzbach thumbnail URLs
+                  if (imageData.name.contains("Bolzbach")) {
+                    dom.console.log(s"🖼️ Bolzbach Thumbnail[$index]: ${imageData.name}")
+                    dom.console.log(s"   - src URL: ${imageData.dataUrl}")
+                  }
+
                   div(
                     className := "thumbnail-item",
                     img(

@@ -33,6 +33,7 @@ object WebcamData {
     Lake(
       name = "Urnersee",
       webcams = List(
+        /*
         Webcam(
           name = "Sisikon Bootshafen Nord",
           url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera04.jpg",
@@ -56,13 +57,13 @@ object WebcamData {
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
           reloadInMin = 5,
           footer = "https://surfclub-uri.ch"
-        ),
+        ),*/
         Webcam(
           name = "Bolzbach",
           url = "https://www.energieuri.ch/wp-content/uploads/webcam/live.jpg",
-          reloadInMin = 2,
+          reloadInMin = 15,
           footer = "https://www.seedorf-uri.ch"
-        ),
+        ),/*
         Webcam(
           name = "Sisikon Bootshafen Süd",
           url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera05.jpg",
@@ -74,24 +75,7 @@ object WebcamData {
           url = "https://meteo.windsurfing-urnersee.ch/webcam_rechts.jpg",
           reloadInMin = 2,
           footer = "https://windsurfing-urnersee.ch"
-        )
-      )
-    ),
-    Lake(
-      name = "Test Lake",
-      webcams = List(
-        Webcam(
-          name = "Test Webcam 1",
-          url = "https://picsum.photos/800/600",
-          reloadInMin = 2,
-          footer = "https://picsum.photos"
-        ),
-        Webcam(
-          name = "Test Webcam 2",
-          url = "https://picsum.photos/900/700",
-          reloadInMin = 3,
-          footer = "https://picsum.photos"
-        )
+        )*/
       )
     )
   )
