@@ -1,16 +1,15 @@
 package pme123.windspotter
 
 import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 import org.scalajs.dom.{File, FileReader}
+
 import scala.scalajs.js.Date
-import scala.concurrent.duration.*
 
 
 
-object ImageUploadView:
+object ImageOverlayView:
 
   def apply(): HtmlElement =
     val selectedImageVar    = Var[Option[ImageData]](None)
@@ -434,4 +433,4 @@ object ImageUploadView:
 
 
 
-end ImageUploadView
+end ImageOverlayView

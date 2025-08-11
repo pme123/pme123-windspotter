@@ -41,7 +41,7 @@ object MainView:
               Tab(
                 _.text     := lake.name,
                 _.selected := (lake == WebcamData.getDefaultLake),
-                LakeView(lake, webcamStates, slideshowControls, ImageUploadView.showImageOverlay)
+                LakeView(lake, webcamStates, slideshowControls, ImageOverlayView.showImageOverlay)
               )
             )
           }

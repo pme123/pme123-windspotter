@@ -619,7 +619,7 @@ body {
   box-shadow: 4px 0 0 #aaa;
   border: none;
   margin-left: 0;
-  transform: none;
+  transform: translateX(-2px);
 }
 
 .play-button:hover {
