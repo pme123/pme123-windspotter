@@ -97,7 +97,20 @@ object WebcamView {
             // Footer with webcam info
             div(
               className := "webcam-footer",
+              div(
+                className := "footer-left",
+                child <-- stateVar.signal.map(_.lastUpdate).map { lastUpdate =>
+                  lastUpdate match {
+                    case Some(time) =>
+                      val nextLoadTime = calculateNextLoadTime(time, webcam.reloadInMin)
+                      span(s"Next load: $nextLoadTime")
+                    case None =>
+                      span("Loading...")
+                  }
+                }
+              ),
               a(
+                className := "footer-right",
                 href := webcam.footer,
                 target := "_blank",
                 webcam.footer
@@ -105,5 +118,23 @@ object WebcamView {
             )
           )
         )
+  }
+
+  private def calculateNextLoadTime(lastUpdateTime: String, reloadInMin: Int): String = {
+    try {
+      // Parse the last update time (format: "HH:MM")
+      val parts = lastUpdateTime.split(":")
+      val hours = parts(0).toInt
+      val minutes = parts(1).toInt
+
+      // Calculate next load time
+      val totalMinutes = hours * 60 + minutes + reloadInMin
+      val nextHours = (totalMinutes / 60) % 24
+      val nextMinutes = totalMinutes % 60
+
+      f"$nextHours%02d:$nextMinutes%02d"
+    } catch {
+      case _: Exception => "Unknown"
+    }
   }
 }

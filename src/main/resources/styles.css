@@ -275,14 +275,26 @@ body {
 }
 
 .webcam-footer {
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 6px;
+  font-size: 12px;
 }
 
-.webcam-footer a {
+.footer-left {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.footer-right {
   color: #666;
   text-decoration: none;
-  font-size: 12px;
+}
+
+.footer-right:hover {
+  color: #888;
+  text-decoration: none;
 }
 
 .webcam-footer a:hover {

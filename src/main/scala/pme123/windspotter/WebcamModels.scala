@@ -42,19 +42,19 @@ object WebcamData {
         Webcam(
           name = "Isleten",
           url = "https://meteo.windsurfing-urnersee.ch/webcam_isleten.jpg",
-          reloadInMin = 2,
+          reloadInMin = 5,
           footer = "https://windsurfing-urnersee.ch"
         ),
         Webcam(
           name = "Gruonbach",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_bucht.jpg",
-          reloadInMin = 2,
+          reloadInMin = 5,
           footer = "https://surfclub-uri.ch"
         ),
         Webcam(
           name = "Axenegg",
           url = "https://elbeato.bplaced.net/webcamSurfclub/webcam_axenegg.jpg",
-          reloadInMin = 2,
+          reloadInMin = 5,
           footer = "https://surfclub-uri.ch"
         ),
         Webcam(
