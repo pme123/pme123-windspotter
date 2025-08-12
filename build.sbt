@@ -17,7 +17,8 @@ lazy val root = (project in file("."))
         )
     },
     libraryDependencies ++= Seq(
-      "com.raquo"   %%% "laminar"            % "17.2.0",
-      "be.doeraene" %%% "web-components-ui5" % "2.1.0"
+      "com.raquo"     %%% "laminar"            % "17.2.0",
+      "be.doeraene"   %%% "web-components-ui5" % "2.1.0",
+      "org.scala-js"  %%% "scalajs-dom"       % "2.8.0"
     )
   ).enablePlugins(ScalaJSPlugin)

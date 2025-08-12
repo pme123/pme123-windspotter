@@ -14,6 +14,14 @@ object WebcamView {
     slideshowControlVar: Var[Boolean] = Var(false)
   ): HtmlElement = {
 
+    // Handle different webcam types
+    webcam.webcamType match {
+      case VideoWebcam =>
+        return VideoWebcamView(webcam, showImageOverlay)
+      case ImageWebcam =>
+        // Continue with existing image webcam logic
+    }
+
     // Only start auto-refresh if this webcam doesn't have any images yet
     val currentState = stateVar.now()
     if (currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {

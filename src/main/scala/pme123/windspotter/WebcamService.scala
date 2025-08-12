@@ -170,9 +170,15 @@ object WebcamService {
   }
 
   def startAutoRefresh(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+    // Skip auto-refresh for video webcams
+    if (webcam.webcamType == VideoWebcam) {
+      dom.console.log(s"📹 Skipping auto-refresh for video webcam: ${webcam.name}")
+      return
+    }
+
     val currentState = stateVar.now()
     stateVar.set(currentState.copy(isAutoRefresh = true))
-    
+
     // Load first image immediately
     loadWebcamImage(webcam, stateVar)
     
