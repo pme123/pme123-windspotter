@@ -125,6 +125,14 @@ object WebcamData:
     overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
+  val leccoWebcam = Webcam(
+    name = "Lecco",
+    url = "1748447411", // Store just the Windy webcam ID
+    reloadInMin = 10,    // Refresh every 10 minutes
+    footer = "https://windy.com",
+    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
+    webcamType = WindyWebcam
+  )
   val domasoWebcam = Webcam(
     name = "Domaso",
     url = "https://domasocamping.com/webcam/panorama.jpg", // Store just the Windy webcam ID

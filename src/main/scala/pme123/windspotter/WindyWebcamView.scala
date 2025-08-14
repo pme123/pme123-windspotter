@@ -70,7 +70,7 @@ object WindyWebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            span("Live webcam - reload button refreshes page")
+            span("Live webcam - reload button refreshes player")
           ),
           webcam.overlayLink
             .map: overlayUrl =>
@@ -96,29 +96,62 @@ object WindyWebcamView:
     // Clear container
     container.innerHTML = ""
 
-    // Create the Windy webcam link element with hardcoded attributes
-    val windyLink = dom.document.createElement("a").asInstanceOf[dom.HTMLAnchorElement]
-    windyLink.setAttribute("name", "windy-webcam-timelapse-player")
-    windyLink.setAttribute("data-id", webcam.url) // webcam.url contains the Windy ID
-    windyLink.setAttribute("data-play", "live")
-    windyLink.setAttribute("data-loop", "0")
-    windyLink.setAttribute("data-auto-play", "0")
-    windyLink.setAttribute("data-force-full-screen-on-overlay-play", "0")
-    windyLink.setAttribute("data-interactive", "1")
-    windyLink.setAttribute("href", s"https://windy.com/webcams/${webcam.url}")
-    windyLink.setAttribute("target", "_blank")
-    windyLink.textContent = webcam.name
+    // Create an iframe that loads a minimal HTML page with just the Windy webcam
+    val iframe = dom.document.createElement("iframe").asInstanceOf[dom.HTMLIFrameElement]
+    iframe.style.width = "100%"
+    iframe.style.height = "400px"
+    iframe.style.border = "none"
+    iframe.style.borderRadius = "8px"
 
-    // Add the link to the container
-    container.appendChild(windyLink)
+    // Create the HTML content for the iframe with the Windy webcam
+    val windyHtml = s"""
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/v2/script/player.js"></script>
+      </head>
+      <body style="margin: 0; padding: 0; background: #f0f0f0;">
+        <a name="windy-webcam-timelapse-player"
+           data-id="${webcam.url}"
+           data-play="live"
+           data-loop="0"
+           data-auto-play="0"
+           data-force-full-screen-on-overlay-play="0"
+           data-interactive="1"
+           href="https://windy.com/webcams/${webcam.url}"
+           target="_blank">
+          ${webcam.name}
+        </a>
+      </body>
+      </html>
+    """
+
+    // Set the iframe content
+    iframe.setAttribute("srcdoc", windyHtml)
+
+    // Add the iframe to the container
+    container.appendChild(iframe)
   end createWindyEmbed
 
   private def reloadWindyPlayer(webcam: Webcam): Unit = {
     dom.console.log(s"🔄 Reloading Windy player for ${webcam.name}")
 
-    // Since recreating the embed doesn't work well, let's just reload the page
-    // This is the most reliable way to refresh the Windy player
-    dom.window.location.reload()
+    val containerId = s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}"
+    val container = dom.document.getElementById(containerId)
+
+    if (container != null) {
+      // Find the iframe in the container
+      val iframe = container.querySelector("iframe").asInstanceOf[dom.HTMLIFrameElement]
+      if (iframe != null) {
+        // Reload the iframe by recreating it
+        createWindyEmbed(container, webcam)
+        dom.console.log(s"✅ Windy player iframe reloaded for ${webcam.name}")
+      } else {
+        dom.console.log(s"❌ Windy iframe not found for ${webcam.name}")
+      }
+    } else {
+      dom.console.log(s"❌ Windy container not found for ${webcam.name}")
+    }
   }
 
 end WindyWebcamView
