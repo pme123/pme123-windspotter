@@ -6,35 +6,35 @@ case object VideoWebcam extends WebcamType
 case object WindyWebcam extends WebcamType
 
 case class Webcam(
-  name: String,
-  url: String,
-  reloadInMin: Int,
-  footer: String,
-  overlayLink: Option[String] = None,
-  webcamType: WebcamType = ImageWebcam
+    name: String,
+    url: String,
+    reloadInMin: Int,
+    footer: String,
+    overlayLink: Option[String] = None,
+    webcamType: WebcamType = ImageWebcam
 )
 
 case class Lake(
-  name: String,
-  webcams: List[Webcam]
+    name: String,
+    webcams: List[Webcam]
 )
 
 case class ImageData(
-  name: String,
-  url: String,
-  dataUrl: String
+    name: String,
+    url: String,
+    dataUrl: String
 )
 
 case class WebcamState(
-  webcam: Webcam,
-  selectedImage: Option[ImageData] = None,
-  imageHistory: List[ImageData] = List.empty,
-  isAutoRefresh: Boolean = false,
-  lastUpdate: Option[String] = None,
-  currentUrl: Option[String] = None
+    webcam: Webcam,
+    selectedImage: Option[ImageData] = None,
+    imageHistory: List[ImageData] = List.empty,
+    isAutoRefresh: Boolean = false,
+    lastUpdate: Option[String] = None,
+    currentUrl: Option[String] = None
 )
 
-object WebcamData {
+object WebcamData:
 
   // Individual Webcam Variables
   val sisikonBootshafenNordWebcam = Webcam(
@@ -86,7 +86,7 @@ object WebcamData {
     footer = "https://windsurfing-urnersee.ch"
   )
 
-  val silvaplanaMultsWebcam = Webcam(
+  val silvaplanaMultsWebcam      = Webcam(
     name = "Silvaplana Mulets",
     url = "https://hd-auth.skylinewebcams.com/live.m3u8?a=t9018ai5oko7gonu3aviiugh22",
     reloadInMin = 0, // Videos don't need reloading
@@ -100,14 +100,28 @@ object WebcamData {
     footer = "https://www.silvaplana.ch",
     webcamType = VideoWebcam
   )
-  
-  val dervioWindyWebcam = Webcam(
+
+  val dervioWebcam = Webcam(
     name = "Dervio",
     url = "1564004172", // Store just the Windy webcam ID
-    reloadInMin = 1, // Refresh every 10 minutes
+    reloadInMin = 1,    // Refresh every 10 minutes
     footer = "https://windy.com",
     overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
     webcamType = WindyWebcam
+  )
+  val colicoWebcam = Webcam(
+    name = "Colico",
+    url = "1564003197", // Store just the Windy webcam ID
+    reloadInMin = 1,    // Refresh every 10 minutes
+    footer = "https://windy.com",
+    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
+    webcamType = WindyWebcam
+  )
+  val domasoWebcam = Webcam(
+    name = "Domaso",
+    url = "https://domasocamping.com/webcam/panorama.jpg", // Store just the Windy webcam ID
+    reloadInMin = 1,                                       // Refresh every 10 minutes
+    footer = "https://domasocamping.com"
   )
 
   // Individual Lake Variables
@@ -118,9 +132,9 @@ object WebcamData {
       isletenWebcam,
       gruonbachWebcam,
       axeneggWebcam,
-     // bolzbachWebcam,
-      sisikonBootshafenSuedWebcam,
-     // windsurfingUrnerseeWebcam
+      // bolzbachWebcam,
+      sisikonBootshafenSuedWebcam
+      // windsurfingUrnerseeWebcam
     )
   )
 
@@ -128,22 +142,23 @@ object WebcamData {
     name = "Silvaplana",
     webcams = List(
       silvaplanaMultsWebcam,
-      silvaplanaSurfcenterWebcam,
+      silvaplanaSurfcenterWebcam
     )
   )
 
   val comersee = Lake(
     name = "Comersee",
     webcams = List(
-
-      dervioWindyWebcam
+      dervioWebcam,
+      colicoWebcam,
+      domasoWebcam
     )
   )
 
   val lakes = List(
     comersee,
-      urnersee,
-   // silvaplana,
+    urnersee
+    // silvaplana,
   )
 
   def getDefaultLake: Lake = lakes.head
@@ -152,4 +167,4 @@ object WebcamData {
 
   def findLakeByName(name: String): Option[Lake] =
     lakes.find(_.name == name)
-}
+end WebcamData
