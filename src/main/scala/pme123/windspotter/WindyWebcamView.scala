@@ -70,7 +70,7 @@ object WindyWebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            span("Live webcam - reload button refreshes player")
+            span("Use reload button to refresh")
           ),
           webcam.overlayLink
             .map: overlayUrl =>
@@ -99,9 +99,10 @@ object WindyWebcamView:
     // Create an iframe that loads a minimal HTML page with just the Windy webcam
     val iframe = dom.document.createElement("iframe").asInstanceOf[dom.HTMLIFrameElement]
     iframe.style.width = "100%"
-    iframe.style.height = "400px"
+    iframe.style.height = "533px"
     iframe.style.border = "none"
     iframe.style.borderRadius = "8px"
+    iframe.style.overflow = "hidden"
 
     // Create the HTML content for the iframe with the Windy webcam
     val windyHtml = s"""
@@ -110,10 +111,10 @@ object WindyWebcamView:
       <head>
         <script async type="text/javascript" src="https://webcams.windy.com/webcams/public/embed/v2/script/player.js"></script>
       </head>
-      <body style="margin: 0; padding: 0; background: #f0f0f0;">
+      <body style="margin: 0; padding: 0; background: #f0f0f0; height: 100%">
         <a name="windy-webcam-timelapse-player"
            data-id="${webcam.url}"
-           data-play="live"
+           data-play="day"
            data-loop="0"
            data-auto-play="0"
            data-force-full-screen-on-overlay-play="0"
