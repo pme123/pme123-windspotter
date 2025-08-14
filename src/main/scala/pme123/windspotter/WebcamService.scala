@@ -176,6 +176,13 @@ object WebcamService {
       return
     }
 
+    // Handle Windy webcams differently
+    if (webcam.webcamType == WindyWebcam) {
+      dom.console.log(s"🌬️ Starting auto-capture for Windy webcam: ${webcam.name}")
+      startWindyAutoCapture(webcam, stateVar)
+      return
+    }
+
     val currentState = stateVar.now()
     stateVar.set(currentState.copy(isAutoRefresh = true))
 
@@ -192,5 +199,71 @@ object WebcamService {
     val currentState = stateVar.now()
     stateVar.set(currentState.copy(isAutoRefresh = false))
     dom.console.log(s"⏹️ Stopped auto-refresh")
+  }
+
+  private def startWindyAutoCapture(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+    val currentState = stateVar.now()
+    stateVar.set(currentState.copy(isAutoRefresh = true))
+
+    // Capture first image after a delay to let Windy load
+    dom.window.setTimeout(() => {
+      captureWindyWebcamImage(webcam, stateVar)
+    }, 3000)
+
+    // Set up interval for regular captures
+    def scheduleNext(): Unit = {
+      dom.window.setTimeout(() => {
+        val state = stateVar.now()
+        if (state.isAutoRefresh) {
+          captureWindyWebcamImage(webcam, stateVar)
+          scheduleNext()
+        }
+      }, webcam.reloadInMin * 60 * 1000)
+    }
+
+    scheduleNext()
+    dom.console.log(s"Started auto-capture for ${webcam.name} (every ${webcam.reloadInMin} min)")
+  }
+
+  private def captureWindyWebcamImage(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+    dom.console.log(s"📸 Auto-capturing Windy webcam image for ${webcam.name}")
+
+    val now = new Date()
+    val timeString = f"${now.getHours().toInt}%02d:${now.getMinutes().toInt}%02d"
+    val imageName = s"${webcam.name}_$timeString.jpg"
+
+    // Create a placeholder canvas for now
+    val canvas = dom.document.createElement("canvas").asInstanceOf[dom.HTMLCanvasElement]
+    canvas.width = 400
+    canvas.height = 300
+    val ctx = canvas.getContext("2d").asInstanceOf[dom.CanvasRenderingContext2D]
+
+    // Draw placeholder
+    ctx.fillStyle = "#e3f2fd"
+    ctx.fillRect(0, 0, 400, 300)
+    ctx.fillStyle = "#1976d2"
+    ctx.font = "16px Arial"
+    ctx.textAlign = "center"
+    ctx.fillText(s"🌬️ ${webcam.name}", 200, 140)
+    ctx.fillText(s"Captured: $timeString", 200, 170)
+
+    val dataUrl = canvas.toDataURL("image/jpeg", 0.8)
+
+    val imageData = ImageData(
+      name = imageName,
+      url = webcam.url,
+      dataUrl = dataUrl
+    )
+
+    val state = stateVar.now()
+    val newHistory = (state.imageHistory :+ imageData).takeRight(10)
+
+    stateVar.set(state.copy(
+      selectedImage = Some(imageData),
+      imageHistory = newHistory,
+      lastUpdate = Some(timeString)
+    ))
+
+    dom.console.log(s"✅ Windy webcam image captured for ${webcam.name}")
   }
 }

@@ -3,12 +3,14 @@ package pme123.windspotter
 sealed trait WebcamType
 case object ImageWebcam extends WebcamType
 case object VideoWebcam extends WebcamType
+case object WindyWebcam extends WebcamType
 
 case class Webcam(
   name: String,
   url: String,
   reloadInMin: Int,
   footer: String,
+  overlayLink: Option[String] = None,
   webcamType: WebcamType = ImageWebcam
 )
 
@@ -84,12 +86,28 @@ object WebcamData {
     footer = "https://windsurfing-urnersee.ch"
   )
 
-  val skylineVideoWebcam = Webcam(
-    name = "Skyline Video Stream",
+  val silvaplanaMultsWebcam = Webcam(
+    name = "Silvaplana Mulets",
+    url = "https://hd-auth.skylinewebcams.com/live.m3u8?a=t9018ai5oko7gonu3aviiugh22",
+    reloadInMin = 0, // Videos don't need reloading
+    footer = "https://www.silvaplana.ch",
+    webcamType = VideoWebcam
+  )
+  val silvaplanaSurfcenterWebcam = Webcam(
+    name = "Silvaplana Surfcenter",
     url = "https://hd-auth.skylinewebcams.com/live.m3u8",
     reloadInMin = 0, // Videos don't need reloading
-    footer = "https://www.skylinewebcams.com",
+    footer = "https://www.silvaplana.ch",
     webcamType = VideoWebcam
+  )
+  
+  val dervioWindyWebcam = Webcam(
+    name = "Dervio",
+    url = "1564004172", // Store just the Windy webcam ID
+    reloadInMin = 1, // Refresh every 10 minutes
+    footer = "https://windy.com",
+    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
+    webcamType = WindyWebcam
   )
 
   // Individual Lake Variables
@@ -109,13 +127,23 @@ object WebcamData {
   val silvaplana = Lake(
     name = "Silvaplana",
     webcams = List(
-      skylineVideoWebcam
+      silvaplanaMultsWebcam,
+      silvaplanaSurfcenterWebcam,
+    )
+  )
+
+  val comersee = Lake(
+    name = "Comersee",
+    webcams = List(
+
+      dervioWindyWebcam
     )
   )
 
   val lakes = List(
-    urnersee,
-  //  silvaplana
+    comersee,
+      urnersee,
+   // silvaplana,
   )
 
   def getDefaultLake: Lake = lakes.head

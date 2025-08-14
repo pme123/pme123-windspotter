@@ -18,6 +18,8 @@ object WebcamView {
     webcam.webcamType match {
       case VideoWebcam =>
         return VideoWebcamView(webcam, showImageOverlay)
+      case WindyWebcam =>
+        return WindyWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
       case ImageWebcam =>
         // Continue with existing image webcam logic
     }

@@ -342,7 +342,9 @@ object ImageOverlayView:
     closeButton.className = "overlay-close-button"
     closeButton.textContent = "✕"
     closeButton.onclick = (_: dom.Event) =>
-      dom.document.body.removeChild(overlay)
+      if (overlay.parentNode != null && overlay.parentNode == dom.document.body) {
+        dom.document.body.removeChild(overlay)
+      }
 
     // Create full-size image
     val fullImage = dom.document.createElement("img").asInstanceOf[dom.HTMLImageElement]
@@ -409,7 +411,9 @@ object ImageOverlayView:
 
     // Add click to close functionality (only on overlay background)
     overlay.onclick = (_: dom.Event) =>
-      dom.document.body.removeChild(overlay)
+      if (overlay.parentNode != null && overlay.parentNode == dom.document.body) {
+        dom.document.body.removeChild(overlay)
+      }
 
     // Prevent image and controls click from closing overlay
     fullImage.onclick = (e: dom.Event) =>

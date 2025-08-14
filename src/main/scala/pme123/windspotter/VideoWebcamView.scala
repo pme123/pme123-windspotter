@@ -43,7 +43,7 @@ object VideoWebcamView {
               "Open Live Stream"
             )
           )
-        } else if (webcam.url.contains(".m3u8") || webcam.url.contains("stream")) {
+        } else if (webcam.url.contains(".m3u8") || webcam.url.contains("stream") || webcam.url.contains(".mp4")) {
           // For HLS/video streams, use HTML5 video element with HLS.js
           videoTag(
             idAttr := s"video-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
@@ -55,40 +55,88 @@ object VideoWebcamView {
             htmlAttr("controls", BooleanAsAttrPresenceCodec) := true,
             onMountCallback(ctx => {
               val video = ctx.thisNode.ref.asInstanceOf[dom.HTMLVideoElement]
-              dom.console.log(s"🎬 Initializing HLS for ${webcam.name}")
+              dom.console.log(s"🎬 Initializing video for ${webcam.name}")
+              dom.console.log(s"📹 Video URL: ${webcam.url}")
 
-              // Check if HLS.js is available
-              if (js.isUndefined(js.Dynamic.global.Hls)) {
-                dom.console.log(s"❌ HLS.js library not loaded for ${webcam.name}")
-                // Fallback: try direct video source
+              // Add event listeners for debugging
+              video.addEventListener("loadstart", (_: dom.Event) => {
+                dom.console.log(s"📥 Video load started for ${webcam.name}")
+              })
+
+              video.addEventListener("loadeddata", (_: dom.Event) => {
+                dom.console.log(s"✅ Video data loaded for ${webcam.name}")
+              })
+
+              video.addEventListener("canplay", (_: dom.Event) => {
+                dom.console.log(s"▶️ Video can play for ${webcam.name}")
+              })
+
+              video.addEventListener("error", (e: dom.Event) => {
+                val videoError = video.error
+                if (videoError != null) {
+                  val errorCode = videoError.code
+                  val errorMessage = errorCode match {
+                    case 1 => "MEDIA_ERR_ABORTED - The video download was aborted"
+                    case 2 => "MEDIA_ERR_NETWORK - A network error occurred"
+                    case 3 => "MEDIA_ERR_DECODE - The video is corrupted or not supported"
+                    case 4 => "MEDIA_ERR_SRC_NOT_SUPPORTED - The video format is not supported"
+                    case _ => s"Unknown error code: $errorCode"
+                  }
+                  dom.console.log(s"❌ Video error for ${webcam.name}: $errorMessage")
+                  dom.console.log(s"   Error details: code=$errorCode, message=${videoError}")
+                } else {
+                  dom.console.log(s"❌ Video error for ${webcam.name}: Unknown error")
+                }
+              })
+
+              // Handle different video types
+              if (webcam.url.contains(".mp4")) {
+                // Direct MP4 video
+                dom.console.log(s"🎥 Loading MP4 video for ${webcam.name}")
+                video.src = webcam.url
+                video.load() // Force reload
+                video.play()
+                dom.console.log(s"✅ MP4 video playback attempted for ${webcam.name}")
+              } else if (webcam.url.contains(".m3u8")) {
+                // HLS stream
+                if (js.isUndefined(js.Dynamic.global.Hls)) {
+                  dom.console.log(s"❌ HLS.js library not loaded for ${webcam.name}")
+                  // Fallback: try direct video source
+                  video.src = webcam.url
+                  video.play()
+                  dom.console.log(s"✅ Direct HLS playback attempted for ${webcam.name}")
+                } else {
+                  // Initialize HLS.js
+                  try {
+                    if (js.Dynamic.global.Hls.isSupported()) {
+                      val hls = js.Dynamic.newInstance(js.Dynamic.global.Hls)()
+                      hls.loadSource(webcam.url)
+                      hls.attachMedia(video)
+                      hls.on(js.Dynamic.global.Hls.Events.MANIFEST_PARSED, () => {
+                        dom.console.log(s"✅ HLS manifest loaded for ${webcam.name}")
+                        video.play()
+                      })
+                      hls.on(js.Dynamic.global.Hls.Events.ERROR, (event: js.Any, data: js.Any) => {
+                        dom.console.log(s"❌ HLS error for ${webcam.name}:", data)
+                      })
+                    } else if (video.canPlayType("application/vnd.apple.mpegurl") != "") {
+                      // Safari native HLS support
+                      video.src = webcam.url
+                      video.play()
+                    } else {
+                      dom.console.log(s"❌ HLS not supported for ${webcam.name}")
+                    }
+                  } catch {
+                    case e: Exception =>
+                      dom.console.log(s"❌ HLS initialization error for ${webcam.name}:", e.getMessage)
+                  }
+                }
+              } else {
+                // Generic video stream
+                dom.console.log(s"🎬 Loading generic video stream for ${webcam.name}")
                 video.src = webcam.url
                 video.play()
-                dom.console.log(s"✅ Direct video playback attempted for ${webcam.name}")
-              } else {
-                // Initialize HLS.js
-                try {
-                  if (js.Dynamic.global.Hls.isSupported()) {
-                    val hls = js.Dynamic.newInstance(js.Dynamic.global.Hls)()
-                    hls.loadSource(webcam.url)
-                    hls.attachMedia(video)
-                    hls.on(js.Dynamic.global.Hls.Events.MANIFEST_PARSED, () => {
-                      dom.console.log(s"✅ HLS manifest loaded for ${webcam.name}")
-                      video.play()
-                    })
-                    hls.on(js.Dynamic.global.Hls.Events.ERROR, (event: js.Any, data: js.Any) => {
-                      dom.console.log(s"❌ HLS error for ${webcam.name}:", data)
-                    })
-                  } else if (video.canPlayType("application/vnd.apple.mpegurl") != "") {
-                    // Safari native HLS support
-                    video.src = webcam.url
-                    video.play()
-                  } else {
-                    dom.console.log(s"❌ HLS not supported for ${webcam.name}")
-                  }
-                } catch {
-                  case e: Exception =>
-                    dom.console.log(s"❌ HLS initialization error for ${webcam.name}:", e.getMessage)
-                }
+                dom.console.log(s"✅ Generic video playback attempted for ${webcam.name}")
               }
             }),
             "Your browser does not support HLS video streams."
