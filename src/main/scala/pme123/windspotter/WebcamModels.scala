@@ -104,15 +104,23 @@ object WebcamData:
   val dervioWebcam = Webcam(
     name = "Dervio",
     url = "1564004172", // Store just the Windy webcam ID
-    reloadInMin = 1,    // Refresh every 10 minutes
+    reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
     overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
+    webcamType = WindyWebcam
+  )
+  val cremiaWebcam = Webcam(
+    name = "Cremia",
+    url = "1564003897", // Store just the Windy webcam ID
+    reloadInMin = 10,    // Refresh every 10 minutes
+    footer = "https://windy.com",
+    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
   val colicoWebcam = Webcam(
     name = "Colico",
     url = "1564003197", // Store just the Windy webcam ID
-    reloadInMin = 1,    // Refresh every 10 minutes
+    reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
     overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
@@ -150,6 +158,7 @@ object WebcamData:
     name = "Comersee",
     webcams = List(
       dervioWebcam,
+      cremiaWebcam,
       colicoWebcam,
       domasoWebcam
     )

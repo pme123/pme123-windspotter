@@ -33,6 +33,15 @@ object WindyWebcamView:
           Title(
             className := "webcam-title",
             webcam.name
+          ),
+          Button(
+            _.design := ButtonDesign.Transparent,
+            _.icon := IconName.`refresh`,
+            _.tooltip := "Reload Windy Player",
+            onClick --> { _ =>
+              reloadWindyPlayer(webcam)
+            },
+            "Reload"
           )
         ),
 
@@ -50,18 +59,6 @@ object WindyWebcamView:
 
                 createWindyEmbed(container, webcam)
 
-                // Add overlay functionality with delayed setup to wait for Windy script
-                webcam.overlayLink match
-                case Some(overlayUrl) =>
-                  setupOverlayHandler(container, webcam, overlayUrl)
-                case None             =>
-                  dom.console.log(s"ℹ️ No overlay link configured for ${webcam.name}")
-                end match
-
-                // Start auto-refresh if configured
-                if webcam.reloadInMin > 0 then
-                  startWindyAutoRefresh(webcam, stateVar)
-
                 dom.console.log(s"✅ Windy webcam initialized for ${webcam.name}")
               )
             )
@@ -73,7 +70,7 @@ object WindyWebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            span(s"Reloads every ${webcam.reloadInMin} minutes")
+            span("Live webcam - reload button refreshes page")
           ),
           webcam.overlayLink
             .map: overlayUrl =>
@@ -105,9 +102,10 @@ object WindyWebcamView:
     windyLink.setAttribute("data-id", webcam.url) // webcam.url contains the Windy ID
     windyLink.setAttribute("data-play", "live")
     windyLink.setAttribute("data-loop", "0")
-    windyLink.setAttribute("data-auto-play", "1")
+    windyLink.setAttribute("data-auto-play", "0")
     windyLink.setAttribute("data-force-full-screen-on-overlay-play", "0")
     windyLink.setAttribute("data-interactive", "1")
+    windyLink.setAttribute("href", s"https://windy.com/webcams/${webcam.url}")
     windyLink.setAttribute("target", "_blank")
     windyLink.textContent = webcam.name
 
@@ -115,90 +113,12 @@ object WindyWebcamView:
     container.appendChild(windyLink)
   end createWindyEmbed
 
-  private def refreshWindyWebcam(webcam: Webcam, stateVar: Var[WebcamState]): Unit =
-    dom.console.log(s"🔄 Refreshing Windy webcam: ${webcam.name}")
+  private def reloadWindyPlayer(webcam: Webcam): Unit = {
+    dom.console.log(s"🔄 Reloading Windy player for ${webcam.name}")
 
-    val containerId = s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}"
-    val container   = dom.document.getElementById(containerId)
+    // Since recreating the embed doesn't work well, let's just reload the page
+    // This is the most reliable way to refresh the Windy player
+    dom.window.location.reload()
+  }
 
-    if container != null then
-      // Recreate the Windy embed to force refresh
-      createWindyEmbed(container, webcam)
-
-      // Update last refresh time
-      val now          = new js.Date()
-      val timeString   = f"${now.getHours().toInt}%02d:${now.getMinutes().toInt}%02d"
-      val currentState = stateVar.now()
-      stateVar.set(currentState.copy(lastUpdate = Some(timeString)))
-
-      dom.console.log(s"✅ Windy webcam refreshed: ${webcam.name}")
-    else
-      dom.console.log(s"❌ Windy container not found for ${webcam.name}")
-    end if
-  end refreshWindyWebcam
-
-  private def setupOverlayHandler(
-      container: dom.Element,
-      webcam: Webcam,
-      overlayUrl: String
-  ): Unit =
-    dom.console.log(s"🔧 Setting up overlay handler for ${webcam.name}")
-
-    def trySetupHandler(attempts: Int): Unit =
-      if attempts > 0 then
-        // Look for any clickable elements in the container
-        val clickableElements = container.querySelectorAll("a, iframe, div, *")
-
-        if clickableElements.length > 0 then
-          dom.console.log(
-            s"📍 Found ${clickableElements.length} elements in container, setting up overlay handler"
-          )
-
-          // Add event listener to container with capture phase
-          container.addEventListener(
-            "click",
-            (e: dom.Event) =>
-              dom.console.log(s"🎯 Click intercepted on ${webcam.name} container!")
-              e.preventDefault()
-              e.stopPropagation()
-              e.stopImmediatePropagation()
-              dom.console.log(s"🌐 Opening overlay for ${webcam.name}: $overlayUrl")
-              WebOverlayView.showWebOverlay(webcam.name, overlayUrl)
-            ,
-            useCapture = true
-          ) // Use capture phase to intercept before other handlers
-
-          dom.console.log(s"✅ Overlay handler set up for ${webcam.name}")
-        else
-          // Windy content not loaded yet, try again
-          dom.console.log(s"⏳ Windy content not ready, retrying... (${attempts} attempts left)")
-          dom.window.setTimeout(() => trySetupHandler(attempts - 1), 500)
-        end if
-      else
-        dom.console.log(
-          s"❌ Failed to set up overlay handler for ${webcam.name} after multiple attempts"
-        )
-
-    // Start trying to set up the handler
-    trySetupHandler(10) // Try up to 10 times with 500ms intervals
-  end setupOverlayHandler
-
-  private def startWindyAutoRefresh(webcam: Webcam, stateVar: Var[WebcamState]): Unit =
-    val currentState = stateVar.now()
-    stateVar.set(currentState.copy(isAutoRefresh = true))
-
-    def scheduleNext(): Unit =
-      dom.window.setTimeout(
-        () =>
-          val state = stateVar.now()
-          if state.isAutoRefresh then
-            refreshWindyWebcam(webcam, stateVar)
-            scheduleNext()
-        ,
-        webcam.reloadInMin * 60 * 1000
-      ) // Convert minutes to milliseconds
-
-    scheduleNext()
-    dom.console.log(s"🔄 Started auto-refresh for ${webcam.name} (every ${webcam.reloadInMin} min)")
-  end startWindyAutoRefresh
 end WindyWebcamView
