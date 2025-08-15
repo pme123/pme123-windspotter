@@ -283,8 +283,13 @@ body {
 }
 
 .footer-left {
-  color: #aaa;
+  #color: #666;
   font-weight: 500;
+    text-decoration: none;
+}
+.footer-right:hover {
+  color: #888;
+  text-decoration: none;
 }
 
 .footer-right {
@@ -898,4 +903,171 @@ body {
   width: 100%;
   border: none;
   background: white;
+}
+
+/* Webcam title row styles */
+.webcam-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.webcam-title-row .webcam-title {
+  margin: 0;
+  flex: 1;
+}
+
+.webcam-reload-button {
+  margin-left: 16px;
+  flex-shrink: 0;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.webcam-reload-button:hover {
+  color: #666;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.webcam-reload-button:focus {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.webcam-reload-button:active {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Target UI5 button internal parts */
+.webcam-reload-button::part(button) {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+.webcam-reload-button ui5-button {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* More specific UI5 button targeting */
+ui5-button.webcam-reload-button {
+  --_ui5_button_base_border_color: transparent !important;
+  --_ui5_button_border_color: transparent !important;
+  --_ui5_button_active_border_color: transparent !important;
+  --_ui5_button_emphasized_border_color: transparent !important;
+  --_ui5_button_base_background: transparent !important;
+  --_ui5_button_background: transparent !important;
+  --_ui5_button_active_background: transparent !important;
+  --_ui5_button_emphasized_background: transparent !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+ui5-button.webcam-reload-button:hover {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+ui5-button.webcam-reload-button:focus {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+ui5-button.webcam-reload-button:active {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Clean approach - target all possible UI5 button internal elements */
+ui5-button.webcam-reload-button,
+ui5-button.webcam-reload-button .ui5-button-root,
+ui5-button.webcam-reload-button .ui5-button-inner,
+ui5-button.webcam-reload-button button {
+  background: transparent !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Hover and focus states */
+ui5-button.webcam-reload-button:hover,
+ui5-button.webcam-reload-button:focus,
+ui5-button.webcam-reload-button:active,
+ui5-button.webcam-reload-button:hover .ui5-button-root,
+ui5-button.webcam-reload-button:focus .ui5-button-root,
+ui5-button.webcam-reload-button:active .ui5-button-root,
+ui5-button.webcam-reload-button:hover button,
+ui5-button.webcam-reload-button:focus button,
+ui5-button.webcam-reload-button:active button {
+  background: transparent !important;
+  border: 0 !important;
+  border-width: 0 !important;
+  border-style: none !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Custom reload button styles */
+.webcam-reload-button-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 16px;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.webcam-reload-button-custom:hover {
+  color: #666;
+  background: none;
+}
+
+.webcam-reload-button-custom:focus {
+  outline: none;
+}
+
+.webcam-reload-button-custom:active {
+  transform: scale(0.95);
+}
+
+/* Style the icon inside the custom button */
+.webcam-reload-button-custom ui5-icon {
+  font-size: 16px;
+  color: inherit;
 }

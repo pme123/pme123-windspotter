@@ -30,18 +30,21 @@ object WindyWebcamView:
         className := "upload-method webcam-section",
         div(
           className := "webcam-header",
-          Title(
-            className := "webcam-title",
-            webcam.name
-          ),
-          Button(
-            _.design := ButtonDesign.Transparent,
-            _.icon := IconName.`refresh`,
-            _.tooltip := "Reload Windy Player",
-            onClick --> { _ =>
-              reloadWindyPlayer(webcam)
-            },
-            "Reload"
+          div(
+            className := "webcam-title-row",
+            Title(
+              className := "webcam-title",
+              webcam.name
+            ),
+            // Custom button using UI5 Icon but with custom styling
+            div(
+              className := "webcam-reload-button-custom",
+              title := "Reload Windy Player",
+              onClick --> { _ =>
+                reloadWindyPlayer(webcam)
+              },
+              Icon(_.name := IconName.`refresh`)
+            )
           )
         ),
 
@@ -70,17 +73,17 @@ object WindyWebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            span("Use reload button to refresh")
+            span("Use reload button to refresh / for live video: "),
+            webcam.overlayLink
+              .map: overlayUrl =>
+                  a(
+                    className := "footer-left",
+                    href   := overlayUrl,
+                    target := "_blank",
+                    "Go to Main Page"
+                  )
+              .toSeq
           ),
-          webcam.overlayLink
-            .map: overlayUrl =>
-              a(
-                className := "footer-center",
-                href      := overlayUrl,
-                target    := "_blank",
-                "Go to Main Page"
-              )
-            .toSeq,
           a(
             className := "footer-right",
             href      := webcam.footer,
@@ -105,7 +108,8 @@ object WindyWebcamView:
     iframe.style.overflow = "hidden"
 
     // Create the HTML content for the iframe with the Windy webcam
-    val windyHtml = s"""
+    val windyHtml =
+      s"""
       <!DOCTYPE html>
       <html>
       <head>
@@ -134,25 +138,25 @@ object WindyWebcamView:
     container.appendChild(iframe)
   end createWindyEmbed
 
-  private def reloadWindyPlayer(webcam: Webcam): Unit = {
+  private def reloadWindyPlayer(webcam: Webcam): Unit =
     dom.console.log(s"🔄 Reloading Windy player for ${webcam.name}")
 
     val containerId = s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}"
-    val container = dom.document.getElementById(containerId)
+    val container   = dom.document.getElementById(containerId)
 
-    if (container != null) {
+    if container != null then
       // Find the iframe in the container
       val iframe = container.querySelector("iframe").asInstanceOf[dom.HTMLIFrameElement]
-      if (iframe != null) {
+      if iframe != null then
         // Reload the iframe by recreating it
         createWindyEmbed(container, webcam)
         dom.console.log(s"✅ Windy player iframe reloaded for ${webcam.name}")
-      } else {
+      else
         dom.console.log(s"❌ Windy iframe not found for ${webcam.name}")
-      }
-    } else {
+      end if
+    else
       dom.console.log(s"❌ Windy container not found for ${webcam.name}")
-    }
-  }
+    end if
+  end reloadWindyPlayer
 
 end WindyWebcamView
