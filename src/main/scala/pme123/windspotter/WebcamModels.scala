@@ -153,6 +153,20 @@ object WebcamData:
     footer = "https://www.youtube.com/@yachtclubimmensee",
     webcamType = YoutubeWebcam
   )
+  val aegeriWebcam = Webcam(
+    name = "Aegeri",
+    url = "https://scae.ch/webcam/image.jpg",
+    reloadInMin = 1,
+    footer = "https://scae.ch"
+  )
+
+  // Sempachersee
+  val eichWebcam = Webcam(
+    name = "Eich",
+    url = "https://windsurfclubeich.ch/webcam/hikvision_current.jpg",
+    reloadInMin = 1,
+    footer = "https://www.windsurfclubeich.ch"
+  )
 
   // Lakes
 
@@ -188,9 +202,17 @@ object WebcamData:
   )
 
   val zugersee = Lake(
-    name = "Zugersee",
+    name = "Zugerseen",
     webcams = List(
-      immenseeWebcam
+      immenseeWebcam,
+      aegeriWebcam
+    )
+  )
+
+  val sempachersee = Lake(
+    name = "Sempachersee",
+    webcams = List(
+      eichWebcam
     )
   )
 
@@ -198,7 +220,7 @@ object WebcamData:
     zugersee,
     urnersee,
     comersee,
-    
+    sempachersee,
     // silvaplana,
   )
 
