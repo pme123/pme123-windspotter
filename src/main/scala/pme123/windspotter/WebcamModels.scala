@@ -166,7 +166,12 @@ object WebcamData:
     footer = "https://www.weisszahnarzt.ch",
     liveVideoLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
   )
-
+  val chamWebcam = Webcam(
+    name = "Cham",
+    url = "https://www.webcam.scc.ch/image_large.jpg",
+    reloadInMin = 5,
+    footer = "https://www.webcam.scc.ch"
+  )
   // Sempachersee
   val eichWebcam = Webcam(
     name = "Eich",
@@ -213,7 +218,9 @@ object WebcamData:
     webcams = List(
       immenseeWebcam,
       walchwilWebcam,
+      chamWebcam,
       aegeriWebcam,
+
     )
   )
 

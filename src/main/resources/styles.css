@@ -45,6 +45,18 @@ body {
   text-decoration: underline;
 }
 
+/* Header Links */
+.header-links {
+  display: flex;
+  align-items: center;
+}
+
+.header-delimiter {
+  color: white;
+  margin: 0 8px;
+  opacity: 0.7;
+}
+
 :host([media-range="M"]) .ui5-tc__content, :host([media-range="L"]) .ui5-tc__content {
     padding: 1rem 0;
 }
@@ -91,10 +103,7 @@ body {
     padding: 1em 0 0 0;
     }
 
-/* Lake View Styles */
-.lake-view {
-
-}
+/* Lake View Styles - placeholder for future styles */
 
 /* Vertical Webcam Layout */
 .webcams-vertical {
@@ -283,9 +292,9 @@ body {
 }
 
 .footer-left {
-  #color: #666;
+  color: #666;
   font-weight: 500;
-    text-decoration: none;
+  text-decoration: none;
 }
 .footer-right:hover {
   color: #888;
