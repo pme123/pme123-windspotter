@@ -161,7 +161,7 @@ object WebcamData:
   )
   val walchwilWebcam = Webcam(
     name = "Walchwil",
-    url = "http://109.164.203.165/record/current.jpg",
+    url = "https://api.codetabs.com/v1/proxy?quest=http://109.164.203.165/record/current.jpg",
     reloadInMin = 5,
     footer = "https://www.weisszahnarzt.ch",
     liveVideoLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
