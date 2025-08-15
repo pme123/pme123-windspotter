@@ -156,7 +156,7 @@ object WebcamData:
   val aegeriWebcam = Webcam(
     name = "Aegeri",
     url = "https://scae.ch/webcam/image.jpg",
-    reloadInMin = 1,
+    reloadInMin = 5,
     footer = "https://scae.ch"
   )
 
