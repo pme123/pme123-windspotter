@@ -20,7 +20,7 @@ object AuthService:
   // TODO: Replace with your actual GitHub OAuth App Client ID
   // Get this from: https://github.com/settings/developers
   private val CLIENT_ID = "Ov23liPMwUFPachXQfpj" // Replace with your actual Client ID
-  private val REDIRECT_URI = dom.window.location.origin
+  private val REDIRECT_URI = s"${dom.window.location.origin}/pme123-windspotter"
   
   // Reactive state for authentication - start with false to show login screen
   val isAuthenticatedVar = Var(false)
