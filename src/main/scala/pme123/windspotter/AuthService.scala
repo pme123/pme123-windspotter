@@ -20,7 +20,13 @@ object AuthService:
   // TODO: Replace with your actual GitHub OAuth App Client ID
   // Get this from: https://github.com/settings/developers
   private val CLIENT_ID = "Ov23liPMwUFPachXQfpj" // Replace with your actual Client ID
-  private val REDIRECT_URI = s"${dom.window.location.origin}/pme123-windspotter"
+  // Environment-aware redirect URI
+  private val REDIRECT_URI = {
+    val currentOrigin = dom.window.location.origin
+    dom.console.log(s"🔐 Current origin: $currentOrigin")
+    // Always use the current origin - works for both localhost and GitHub Pages
+    currentOrigin
+  }
   
   // Reactive state for authentication - start with false to show login screen
   val isAuthenticatedVar = Var(false)
@@ -51,17 +57,30 @@ object AuthService:
   // Check if user is already authenticated on app start
   def initialize(): Unit =
     dom.console.log("🔐 Initializing AuthService...")
+    val currentOrigin = dom.window.location.origin
 
-    // TEMPORARY: Force unauthenticated state to test login screen
-    forceLogout()
+    // Check for OAuth callback first
+    val urlParams = new dom.URLSearchParams(dom.window.location.search)
+    val code = urlParams.get("code")
+    if (code != null && code.nonEmpty) {
+      dom.console.log(s"🔐 OAuth callback received with code: $code")
+      handleOAuthCallback(code)
+      // Clean up URL
+      dom.window.history.replaceState(null, "", dom.window.location.pathname)
+      return
+    }
 
-    dom.console.log(s"🔐 Authentication state after init: ${isAuthenticatedVar.now()}")
+    // Check for demo mode flag
+    val demoMode = dom.window.localStorage.getItem("demo_mode")
+    if (demoMode == "true") {
+      dom.console.log("🔐 Demo mode detected - auto-authenticating")
+      demoLogin()
+      return
+    }
 
-    // TODO: Uncomment this section when ready to test real authentication
-    /*
     // Check for stored token
     val storedToken = dom.window.localStorage.getItem("github_access_token")
-    if (storedToken != null && storedToken.nonEmpty) {
+    if (storedToken != null && storedToken.nonEmpty && storedToken != "demo_token_from_oauth") {
       dom.console.log("🔐 Found stored token, validating...")
       accessTokenVar.set(Some(storedToken))
       fetchUserInfo(storedToken).foreach {
@@ -74,23 +93,29 @@ object AuthService:
           // Token might be expired, clear it
           logout()
       }
+    } else if (storedToken == "demo_token_from_oauth") {
+      dom.console.log("🔐 Found demo OAuth token - restoring session")
+      // Restore demo OAuth session
+      val demoUser = GitHubUser(
+        login = "github-user",
+        name = Some("GitHub User"),
+        avatar_url = "https://github.com/identicons/github-user.png",
+        html_url = "https://github.com/github-user"
+      )
+      currentUserVar.set(Some(demoUser))
+      isAuthenticatedVar.set(true)
     } else {
-      dom.console.log("🔐 No stored token found")
+      dom.console.log("🔐 No stored token found - showing login screen")
+      // Start with unauthenticated state
+      isAuthenticatedVar.set(false)
+      currentUserVar.set(None)
+      accessTokenVar.set(None)
     }
 
-    // Check for OAuth callback
-    val urlParams = new dom.URLSearchParams(dom.window.location.search)
-    val code = urlParams.get("code")
-    if (code != null && code.nonEmpty) {
-      dom.console.log(s"🔐 OAuth callback received with code: $code")
-      handleOAuthCallback(code)
-      // Clean up URL
-      dom.window.history.replaceState(null, "", dom.window.location.pathname)
-    }
-    */
+    dom.console.log(s"🔐 Authentication state after init: ${isAuthenticatedVar.now()}")
   
   def login(): Unit =
-    if (CLIENT_ID == "REPLACE_WITH_YOUR_GITHUB_CLIENT_ID") {
+    if (CLIENT_ID == "REPLACE_WITH_YOUR_GITHUB_CLIENT_ID" || CLIENT_ID.isEmpty) {
       dom.window.alert("""
         |GitHub OAuth not configured!
         |
@@ -114,14 +139,30 @@ object AuthService:
     isAuthenticatedVar.set(false)
   
   private def handleOAuthCallback(code: String): Unit =
-    // Note: In a real application, you should exchange the code for a token on your backend
-    // This is a simplified example that would require a backend service
-    dom.console.log(s"Received OAuth code: $code")
-    dom.console.log("In a production app, you would exchange this code for an access token via your backend")
-    
-    // For demo purposes, you could implement a simple backend endpoint or use GitHub's device flow
-    // For now, we'll show a message to the user
-    dom.window.alert("OAuth callback received. In a production app, this would complete the authentication flow.")
+    dom.console.log(s"🔐 Handling OAuth callback with code: $code")
+
+    // Note: In a real production app, you would exchange the code for a token on your backend
+    // For this demo, we'll simulate a successful authentication
+
+    // Simulate successful OAuth flow
+    dom.console.log("🔐 Simulating successful OAuth token exchange...")
+
+    // Create a demo user (in production, you'd get this from GitHub API after token exchange)
+    val demoUser = GitHubUser(
+      login = "github-user",
+      name = Some("GitHub User"),
+      avatar_url = "https://github.com/identicons/github-user.png",
+      html_url = "https://github.com/github-user"
+    )
+
+    // Set authentication state
+    currentUserVar.set(Some(demoUser))
+    isAuthenticatedVar.set(true)
+
+    // Store a demo token (in production, this would be the real access token)
+    dom.window.localStorage.setItem("github_access_token", "demo_token_from_oauth")
+
+    dom.console.log("🔐 OAuth authentication completed successfully")
   
   private def fetchUserInfo(token: String): Future[scala.util.Try[GitHubUser]] =
     val requestHeaders = new dom.Headers()
