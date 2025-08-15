@@ -21,23 +21,7 @@ object Main:
       width := "100%",
       height := "100%",
       className := "app-container",
-      Bar(
-        _.design := BarDesign.Header,
-        _.slots.endContent := span(
-          Link(
-            _.href := "https://pme123.github.io/pme123-weather",
-            _.target := LinkTarget._blank,
-            "Weather"
-          ),
-          " | ",
-          Link(
-            _.href := "https://github.com/pme123/pme123-windspotter",
-            _.target := LinkTarget._blank,
-            "GitHub"
-          )
-        ),
-        Title(_.size := TitleLevel.H4, "PME123 Windspotter")
-      ),
+      HeaderBar(),
       div(
         className := "main-content",
         MainView()
