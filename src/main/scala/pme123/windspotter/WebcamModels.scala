@@ -7,12 +7,12 @@ case object WindyWebcam extends WebcamType
 case object YoutubeWebcam extends WebcamType
 
 case class Webcam(
-    name: String,
-    url: String,
-    reloadInMin: Int,
-    footer: String,
-    overlayLink: Option[String] = None,
-    webcamType: WebcamType = ImageWebcam
+                   name: String,
+                   url: String,
+                   reloadInMin: Int,
+                   footer: String,
+                   liveVideoLink: Option[String] = None,
+                   webcamType: WebcamType = ImageWebcam
 )
 
 case class Lake(
@@ -111,7 +111,7 @@ object WebcamData:
     url = "1564004172", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
+    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
     webcamType = WindyWebcam
   )
   val cremiaWebcam = Webcam(
@@ -119,7 +119,7 @@ object WebcamData:
     url = "1564003897", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
+    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
   val colicoWebcam = Webcam(
@@ -127,7 +127,7 @@ object WebcamData:
     url = "1564003197", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
+    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
   val leccoWebcam = Webcam(
@@ -135,7 +135,7 @@ object WebcamData:
     url = "1748447411", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    overlayLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
+    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
     webcamType = WindyWebcam
   )
   val domasoWebcam = Webcam(
@@ -158,6 +158,13 @@ object WebcamData:
     url = "https://scae.ch/webcam/image.jpg",
     reloadInMin = 5,
     footer = "https://scae.ch"
+  )
+  val walchwilWebcam = Webcam(
+    name = "Walchwil",
+    url = "http://109.164.203.165/record/current.jpg",
+    reloadInMin = 5,
+    footer = "https://www.weisszahnarzt.ch",
+    liveVideoLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
   )
 
   // Sempachersee
@@ -205,7 +212,8 @@ object WebcamData:
     name = "Zugerseen",
     webcams = List(
       immenseeWebcam,
-      aegeriWebcam
+      walchwilWebcam,
+      aegeriWebcam,
     )
   )
 

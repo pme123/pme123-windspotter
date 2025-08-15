@@ -39,7 +39,7 @@ object WindyWebcamView:
             // Custom button using UI5 Icon but with custom styling
             div(
               className := "webcam-reload-button-custom",
-              title := "Reload Windy Player",
+              title     := "Reload Windy Player",
               onClick --> { _ =>
                 reloadWindyPlayer(webcam)
               },
@@ -73,15 +73,18 @@ object WindyWebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            span("Use reload button to refresh / for live video: "),
-            webcam.overlayLink
-              .map: overlayUrl =>
+            span("Use reload button to refresh"),
+            webcam.liveVideoLink
+              .map: videoUrl =>
+                span(
+                  " | For live video: ",
                   a(
                     className := "footer-left",
-                    href   := overlayUrl,
-                    target := "_blank",
+                    href      := videoUrl,
+                    target    := "_blank",
                     "Go to Main Page"
                   )
+                )
               .toSeq
           ),
           a(
