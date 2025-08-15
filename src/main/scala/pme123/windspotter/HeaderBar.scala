@@ -21,7 +21,9 @@ object HeaderBar:
           _.href := "https://github.com/pme123/pme123-windspotter",
           _.target := LinkTarget._blank,
           "Github"
-        )
+        ),
+        " | ",
+        UserProfile()
       ),
       Title(_.size := TitleLevel.H4, "feensturm's Windspotter")
     )

@@ -13,6 +13,10 @@ object Main:
   @JSExportTopLevel("main")
   def main(args: Array[String] = Array.empty): Unit =
     lazy val appContainer = dom.document.querySelector("#app")
+
+    // Initialize authentication
+    AuthService.initialize()
+
     renderOnDomContentLoaded(appContainer, page)
   end main
 
@@ -22,10 +26,22 @@ object Main:
       height := "100%",
       className := "app-container",
       HeaderBar(),
-      div(
-        className := "main-content",
-        MainView()
-      ),
+      child <-- AuthService.isAuthenticatedVar.signal.map { isAuthenticated =>
+        dom.console.log(s"🔐 Rendering based on auth state: $isAuthenticated")
+        if (isAuthenticated) {
+          dom.console.log("🔐 Showing MainView")
+          div(
+            className := "main-content",
+            MainView()
+          )
+        } else {
+          dom.console.log("🔐 Showing LoginView")
+          div(
+            className := "main-content login-required",
+            LoginView()
+          )
+        }
+      },
       div(
         className := "footer",
         p("Built with Scala.js + Laminar + UI5 Web Components")
