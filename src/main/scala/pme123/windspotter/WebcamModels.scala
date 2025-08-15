@@ -154,7 +154,7 @@ object WebcamData:
     webcamType = YoutubeWebcam
   )
   val aegeriWebcam = Webcam(
-    name = "Aegeri",
+    name = "Aegerisee",
     url = "https://scae.ch/webcam/image.jpg",
     reloadInMin = 5,
     footer = "https://scae.ch"
@@ -171,6 +171,12 @@ object WebcamData:
     url = "https://www.webcam.scc.ch/image_large.jpg",
     reloadInMin = 5,
     footer = "https://www.webcam.scc.ch"
+  )
+  val zugWebcam = Webcam(
+    name = "Zug",
+    url = "https://www.barile.ch/yczug/yczug/cam1.jpg",
+    reloadInMin = 2,
+    footer = "https://www.yczug.ch"
   )
   // Sempachersee
   val eichWebcam = Webcam(
@@ -218,6 +224,7 @@ object WebcamData:
     webcams = List(
       immenseeWebcam,
       walchwilWebcam,
+      zugWebcam,
       chamWebcam,
       aegeriWebcam,
 

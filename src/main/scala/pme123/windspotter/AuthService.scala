@@ -24,8 +24,14 @@ object AuthService:
   private val REDIRECT_URI = {
     val currentOrigin = dom.window.location.origin
     dom.console.log(s"🔐 Current origin: $currentOrigin")
-    // Always use the current origin - works for both localhost and GitHub Pages
-    currentOrigin
+
+    if (currentOrigin.contains("localhost") || currentOrigin.contains("127.0.0.1")) {
+      // Development environment - use just the origin
+      currentOrigin
+    } else {
+      // Production GitHub Pages - use the configured callback URL
+      s"$currentOrigin/pme123-windspotter"
+    }
   }
   
   // Reactive state for authentication - start with false to show login screen
