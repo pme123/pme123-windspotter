@@ -33,21 +33,30 @@ object LoginView:
                 AuthService.login()
               }
             ),
-            div(
-              className := "demo-section",
-              p(
-                className := "demo-text",
-                "Or try the demo mode:"
-              ),
-              Button(
-                _.design := ButtonDesign.Default,
-                _.icon := IconName.`play`,
-                "Demo Login",
-                onClick --> { _ =>
-                  AuthService.demoLogin()
-                }
-              )
-            )
+            // Only show demo mode in development (localhost)
+            {
+              val isLocalhost = dom.window.location.origin.contains("localhost") ||
+                               dom.window.location.origin.contains("127.0.0.1")
+              if (isLocalhost) {
+                div(
+                  className := "demo-section",
+                  p(
+                    className := "demo-text",
+                    "Or try the demo mode:"
+                  ),
+                  Button(
+                    _.design := ButtonDesign.Default,
+                    _.icon := IconName.`play`,
+                    "Demo Login",
+                    onClick --> { _ =>
+                      AuthService.demoLogin()
+                    }
+                  )
+                )
+              } else {
+                emptyNode
+              }
+            }
           )
         )
       )

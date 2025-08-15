@@ -12,35 +12,12 @@ object UserProfile:
       className := "user-profile",
       child <-- AuthService.currentUserVar.signal.map {
         case Some(user) =>
-          div(
-            className := "user-info",
-            img(
-              src := user.avatar_url,
-              className := "user-avatar",
-              alt := s"${user.login} avatar"
-            ),
-            span(
-              className := "user-name",
-              user.name.getOrElse(user.login)
-            ),
-            Button(
-              _.design := ButtonDesign.Transparent,
-              _.icon := IconName.`log`,
-              _.tooltip := "Sign out",
-              onClick --> { _ =>
-                AuthService.logout()
-              }
-            )
+          span(
+            className := "user-name",
+            user.name.getOrElse(user.login)
           )
         case None =>
-          Button(
-            _.design := ButtonDesign.Transparent,
-            _.icon := IconName.`source-code`,
-            "Sign in",
-            onClick --> { _ =>
-              AuthService.login()
-            }
-          )
+          emptyNode // No sign in link when not authenticated
       }
     )
 
