@@ -17,9 +17,10 @@ case class GitHubUser(
 
 object AuthService:
   
+  // TODO: Replace with your actual GitHub OAuth App Client ID
   // Get this from: https://github.com/settings/developers
   private val CLIENT_ID = "Ov23liPMwUFPachXQfpj" // Replace with your actual Client ID
-  private val REDIRECT_URI = "https://pme123.github.io/pme123-windspotter"
+  private val REDIRECT_URI = dom.window.location.origin
   
   // Reactive state for authentication - start with false to show login screen
   val isAuthenticatedVar = Var(false)
@@ -89,7 +90,7 @@ object AuthService:
     */
   
   def login(): Unit =
-    if (CLIENT_ID == "Ov23liPMwUFPachXQfpj") {
+    if (CLIENT_ID == "REPLACE_WITH_YOUR_GITHUB_CLIENT_ID") {
       dom.window.alert("""
         |GitHub OAuth not configured!
         |
