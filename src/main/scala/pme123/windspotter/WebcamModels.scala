@@ -4,6 +4,7 @@ sealed trait WebcamType
 case object ImageWebcam extends WebcamType
 case object VideoWebcam extends WebcamType
 case object WindyWebcam extends WebcamType
+case object YoutubeWebcam extends WebcamType
 
 case class Webcam(
     name: String,
@@ -36,7 +37,8 @@ case class WebcamState(
 
 object WebcamData:
 
-  // Individual Webcam Variables
+  // Urnersee
+
   val sisikonBootshafenNordWebcam = Webcam(
     name = "Sisikon Bootshafen Nord",
     url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera04.jpg",
@@ -86,6 +88,7 @@ object WebcamData:
     footer = "https://windsurfing-urnersee.ch"
   )
 
+  // Silvaplana
   val silvaplanaMultsWebcam      = Webcam(
     name = "Silvaplana Mulets",
     url = "https://hd-auth.skylinewebcams.com/live.m3u8?a=t9018ai5oko7gonu3aviiugh22",
@@ -100,6 +103,8 @@ object WebcamData:
     footer = "https://www.silvaplana.ch",
     webcamType = VideoWebcam
   )
+
+  // Comersee
 
   val dervioWebcam = Webcam(
     name = "Dervio",
@@ -140,7 +145,17 @@ object WebcamData:
     footer = "https://domasocamping.com"
   )
 
-  // Individual Lake Variables
+  // Zugersee
+  val immenseeWebcam = Webcam(
+    name = "Immensee",
+    url = "FDJcAc0zOl8", // Example YouTube video ID - replace with actual webcam stream
+    reloadInMin = 0, // YouTube videos don't need reloading
+    footer = "https://www.youtube.com/@yachtclubimmensee",
+    webcamType = YoutubeWebcam
+  )
+
+  // Lakes
+
   val urnersee = Lake(
     name = "Urnersee",
     webcams = List(
@@ -172,9 +187,18 @@ object WebcamData:
     )
   )
 
+  val zugersee = Lake(
+    name = "Zugersee",
+    webcams = List(
+      immenseeWebcam
+    )
+  )
+
   val lakes = List(
+    zugersee,
+    urnersee,
     comersee,
-    urnersee
+    
     // silvaplana,
   )
 
