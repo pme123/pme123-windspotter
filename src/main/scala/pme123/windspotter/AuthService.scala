@@ -23,7 +23,7 @@ object AuthService:
 
   // Allowed GitHub usernames - add the GitHub usernames of people who should have access
   private val ALLOWED_USERS = Set(
-    "pme123xx",           // Test username
+    "pme123",           // Test username
     "your-username",      // Add more usernames as needed
     "friend-username"     // Remove these examples and add real usernames
   )
