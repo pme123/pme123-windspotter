@@ -23,9 +23,9 @@ object AuthService:
 
   // Allowed GitHub usernames - add the GitHub usernames of people who should have access
   private val ALLOWED_USERS = Set(
-    "pme123",           // Test username
-    "your-username",      // Add more usernames as needed
-    "friend-username"     // Remove these examples and add real usernames
+    "pme123"              // Add real GitHub usernames here
+    // "friend-username", // Add more as needed
+    // "team-member"      // Remove examples and add real usernames
   )
   // Environment-aware redirect URI
   private val REDIRECT_URI = {
@@ -64,20 +64,34 @@ object AuthService:
     accessTokenVar.set(None)
     dom.window.localStorage.removeItem("github_access_token")
 
-  // Demo mode - simulate successful login for testing
+  // Demo mode - for localhost development only
   def demoLogin(): Unit =
-    dom.console.log("🔐 Demo login - simulating successful authentication")
-    val demoUser = GitHubUser(
-      login = "demo-user",
-      name = Some("Demo User"),
-      avatar_url = "https://github.com/identicons/demo-user.png",
-      html_url = "https://github.com/demo-user"
+    dom.console.log("🔐 Demo login - for development only")
+
+    val username = dom.window.prompt(
+      "Demo Mode: Enter a GitHub username to test with:",
+      "pme123"
     )
-    currentUserVar.set(Some(demoUser))
-    isAuthenticatedVar.set(true)
-    // For demo mode, we'll allow access regardless of authorization
-    isAuthorizedVar.set(true)
-    dom.window.localStorage.setItem("demo_mode", "true")
+
+    if (username != null && username.trim.nonEmpty) {
+      val trimmedUsername = username.trim
+      verifyGitHubUser(trimmedUsername).foreach {
+        case Success(user) =>
+          dom.console.log(s"🔐 Demo login successful for: ${user.login}")
+          currentUserVar.set(Some(user))
+          isAuthenticatedVar.set(true)
+
+          // Check authorization even in demo mode
+          val authorized = isUserAuthorized(user)
+          isAuthorizedVar.set(authorized)
+
+          dom.window.localStorage.setItem("github_access_token", s"verified_user_${user.login}")
+
+        case Failure(ex) =>
+          dom.console.error(s"🔐 Demo login failed: ${ex.getMessage}")
+          dom.window.alert(s"Could not verify GitHub user '$trimmedUsername'")
+      }
+    }
   
   // Check if user is already authenticated on app start
   def initialize(): Unit =
@@ -95,52 +109,36 @@ object AuthService:
       return
     }
 
-    // Check for demo mode flag
-    val demoMode = dom.window.localStorage.getItem("demo_mode")
-    if (demoMode == "true") {
-      dom.console.log("🔐 Demo mode detected - auto-authenticating")
-      demoLogin()
-      return
-    }
+
 
     // Check for stored token
     val storedToken = dom.window.localStorage.getItem("github_access_token")
-    if (storedToken != null && storedToken.nonEmpty && storedToken != "demo_token_from_oauth") {
-      dom.console.log("🔐 Found stored token, validating...")
-      accessTokenVar.set(Some(storedToken))
-      fetchUserInfo(storedToken).foreach {
-        case Success(user) =>
-          dom.console.log(s"🔐 User authenticated: ${user.login}")
-          currentUserVar.set(Some(user))
-          isAuthenticatedVar.set(true)
-          // Check authorization
-          val authorized = isUserAuthorized(user)
-          isAuthorizedVar.set(authorized)
-          if (!authorized) {
-            dom.console.log(s"🔐 User ${user.login} is not authorized to access this application")
-          }
-        case Failure(ex) =>
-          dom.console.log(s"🔐 Token validation failed: ${ex.getMessage}")
-          // Token might be expired, clear it
-          logout()
-      }
-    } else if (storedToken == "demo_token_from_oauth") {
-      dom.console.log("🔐 Found demo OAuth token - restoring session")
-      // Restore demo OAuth session
-      val demoUser = GitHubUser(
-        login = "unauthorized-user",  // Test with unauthorized username
-        name = Some("Demo GitHub User"),
-        avatar_url = "https://github.com/identicons/pme123.png",
-        html_url = "https://github.com/pme123"
-      )
-      currentUserVar.set(Some(demoUser))
-      isAuthenticatedVar.set(true)
+    if (storedToken != null && storedToken.nonEmpty) {
+      if (storedToken.startsWith("verified_user_")) {
+        // Handle verified user session
+        val username = storedToken.replace("verified_user_", "")
+        dom.console.log(s"🔐 Found verified user session for: $username")
 
-      // Check authorization properly for restored session too
-      val authorized = isUserAuthorized(demoUser)
-      isAuthorizedVar.set(authorized)
-      if (!authorized) {
-        dom.console.log(s"🔐 Restored user ${demoUser.login} is not authorized to access this application")
+        verifyGitHubUser(username).foreach {
+          case Success(user) =>
+            dom.console.log(s"🔐 User session restored: ${user.login}")
+            currentUserVar.set(Some(user))
+            isAuthenticatedVar.set(true)
+            // Check authorization
+            val authorized = isUserAuthorized(user)
+            isAuthorizedVar.set(authorized)
+            if (!authorized) {
+              dom.console.log(s"🔐 User ${user.login} is not authorized to access this application")
+            }
+          case Failure(ex) =>
+            dom.console.log(s"🔐 Session validation failed: ${ex.getMessage}")
+            // Session might be invalid, clear it
+            logout()
+        }
+      } else {
+        // Handle legacy token format (if any)
+        dom.console.log("🔐 Found legacy token, clearing...")
+        logout()
       }
     } else {
       dom.console.log("🔐 No stored token found - showing login screen")
@@ -173,7 +171,6 @@ object AuthService:
   
   def logout(): Unit =
     dom.window.localStorage.removeItem("github_access_token")
-    dom.window.localStorage.removeItem("demo_mode")
     accessTokenVar.set(None)
     currentUserVar.set(None)
     isAuthenticatedVar.set(false)
@@ -182,36 +179,74 @@ object AuthService:
   private def handleOAuthCallback(code: String): Unit =
     dom.console.log(s"🔐 Handling OAuth callback with code: $code")
 
-    // Note: In a real production app, you would exchange the code for a token on your backend
-    // For this demo, we'll simulate a successful authentication
+    // For GitHub Pages deployment, we need to use a different approach
+    // We'll use the GitHub API to get public user info based on the OAuth flow
+    // This is a limitation of client-side only apps, but works for public repos
 
-    // Simulate successful OAuth flow
-    dom.console.log("🔐 Simulating successful OAuth token exchange...")
+    dom.console.log("🔐 Processing GitHub OAuth callback...")
 
-    // Create a demo user (in production, you'd get this from GitHub API after token exchange)
-    val demoUser = GitHubUser(
-      login = "unauthorized-user",  // Test with unauthorized username
-      name = Some("Demo GitHub User"),
-      avatar_url = "https://github.com/identicons/pme123.png",
-      html_url = "https://github.com/pme123"
+    // Since we can't safely exchange the code for a token client-side,
+    // we'll prompt the user to provide their GitHub username for verification
+    val username = dom.window.prompt(
+      "Please enter your GitHub username to complete authentication:",
+      ""
     )
 
-    // Set authentication state
-    currentUserVar.set(Some(demoUser))
-    isAuthenticatedVar.set(true)
+    if (username != null && username.trim.nonEmpty) {
+      val trimmedUsername = username.trim
+      dom.console.log(s"🔐 User provided username: $trimmedUsername")
 
-    // Check authorization properly
-    val authorized = isUserAuthorized(demoUser)
-    isAuthorizedVar.set(authorized)
-    if (!authorized) {
-      dom.console.log(s"🔐 User ${demoUser.login} is not authorized to access this application")
+      // Verify this is a real GitHub user by checking their public profile
+      verifyGitHubUser(trimmedUsername).foreach {
+        case Success(user) =>
+          dom.console.log(s"🔐 Verified GitHub user: ${user.login}")
+          currentUserVar.set(Some(user))
+          isAuthenticatedVar.set(true)
+
+          // Check authorization against real GitHub username
+          val authorized = isUserAuthorized(user)
+          isAuthorizedVar.set(authorized)
+          if (!authorized) {
+            dom.console.log(s"🔐 User ${user.login} is not authorized to access this application")
+          }
+
+          // Store a simple session marker
+          dom.window.localStorage.setItem("github_access_token", s"verified_user_$trimmedUsername")
+
+        case Failure(ex) =>
+          dom.console.error(s"🔐 Failed to verify GitHub user: ${ex.getMessage}")
+          dom.window.alert(s"Could not verify GitHub user '$trimmedUsername'. Please check the username and try again.")
+          logout()
+      }
+    } else {
+      dom.console.log("🔐 User cancelled username input")
+      logout()
+    }
+  
+  private def verifyGitHubUser(username: String): Future[scala.util.Try[GitHubUser]] =
+    dom.console.log(s"🔐 Verifying GitHub user: $username")
+
+    val requestHeaders = new dom.Headers()
+    requestHeaders.append("Accept", "application/vnd.github.v3+json")
+    requestHeaders.append("User-Agent", "pme123-windspotter")
+
+    dom.fetch(s"https://api.github.com/users/$username", new dom.RequestInit {
+      method = dom.HttpMethod.GET
+      headers = requestHeaders
+    }).toFuture.map { response =>
+      if (response.ok) {
+        response.json().toFuture.map { json =>
+          Success(parseGitHubUser(json))
+        }
+      } else if (response.status == 404) {
+        Future.successful(Failure(new Exception(s"GitHub user '$username' not found")))
+      } else {
+        Future.successful(Failure(new Exception(s"Failed to verify GitHub user: ${response.status}")))
+      }
+    }.flatten.recover {
+      case ex => Failure(ex)
     }
 
-    // Store a demo token (in production, this would be the real access token)
-    dom.window.localStorage.setItem("github_access_token", "demo_token_from_oauth")
-
-    dom.console.log("🔐 OAuth authentication completed successfully")
-  
   private def fetchUserInfo(token: String): Future[scala.util.Try[GitHubUser]] =
     val requestHeaders = new dom.Headers()
     requestHeaders.append("Authorization", s"Bearer $token")
