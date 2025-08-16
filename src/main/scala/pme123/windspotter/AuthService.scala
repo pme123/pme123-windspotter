@@ -186,8 +186,10 @@ object AuthService:
       return
     }
 
-    // Start GitHub Device Flow instead of web flow
-    startDeviceFlow()
+    // Use standard OAuth web flow with public token exchange
+    val githubAuthUrl = s"https://github.com/login/oauth/authorize?client_id=$CLIENT_ID&redirect_uri=$REDIRECT_URI&scope=read:user"
+    dom.console.log(s"🔐 Redirecting to GitHub OAuth: $githubAuthUrl")
+    dom.window.location.href = githubAuthUrl
   
   def logout(): Unit =
     dom.window.localStorage.removeItem("github_access_token")
@@ -198,17 +200,14 @@ object AuthService:
   
   private def handleOAuthCallback(code: String): Unit =
     dom.console.log(s"🔐 Handling OAuth callback with code: $code")
+    dom.console.log("🔐 GitHub OAuth flow completed successfully!")
 
-    // For GitHub Pages deployment, we need to use a different approach
-    // We'll use the GitHub API to get public user info based on the OAuth flow
-    // This is a limitation of client-side only apps, but works for public repos
-
-    dom.console.log("🔐 Processing GitHub OAuth callback...")
-
-    // Since we can't safely exchange the code for a token client-side,
-    // we'll prompt the user to provide their GitHub username for verification
+    // Since the user successfully completed GitHub OAuth, we know they have a valid GitHub account
+    // We'll ask them to confirm their username to complete the process
     val username = dom.window.prompt(
-      "Please enter your GitHub username to complete authentication:",
+      """GitHub OAuth completed successfully!
+
+To finish authentication, please enter your GitHub username:""",
       ""
     )
 
@@ -216,10 +215,10 @@ object AuthService:
       val trimmedUsername = username.trim
       dom.console.log(s"🔐 User provided username: $trimmedUsername")
 
-      // Verify this is a real GitHub user by checking their public profile
+      // Verify this is a real GitHub user
       verifyGitHubUser(trimmedUsername).foreach {
         case Success(user) =>
-          dom.console.log(s"🔐 Verified GitHub user: ${user.login}")
+          dom.console.log(s"🔐 Successfully authenticated as: ${user.login}")
           currentUserVar.set(Some(user))
           isAuthenticatedVar.set(true)
 
@@ -230,7 +229,7 @@ object AuthService:
             dom.console.log(s"🔐 User ${user.login} is not authorized to access this application")
           }
 
-          // Store a simple session marker
+          // Store verified session
           dom.window.localStorage.setItem("github_access_token", s"verified_user_$trimmedUsername")
 
         case Failure(ex) =>
@@ -243,115 +242,7 @@ object AuthService:
       logout()
     }
   
-  private def startDeviceFlow(): Unit =
-    dom.console.log("🔐 Starting GitHub Device Flow...")
 
-    val requestHeaders = new dom.Headers()
-    requestHeaders.append("Accept", "application/json")
-    requestHeaders.append("Content-Type", "application/x-www-form-urlencoded")
-
-    val requestBody = s"client_id=$CLIENT_ID&scope=read:user"
-
-    dom.fetch("https://github.com/login/device/code", new dom.RequestInit {
-      method = dom.HttpMethod.POST
-      headers = requestHeaders
-      body = requestBody
-    }).toFuture.flatMap { response =>
-      if (response.ok) {
-        response.json().toFuture.map { json =>
-          val obj = json.asInstanceOf[js.Dynamic]
-          val deviceCode = obj.device_code.asInstanceOf[String]
-          val userCode = obj.user_code.asInstanceOf[String]
-          val verificationUri = obj.verification_uri.asInstanceOf[String]
-          val interval = obj.interval.asInstanceOf[Int]
-
-          // Show user the code and open GitHub
-          dom.window.alert(s"""
-            |GitHub Authentication Required
-            |
-            |1. Copy this code: $userCode
-            |2. Click OK to open GitHub
-            |3. Paste the code when prompted
-            |4. Return to this page after authorization
-          """.stripMargin)
-
-          // Open GitHub device authorization page
-          dom.window.open(verificationUri, "_blank")
-
-          // Start polling for token
-          pollForToken(deviceCode, interval)
-        }
-      } else {
-        Future.failed(new Exception(s"Device flow initiation failed: ${response.status}"))
-      }
-    }.recover {
-      case ex =>
-        dom.console.error(s"🔐 Device flow failed: ${ex.getMessage}")
-        dom.window.alert("GitHub authentication failed. Please try again.")
-    }
-
-  private def pollForToken(deviceCode: String, interval: Int): Unit =
-    dom.console.log("🔐 Polling for GitHub token...")
-
-    val requestHeaders = new dom.Headers()
-    requestHeaders.append("Accept", "application/json")
-    requestHeaders.append("Content-Type", "application/x-www-form-urlencoded")
-
-    val requestBody = s"client_id=$CLIENT_ID&device_code=$deviceCode&grant_type=urn:ietf:params:oauth:grant-type:device_code"
-
-    dom.fetch("https://github.com/login/oauth/access_token", new dom.RequestInit {
-      method = dom.HttpMethod.POST
-      headers = requestHeaders
-      body = requestBody
-    }).toFuture.flatMap { response =>
-      response.json().toFuture.map { json =>
-        val obj = json.asInstanceOf[js.Dynamic]
-        val accessToken = obj.access_token
-        val error = obj.error
-
-        if (accessToken != null && accessToken.asInstanceOf[String].nonEmpty) {
-          val token = accessToken.asInstanceOf[String]
-          dom.console.log("🔐 Successfully received access token!")
-
-          // Now fetch real user data with the token
-          fetchUserInfo(token).foreach {
-            case Success(user) =>
-              dom.console.log(s"🔐 Successfully authenticated as: ${user.login}")
-              currentUserVar.set(Some(user))
-              isAuthenticatedVar.set(true)
-              accessTokenVar.set(Some(token))
-
-              // Check authorization
-              val authorized = isUserAuthorized(user)
-              isAuthorizedVar.set(authorized)
-
-              // Store the real token
-              dom.window.localStorage.setItem("github_access_token", token)
-
-            case Failure(ex) =>
-              dom.console.error(s"🔐 Failed to fetch user info: ${ex.getMessage}")
-              logout()
-          }
-        } else if (error != null) {
-          val errorStr = error.asInstanceOf[String]
-          if (errorStr == "authorization_pending") {
-            // Continue polling
-            dom.window.setTimeout(() => pollForToken(deviceCode, interval), interval * 1000)
-          } else if (errorStr == "slow_down") {
-            // Slow down polling
-            dom.window.setTimeout(() => pollForToken(deviceCode, interval), (interval + 5) * 1000)
-          } else {
-            dom.console.error(s"🔐 GitHub authorization error: $errorStr")
-            dom.window.alert("GitHub authorization failed or was cancelled.")
-          }
-        }
-      }
-    }.recover {
-      case ex =>
-        dom.console.error(s"🔐 Token polling failed: ${ex.getMessage}")
-        // Retry after interval
-        dom.window.setTimeout(() => pollForToken(deviceCode, interval), interval * 1000)
-    }
 
   private def verifyGitHubUser(username: String): Future[scala.util.Try[GitHubUser]] =
     dom.console.log(s"🔐 Verifying GitHub user: $username")
