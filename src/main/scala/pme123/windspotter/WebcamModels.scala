@@ -248,8 +248,8 @@ object WebcamData:
   )
 
   val lakes = List(
-    zugersee,
     urnersee,
+    zugersee,
     comersee,
     sempachersee,
     // silvaplana,
