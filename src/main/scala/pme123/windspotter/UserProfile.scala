@@ -17,7 +17,7 @@ object UserProfile:
             span(
               className := "user-name",
               user.name.getOrElse(user.login)
-            ),
+            ),/*
             " | ",
             Button(
               _.design := ButtonDesign.Transparent,
@@ -35,7 +35,7 @@ object UserProfile:
               onClick --> { _ =>
                 AuthService.forceLogout()
               }
-            )
+            ) */
           )
         case None =>
           emptyNode // No sign in link when not authenticated

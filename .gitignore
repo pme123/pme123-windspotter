@@ -65,3 +65,4 @@ jspm_packages/
 .bloop/
 /test.txt
 /project/metals.sbt
+/test.json
