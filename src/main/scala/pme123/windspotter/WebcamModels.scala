@@ -178,6 +178,14 @@ object WebcamData:
     reloadInMin = 2,
     footer = "https://www.yczug.ch"
   )
+  // Vierwaldstättersee (additional)
+  val brunnenWebcam = Webcam(
+    name = "Brunnen",
+    url = "https://www.foto-webcam.eu/webcam/brunnen/current/816.jpg",
+    reloadInMin = 5,
+    footer = "https://www.foto-webcam.eu/webcam/brunnen"
+  )
+
   // Sempachersee
   val eichWebcam = Webcam(
     name = "Eich",
@@ -195,6 +203,7 @@ object WebcamData:
       isletenWebcam,
       gruonbachWebcam,
       axeneggWebcam,
+      brunnenWebcam,
       // bolzbachWebcam,
       sisikonBootshafenSuedWebcam
       // windsurfingUrnerseeWebcam
