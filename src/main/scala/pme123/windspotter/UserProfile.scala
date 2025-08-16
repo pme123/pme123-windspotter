@@ -12,9 +12,21 @@ object UserProfile:
       className := "user-profile",
       child <-- AuthService.currentUserVar.signal.map {
         case Some(user) =>
-          span(
-            className := "user-name",
-            user.name.getOrElse(user.login)
+          div(
+            className := "user-info",
+            span(
+              className := "user-name",
+              user.name.getOrElse(user.login)
+            ),
+            " | ",
+            Button(
+              _.design := ButtonDesign.Transparent,
+              _.icon := IconName.`log`,
+              "Sign Out",
+              onClick --> { _ =>
+                AuthService.logout()
+              }
+            )
           )
         case None =>
           emptyNode // No sign in link when not authenticated

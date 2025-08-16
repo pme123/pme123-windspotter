@@ -112,6 +112,49 @@ body {
   align-items: center;
 }
 
+/* Unauthorized Access Styles */
+.unauthorized-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  padding: 20px;
+}
+
+.unauthorized-container .ui5-card {
+  max-width: 500px;
+  width: 100%;
+}
+
+.unauthorized-content {
+  padding: 24px;
+  text-align: center;
+}
+
+.unauthorized-description {
+  margin-bottom: 24px;
+}
+
+.unauthorized-description p {
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.user-info-text {
+  font-weight: 500;
+  color: var(--primary-color);
+  background: rgba(33, 150, 243, 0.1);
+  padding: 12px;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-color);
+}
+
+.unauthorized-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
 /* User Profile Styles */
 .user-profile {
   display: inline-flex;
@@ -123,6 +166,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  color: #ccc;
+}
+
+.user-info ui5-button {
+  --_ui5_button_base_color: #ccc !important;
+  --_ui5_button_base_hover_color: white !important;
 }
 
 .user-avatar {

@@ -26,21 +26,28 @@ object Main:
       height := "100%",
       className := "app-container",
       HeaderBar(),
-      child <-- AuthService.isAuthenticatedVar.signal.map { isAuthenticated =>
-        dom.console.log(s"🔐 Rendering based on auth state: $isAuthenticated")
-        if (isAuthenticated) {
-          dom.console.log("🔐 Showing MainView")
-          div(
-            className := "main-content",
-            MainView()
-          )
-        } else {
-          dom.console.log("🔐 Showing LoginView")
-          div(
-            className := "main-content login-required",
-            LoginView()
-          )
-        }
+      child <-- AuthService.isAuthenticatedVar.signal.combineWith(AuthService.isAuthorizedVar.signal).map {
+        case (isAuthenticated, isAuthorized) =>
+          dom.console.log(s"🔐 Rendering based on auth state: $isAuthenticated, authorized: $isAuthorized")
+          if (!isAuthenticated) {
+            dom.console.log("🔐 Showing LoginView")
+            div(
+              className := "main-content login-required",
+              LoginView()
+            )
+          } else if (!isAuthorized) {
+            dom.console.log("🔐 Showing UnauthorizedView")
+            div(
+              className := "main-content login-required",
+              UnauthorizedView()
+            )
+          } else {
+            dom.console.log("🔐 Showing MainView")
+            div(
+              className := "main-content",
+              MainView()
+            )
+          }
       },
       div(
         className := "footer",

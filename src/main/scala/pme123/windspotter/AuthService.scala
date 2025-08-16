@@ -16,10 +16,17 @@ case class GitHubUser(
 )
 
 object AuthService:
-  
+
   // TODO: Replace with your actual GitHub OAuth App Client ID
   // Get this from: https://github.com/settings/developers
   private val CLIENT_ID = "Ov23liPMwUFPachXQfpj" // Replace with your actual Client ID
+
+  // Allowed GitHub usernames - add the GitHub usernames of people who should have access
+  private val ALLOWED_USERS = Set(
+    "pme123",           // Replace with actual GitHub usernames
+    "your-username",    // Add more usernames as needed
+    "friend-username"   // Remove these examples and add real usernames
+  )
   // Environment-aware redirect URI
   private val REDIRECT_URI = {
     val currentOrigin = dom.window.location.origin
@@ -36,13 +43,21 @@ object AuthService:
   
   // Reactive state for authentication - start with false to show login screen
   val isAuthenticatedVar = Var(false)
+  val isAuthorizedVar = Var(false)  // New: tracks if user is authorized (in allowed list)
   val currentUserVar = Var[Option[GitHubUser]](None)
   val accessTokenVar = Var[Option[String]](None)
+
+  // Check if a user is authorized (in the allowed users list)
+  private def isUserAuthorized(user: GitHubUser): Boolean =
+    val authorized = ALLOWED_USERS.contains(user.login)
+    dom.console.log(s"🔐 Authorization check for ${user.login}: $authorized")
+    authorized
 
   // For testing - force unauthenticated state
   def forceLogout(): Unit =
     dom.console.log("🔐 Forcing logout for testing")
     isAuthenticatedVar.set(false)
+    isAuthorizedVar.set(false)
     currentUserVar.set(None)
     accessTokenVar.set(None)
     dom.window.localStorage.removeItem("github_access_token")
@@ -58,6 +73,8 @@ object AuthService:
     )
     currentUserVar.set(Some(demoUser))
     isAuthenticatedVar.set(true)
+    // For demo mode, we'll allow access regardless of authorization
+    isAuthorizedVar.set(true)
     dom.window.localStorage.setItem("demo_mode", "true")
   
   // Check if user is already authenticated on app start
@@ -94,6 +111,12 @@ object AuthService:
           dom.console.log(s"🔐 User authenticated: ${user.login}")
           currentUserVar.set(Some(user))
           isAuthenticatedVar.set(true)
+          // Check authorization
+          val authorized = isUserAuthorized(user)
+          isAuthorizedVar.set(authorized)
+          if (!authorized) {
+            dom.console.log(s"🔐 User ${user.login} is not authorized to access this application")
+          }
         case Failure(ex) =>
           dom.console.log(s"🔐 Token validation failed: ${ex.getMessage}")
           // Token might be expired, clear it
@@ -110,10 +133,13 @@ object AuthService:
       )
       currentUserVar.set(Some(demoUser))
       isAuthenticatedVar.set(true)
+      // For demo OAuth, we'll allow access regardless of authorization
+      isAuthorizedVar.set(true)
     } else {
       dom.console.log("🔐 No stored token found - showing login screen")
       // Start with unauthenticated state
       isAuthenticatedVar.set(false)
+      isAuthorizedVar.set(false)
       currentUserVar.set(None)
       accessTokenVar.set(None)
     }
@@ -140,9 +166,11 @@ object AuthService:
   
   def logout(): Unit =
     dom.window.localStorage.removeItem("github_access_token")
+    dom.window.localStorage.removeItem("demo_mode")
     accessTokenVar.set(None)
     currentUserVar.set(None)
     isAuthenticatedVar.set(false)
+    isAuthorizedVar.set(false)
   
   private def handleOAuthCallback(code: String): Unit =
     dom.console.log(s"🔐 Handling OAuth callback with code: $code")
@@ -164,6 +192,8 @@ object AuthService:
     // Set authentication state
     currentUserVar.set(Some(demoUser))
     isAuthenticatedVar.set(true)
+    // For demo OAuth, we'll allow access regardless of authorization
+    isAuthorizedVar.set(true)
 
     // Store a demo token (in production, this would be the real access token)
     dom.window.localStorage.setItem("github_access_token", "demo_token_from_oauth")
