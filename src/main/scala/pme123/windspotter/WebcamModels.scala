@@ -1,3 +1,4 @@
+
 package pme123.windspotter
 
 sealed trait WebcamType
@@ -194,6 +195,14 @@ object WebcamData:
     footer = "https://www.windsurfclubeich.ch"
   )
 
+  // Gardasee
+  val malcesineWebcam = Webcam(
+    name = "Malcesine",
+    url = "https://addicted-sports.com/fileadmin/webcam/gardasee/current/full.jpg",
+    reloadInMin = 10,
+    footer = "https://addicted-sports.com/webcam/gardasee/malcesine"
+  )
+
   // Lakes
 
   val urnersee = Lake(
@@ -228,6 +237,13 @@ object WebcamData:
     )
   )
 
+  val gardasee = Lake(
+    name = "Gardasee",
+    webcams = List(
+      malcesineWebcam
+    )
+  )
+
   val zugersee = Lake(
     name = "Zugerseen",
     webcams = List(
@@ -250,9 +266,11 @@ object WebcamData:
   val lakes = List(
     urnersee,
     zugersee,
-    comersee,
+
     sempachersee,
     // silvaplana,
+    comersee,
+    gardasee
   )
 
   def getDefaultLake: Lake = lakes.head
@@ -261,4 +279,6 @@ object WebcamData:
 
   def findLakeByName(name: String): Option[Lake] =
     lakes.find(_.name == name)
+
+
 end WebcamData
