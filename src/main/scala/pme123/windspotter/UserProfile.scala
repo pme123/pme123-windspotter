@@ -26,6 +26,15 @@ object UserProfile:
               onClick --> { _ =>
                 AuthService.logout()
               }
+            ),
+            " | ",
+            Button(
+              _.design := ButtonDesign.Transparent,
+              _.icon := IconName.`refresh`,
+              "Force Logout",
+              onClick --> { _ =>
+                AuthService.forceLogout()
+              }
             )
           )
         case None =>

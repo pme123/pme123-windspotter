@@ -23,9 +23,10 @@ object AuthService:
 
   // Allowed GitHub usernames - add the GitHub usernames of people who should have access
   private val ALLOWED_USERS = Set(
-    "pme123xx",           // Replace with actual GitHub usernames
-    "your-username",    // Add more usernames as needed
-    "friend-username"   // Remove these examples and add real usernames
+    "pme123",             // Your actual GitHub username
+    "pme123xx",           // Test username
+    "your-username",      // Add more usernames as needed
+    "friend-username"     // Remove these examples and add real usernames
   )
   // Environment-aware redirect URI
   private val REDIRECT_URI = {
@@ -51,6 +52,8 @@ object AuthService:
   private def isUserAuthorized(user: GitHubUser): Boolean =
     val authorized = ALLOWED_USERS.contains(user.login)
     dom.console.log(s"🔐 Authorization check for ${user.login}: $authorized")
+    dom.console.log(s"🔐 Allowed users: ${ALLOWED_USERS.mkString(", ")}")
+    dom.console.log(s"🔐 User login: '${user.login}' (length: ${user.login.length})")
     authorized
 
   // For testing - force unauthenticated state
@@ -126,15 +129,20 @@ object AuthService:
       dom.console.log("🔐 Found demo OAuth token - restoring session")
       // Restore demo OAuth session
       val demoUser = GitHubUser(
-        login = "github-user",
-        name = Some("GitHub User"),
-        avatar_url = "https://github.com/identicons/github-user.png",
-        html_url = "https://github.com/github-user"
+        login = "unauthorized-user",  // Test with unauthorized username
+        name = Some("Demo GitHub User"),
+        avatar_url = "https://github.com/identicons/pme123.png",
+        html_url = "https://github.com/pme123"
       )
       currentUserVar.set(Some(demoUser))
       isAuthenticatedVar.set(true)
-      // For demo OAuth, we'll allow access regardless of authorization
-      isAuthorizedVar.set(true)
+
+      // Check authorization properly for restored session too
+      val authorized = isUserAuthorized(demoUser)
+      isAuthorizedVar.set(authorized)
+      if (!authorized) {
+        dom.console.log(s"🔐 Restored user ${demoUser.login} is not authorized to access this application")
+      }
     } else {
       dom.console.log("🔐 No stored token found - showing login screen")
       // Start with unauthenticated state
@@ -183,17 +191,22 @@ object AuthService:
 
     // Create a demo user (in production, you'd get this from GitHub API after token exchange)
     val demoUser = GitHubUser(
-      login = "github-user",
-      name = Some("GitHub User"),
-      avatar_url = "https://github.com/identicons/github-user.png",
-      html_url = "https://github.com/github-user"
+      login = "unauthorized-user",  // Test with unauthorized username
+      name = Some("Demo GitHub User"),
+      avatar_url = "https://github.com/identicons/pme123.png",
+      html_url = "https://github.com/pme123"
     )
 
     // Set authentication state
     currentUserVar.set(Some(demoUser))
     isAuthenticatedVar.set(true)
-    // For demo OAuth, we'll allow access regardless of authorization
-    isAuthorizedVar.set(true)
+
+    // Check authorization properly
+    val authorized = isUserAuthorized(demoUser)
+    isAuthorizedVar.set(authorized)
+    if (!authorized) {
+      dom.console.log(s"🔐 User ${demoUser.login} is not authorized to access this application")
+    }
 
     // Store a demo token (in production, this would be the real access token)
     dom.window.localStorage.setItem("github_access_token", "demo_token_from_oauth")
