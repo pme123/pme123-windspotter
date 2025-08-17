@@ -12,7 +12,7 @@ case class Webcam(
                    url: String,
                    reloadInMin: Int,
                    footer: String,
-                   liveVideoLink: Option[String] = None,
+                   mainPageLink: Option[String] = None,
                    webcamType: WebcamType = ImageWebcam
 )
 
@@ -112,7 +112,7 @@ object WebcamData:
     url = "1564004172", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
+    mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
     webcamType = WindyWebcam
   )
   val cremiaWebcam = Webcam(
@@ -120,7 +120,7 @@ object WebcamData:
     url = "1564003897", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
+    mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
   val colicoWebcam = Webcam(
@@ -128,7 +128,7 @@ object WebcamData:
     url = "1564003197", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
+    mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
   val leccoWebcam = Webcam(
@@ -136,7 +136,7 @@ object WebcamData:
     url = "1748447411", // Store just the Windy webcam ID
     reloadInMin = 10,    // Refresh every 10 minutes
     footer = "https://windy.com",
-    liveVideoLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
+    mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
     webcamType = WindyWebcam
   )
   val domasoWebcam = Webcam(
@@ -165,7 +165,7 @@ object WebcamData:
     url = "https://api.codetabs.com/v1/proxy?quest=http://109.164.203.165/record/current.jpg",
     reloadInMin = 5,
     footer = "https://www.weisszahnarzt.ch",
-    liveVideoLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
+    mainPageLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
   )
   val chamWebcam = Webcam(
     name = "Cham",
@@ -187,22 +187,51 @@ object WebcamData:
     footer = "https://www.foto-webcam.eu/webcam/brunnen"
   )
 
-  // Sempachersee
+  // Sempachersee / Alpnachersee
   val eichWebcam = Webcam(
-    name = "Eich",
+    name = "Eich Sempachersee",
     url = "https://windsurfclubeich.ch/webcam/hikvision_current.jpg",
     reloadInMin = 1,
-    footer = "https://www.windsurfclubeich.ch"
+    footer = "https://windsurfclubeich.ch"
   )
-
+  val alpnacherWebcam = Webcam(
+    name = "Alpnachersee",
+    url = "https://webcam.waverocker.org/livCam.jpg?1755370546255",
+    reloadInMin = 5,
+    footer = "https://www.surfstation-alpnachersee.ch"
+  )
+  
   // Gardasee
   val malcesineWebcam = Webcam(
     name = "Malcesine",
     url = "https://addicted-sports.com/fileadmin/webcam/gardasee/current/full.jpg",
     reloadInMin = 10,
-    footer = "https://addicted-sports.com/webcam/gardasee/malcesine"
+    footer = "https://addicted-sports.com",
+    mainPageLink = Some("https://gardasee.webcam/de/malcesine-webcams.html")
   )
-
+  val caporeamoloWebcam = Webcam(
+    name = "Capo Reamol",
+    url = "https://addicted-sports.com/fileadmin/webcam/caporeamol/current/full.jpg",
+    reloadInMin = 10,
+    footer = "https://addicted-sports.com",
+    mainPageLink = Some("https://gardasee.webcam/de/limone-webcams.html")
+  )
+  
+  val tignaleWebcam = Webcam(
+    name = "Tignale",
+    url = "https://pradelafam.net/cam/cam.jpg",
+    reloadInMin = 10,
+    footer = "https://pradelafam.net",
+    mainPageLink = Some("https://gardasee.webcam/de/tignale-webcams.html")
+  )
+  
+  val torboleWebcam = Webcam(
+    name = "Torbole",
+    url = "https://windinfo.eu/fileadmin/user_upload/webcam_upload/gardasee/shaka-torbole-aktuell-1280.jpg",
+    reloadInMin = 10,
+    footer = "https://windinfo.eu",
+    mainPageLink = Some("https://gardasee.webcam/de/torbole-webcams.html")
+  )
   // Lakes
 
   val urnersee = Lake(
@@ -230,6 +259,7 @@ object WebcamData:
   val comersee = Lake(
     name = "Comersee",
     webcams = List(
+      leccoWebcam,
       dervioWebcam,
       cremiaWebcam,
       colicoWebcam,
@@ -240,7 +270,10 @@ object WebcamData:
   val gardasee = Lake(
     name = "Gardasee",
     webcams = List(
-      malcesineWebcam
+      malcesineWebcam,
+      caporeamoloWebcam,
+      torboleWebcam,
+      tignaleWebcam
     )
   )
 
@@ -257,9 +290,10 @@ object WebcamData:
   )
 
   val sempachersee = Lake(
-    name = "Sempachersee",
+    name = "Luzern",
     webcams = List(
-      eichWebcam
+      eichWebcam,
+      alpnacherWebcam
     )
   )
 

@@ -122,16 +122,15 @@ object WebcamView:
           className := "webcam-footer",
           div(
             className := "footer-left",
-            child <-- stateVar.signal.map(_.lastUpdate).map { lastUpdate =>
-              lastUpdate match
+            child <-- stateVar.signal.map(_.lastUpdate).map:
               case Some(time) =>
                 val nextLoadTime = calculateNextLoadTime(time, webcam.reloadInMin)
                 span(
                   s"Next load: $nextLoadTime",
-                  webcam.liveVideoLink
+                  webcam.mainPageLink
                     .map: overlayUrl =>
                       span(
-                        " | For live video: ",
+                        " | Better view: ",
                         a(
                           className := "footer-left",
                           href      := overlayUrl,
@@ -143,7 +142,6 @@ object WebcamView:
                 )
               case None       =>
                 span("Loading...")
-            }
           ),
           a(
             className := "footer-right",

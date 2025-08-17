@@ -74,7 +74,7 @@ object WindyWebcamView:
           div(
             className := "footer-left",
             span("Use reload button to refresh"),
-            webcam.liveVideoLink
+            webcam.mainPageLink
               .map: videoUrl =>
                 span(
                   " | For live video: ",
