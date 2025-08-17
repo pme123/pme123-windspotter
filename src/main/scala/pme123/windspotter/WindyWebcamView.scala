@@ -44,6 +44,16 @@ object WindyWebcamView:
                 reloadWindyPlayer(webcam)
               },
               Icon(_.name := IconName.`refresh`)
+            ),
+            // Capture button for adding current view to thumbnails
+            div(
+              className := "webcam-capture-button-custom",
+              title     := "Capture current view and add to thumbnails",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual capture requested for Windy webcam ${webcam.name}")
+                WebcamService.captureWindyWebcamImage(webcam, stateVar)
+              },
+              Icon(_.name := IconName.`camera`)
             )
           )
         ),

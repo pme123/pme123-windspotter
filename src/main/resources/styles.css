@@ -1210,6 +1210,46 @@ ui5-button.webcam-reload-button:active button {
   color: inherit;
 }
 
+/* Custom capture button styles */
+.webcam-capture-button-custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 8px;
+  margin-left: 8px;
+  border-radius: 4px;
+  transition: color 0.2s ease, transform 0.1s ease;
+  color: #333;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.webcam-capture-button-custom:hover {
+  color: #007acc;
+  background: none;
+}
+
+.webcam-capture-button-custom:focus {
+  outline: none;
+}
+
+.webcam-capture-button-custom:active {
+  transform: scale(0.95);
+}
+
+/* Style the icon inside the custom capture button */
+.webcam-capture-button-custom ui5-icon {
+  font-size: 16px;
+  color: inherit;
+}
+
+/* Webcam header layout - now uses webcam-title-row consistently */
+.webcam-header {
+  width: 100%;
+}
+
 /* YouTube Webcam Styles */
 .youtube-webcam-view {
   width: 100%;

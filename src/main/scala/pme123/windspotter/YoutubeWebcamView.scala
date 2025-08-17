@@ -30,9 +30,23 @@ object YoutubeWebcamView:
         className := "upload-method webcam-section",
         div(
           className := "webcam-header",
-          Title(
-            className := "webcam-title",
-            webcam.name
+          div(
+            className := "webcam-title-row",
+            Title(
+              className := "webcam-title",
+              webcam.name
+            ),
+            // Custom capture button using same style as WindyWebcamView
+            div(
+              className := "webcam-capture-button-custom",
+              title     := "Capture current frame and add to thumbnails",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual capture requested for YouTube webcam ${webcam.name}")
+                // For YouTube webcams, we can use the same capture logic as Windy
+                WebcamService.captureWindyWebcamImage(webcam, stateVar)
+              },
+              Icon(_.name := IconName.`camera`)
+            )
           )
         ),
 

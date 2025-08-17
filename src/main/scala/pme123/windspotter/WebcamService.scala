@@ -225,7 +225,7 @@ object WebcamService {
     dom.console.log(s"Started auto-capture for ${webcam.name} (every ${webcam.reloadInMin} min)")
   }
 
-  private def captureWindyWebcamImage(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+  def captureWindyWebcamImage(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
     dom.console.log(s"📸 Auto-capturing Windy webcam image for ${webcam.name}")
 
     val now = new Date()

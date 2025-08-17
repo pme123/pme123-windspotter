@@ -54,9 +54,22 @@ object WebcamView:
         className := "upload-method webcam-section",
         div(
           className := "webcam-header",
-          Title(
-            className := "webcam-title",
-            webcam.name
+          div(
+            className := "webcam-title-row",
+            Title(
+              className := "webcam-title",
+              webcam.name
+            ),
+            // Custom reload button using same style as WindyWebcamView
+            div(
+              className := "webcam-reload-button-custom",
+              title     := "Load current image and add to thumbnails",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
+                WebcamService.loadWebcamImage(webcam, stateVar)
+              },
+              Icon(_.name := IconName.`refresh`)
+            )
           )
         ),
 
