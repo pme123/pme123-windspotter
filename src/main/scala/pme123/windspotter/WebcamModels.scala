@@ -1,19 +1,18 @@
-
 package pme123.windspotter
 
 sealed trait WebcamType
-case object ImageWebcam extends WebcamType
-case object VideoWebcam extends WebcamType
-case object WindyWebcam extends WebcamType
+case object ImageWebcam   extends WebcamType
+case object VideoWebcam   extends WebcamType
+case object WindyWebcam   extends WebcamType
 case object YoutubeWebcam extends WebcamType
 
 case class Webcam(
-                   name: String,
-                   url: String,
-                   reloadInMin: Int,
-                   footer: String,
-                   mainPageLink: Option[String] = None,
-                   webcamType: WebcamType = ImageWebcam
+    name: String,
+    url: String,
+    reloadInMin: Int,
+    footer: String,
+    mainPageLink: Option[String] = None,
+    webcamType: WebcamType = ImageWebcam
 )
 
 case class Lake(
@@ -110,7 +109,7 @@ object WebcamData:
   val dervioWebcam = Webcam(
     name = "Dervio",
     url = "1564004172", // Store just the Windy webcam ID
-    reloadInMin = 10,    // Refresh every 10 minutes
+    reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
     webcamType = WindyWebcam
@@ -118,7 +117,7 @@ object WebcamData:
   val cremiaWebcam = Webcam(
     name = "Cremia",
     url = "1564003897", // Store just the Windy webcam ID
-    reloadInMin = 10,    // Refresh every 10 minutes
+    reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
@@ -126,15 +125,15 @@ object WebcamData:
   val colicoWebcam = Webcam(
     name = "Colico",
     url = "1564003197", // Store just the Windy webcam ID
-    reloadInMin = 10,    // Refresh every 10 minutes
+    reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
     webcamType = WindyWebcam
   )
-  val leccoWebcam = Webcam(
+  val leccoWebcam  = Webcam(
     name = "Lecco",
     url = "1748447411", // Store just the Windy webcam ID
-    reloadInMin = 10,    // Refresh every 10 minutes
+    reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
     webcamType = WindyWebcam
@@ -150,11 +149,11 @@ object WebcamData:
   val immenseeWebcam = Webcam(
     name = "Immensee",
     url = "FDJcAc0zOl8", // Example YouTube video ID - replace with actual webcam stream
-    reloadInMin = 0, // YouTube videos don't need reloading
+    reloadInMin = 0,     // YouTube videos don't need reloading
     footer = "https://www.youtube.com/@yachtclubimmensee",
     webcamType = YoutubeWebcam
   )
-  val aegeriWebcam = Webcam(
+  val aegeriWebcam   = Webcam(
     name = "Aegerisee",
     url = "https://scae.ch/webcam/image.jpg",
     reloadInMin = 5,
@@ -167,20 +166,20 @@ object WebcamData:
     footer = "https://www.weisszahnarzt.ch",
     mainPageLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
   )
-  val chamWebcam = Webcam(
+  val chamWebcam     = Webcam(
     name = "Cham",
     url = "https://www.webcam.scc.ch/image_large.jpg",
     reloadInMin = 5,
     footer = "https://www.webcam.scc.ch"
   )
-  val zugWebcam = Webcam(
+  val zugWebcam      = Webcam(
     name = "Zug",
     url = "https://www.barile.ch/yczug/yczug/cam1.jpg",
     reloadInMin = 2,
     footer = "https://www.yczug.ch"
   )
   // Vierwaldstättersee (additional)
-  val brunnenWebcam = Webcam(
+  val brunnenWebcam  = Webcam(
     name = "Brunnen",
     url = "https://www.foto-webcam.eu/webcam/brunnen/current/816.jpg",
     reloadInMin = 5,
@@ -188,7 +187,7 @@ object WebcamData:
   )
 
   // Sempachersee / Alpnachersee
-  val eichWebcam = Webcam(
+  val eichWebcam      = Webcam(
     name = "Eich Sempachersee",
     url = "https://windsurfclubeich.ch/webcam/hikvision_current.jpg",
     reloadInMin = 1,
@@ -200,9 +199,9 @@ object WebcamData:
     reloadInMin = 5,
     footer = "https://www.surfstation-alpnachersee.ch"
   )
-  
+
   // Gardasee
-  val malcesineWebcam = Webcam(
+  val malcesineWebcam   = Webcam(
     name = "Malcesine",
     url = "https://addicted-sports.com/fileadmin/webcam/gardasee/current/full.jpg",
     reloadInMin = 10,
@@ -216,7 +215,7 @@ object WebcamData:
     footer = "https://addicted-sports.com",
     mainPageLink = Some("https://gardasee.webcam/de/limone-webcams.html")
   )
-  
+
   val tignaleWebcam = Webcam(
     name = "Tignale",
     url = "https://pradelafam.net/cam/cam.jpg",
@@ -224,13 +223,45 @@ object WebcamData:
     footer = "https://pradelafam.net",
     mainPageLink = Some("https://gardasee.webcam/de/tignale-webcams.html")
   )
-  
+
   val torboleWebcam = Webcam(
     name = "Torbole",
-    url = "https://windinfo.eu/fileadmin/user_upload/webcam_upload/gardasee/shaka-torbole-aktuell-1280.jpg",
+    url =
+      "https://windinfo.eu/fileadmin/user_upload/webcam_upload/gardasee/shaka-torbole-aktuell-1280.jpg",
     reloadInMin = 10,
     footer = "https://windinfo.eu",
     mainPageLink = Some("https://gardasee.webcam/de/torbole-webcams.html")
+  )
+
+  // South of France
+  val almanarreHyeresWebcam = Webcam(
+    name = "Hyères - L'Almanarre",
+    url = "6nXr-WCejHc",
+    reloadInMin = 10,
+    footer = "https://vision-environnement.com",
+    webcamType = YoutubeWebcam
+  )
+
+  val estagnetsWebcam = Webcam(
+    name = "Hyères - Les Estagnets",
+    url = "Tf5fxg4rWfE",
+    reloadInMin = 10,
+    footer = "https://vision-environnement.com",
+    webcamType = YoutubeWebcam
+  )
+  val madragueWebcam  = Webcam(
+    name = "Hyères - La Madrague",
+    url = "ZlN7i9XP0x0",
+    reloadInMin = 10,
+    footer = "https://vision-environnement.com",
+    webcamType = YoutubeWebcam
+  )
+  val carroWebcam     = Webcam(
+    name = "Carro",
+    url = "k9gyMLsi_sE",
+    reloadInMin = 5,
+    footer = "https://vision-environnement.com",
+    webcamType = YoutubeWebcam
   )
   // Lakes
 
@@ -277,6 +308,16 @@ object WebcamData:
     )
   )
 
+  val southOfFrance = Lake(
+    name = "South of France",
+    webcams = List(
+      almanarreHyeresWebcam,
+      estagnetsWebcam,
+      madragueWebcam,
+      carroWebcam
+    )
+  )
+
   val zugersee = Lake(
     name = "Zugerseen",
     webcams = List(
@@ -284,8 +325,7 @@ object WebcamData:
       walchwilWebcam,
       zugWebcam,
       chamWebcam,
-      aegeriWebcam,
-
+      aegeriWebcam
     )
   )
 
@@ -300,11 +340,11 @@ object WebcamData:
   val lakes = List(
     urnersee,
     zugersee,
-
     sempachersee,
     // silvaplana,
     comersee,
-    gardasee
+    gardasee,
+    southOfFrance
   )
 
   def getDefaultLake: Lake = lakes.head
@@ -313,6 +353,5 @@ object WebcamData:
 
   def findLakeByName(name: String): Option[Lake] =
     lakes.find(_.name == name)
-
 
 end WebcamData
