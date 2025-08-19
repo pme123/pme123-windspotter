@@ -56,21 +56,14 @@ object WebcamView:
     div(
       className := "image-upload-section",
 
-      // Auto-load when loading is enabled and no image exists yet
+      // Auto-start refresh when loading is enabled and no image exists yet
       onMountCallback { ctx =>
         loadingEnabledVar.signal.foreach { isEnabled =>
           val currentState = stateVar.now()
           if (isEnabled && currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {
-            dom.console.log(s"🔄 Auto-loading ${webcam.name} on loading enable")
-            WebcamService.loadWebcamImage(webcam, stateVar, loadingEnabledVar)
-            // Also start auto-refresh for regular webcams
-            dom.window.setTimeout(
-              () => {
-                dom.console.log(s"🚀 Starting automatic refresh for ${webcam.name}...")
-                WebcamService.startAutoRefresh(webcam, stateVar)
-              },
-              100
-            )
+            dom.console.log(s"🚀 Starting automatic refresh for ${webcam.name}...")
+            // startAutoRefresh will handle the first load, so we don't need to call loadWebcamImage separately
+            WebcamService.startAutoRefresh(webcam, stateVar)
           }
         }(ctx.owner)
       },
