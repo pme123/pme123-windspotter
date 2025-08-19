@@ -53,6 +53,14 @@ object MainView:
               if (tabIndex < WebcamData.lakes.length) {
                 val selectedLake = WebcamData.lakes(tabIndex)
                 dom.console.log(s"🏔️ Selecting lake by index: ${selectedLake.name}")
+
+                // Auto-enable loading for the selected lake if it's currently disabled
+                val loadingStateVar = lakeLoadingStates.getOrElse(selectedLake, Var(false))
+                if (!loadingStateVar.now()) {
+                  dom.console.log(s"🔄 Auto-enabling loading for ${selectedLake.name}")
+                  loadingStateVar.set(true)
+                }
+
                 selectedLakeVar.set(selectedLake)
               } else {
                 dom.console.log(s"❌ Tab index $tabIndex out of range for ${WebcamData.lakes.length} lakes")
