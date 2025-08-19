@@ -17,7 +17,8 @@ object YoutubeWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean]
+      slideshowControlVar: Var[Boolean],
+      loadingEnabledVar: Var[Boolean] = Var(true)
   ): HtmlElement =
 
     val state = stateVar.signal
@@ -37,37 +38,66 @@ object YoutubeWebcamView:
               webcam.name
             ),
             // Custom capture button using same style as WindyWebcamView
-            div(
-              className := "webcam-capture-button-custom",
-              title     := "Capture current frame and add to thumbnails",
-              onClick --> { _ =>
-                dom.console.log(s"🔄 Manual capture requested for YouTube webcam ${webcam.name}")
-                // For YouTube webcams, we can use the same capture logic as Windy
-                WebcamService.captureWindyWebcamImage(webcam, stateVar)
-              },
-              Icon(_.name := IconName.`camera`)
-            )
+            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
+              div(
+                className := (if loadingEnabled then "webcam-capture-button-custom" else "webcam-capture-button-disabled"),
+                title     := (if loadingEnabled then "Capture current frame and add to thumbnails" else "Loading disabled - enable loading toggle first"),
+                onClick --> { _ =>
+                  if loadingEnabled then
+                    dom.console.log(s"🔄 Manual capture requested for YouTube webcam ${webcam.name}")
+                    // For YouTube webcams, we can use the same capture logic as Windy
+                    WebcamService.captureWindyWebcamImage(webcam, stateVar)
+                  else
+                    dom.console.log(s"⚫ Capture blocked - loading disabled for ${webcam.name}")
+                },
+                Icon(_.name := IconName.`camera`)
+              )
+            }
           )
         ),
 
         // YouTube webcam display (replacing webcam-image-section)
         div(
           className := "webcam-image-section",
-          div(
-            className := "webcam-image-container",
-            div(
-              className := "youtube-container",
-              idAttr    := s"youtube-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
-              onMountCallback(ctx =>
-                val container = ctx.thisNode.ref
-                dom.console.log(s"📺 Initializing YouTube webcam for ${webcam.name}")
-
-                createYoutubeEmbed(container, webcam)
-
-                dom.console.log(s"✅ YouTube webcam initialized for ${webcam.name}")
+          child <-- loadingEnabledVar.signal.map { loadingEnabled =>
+            if (!loadingEnabled) {
+              // Loading disabled - show placeholder
+              div(
+                className := "youtube-disabled-placeholder",
+                div(
+                  className := "disabled-content",
+                  div(
+                    className := "disabled-icon",
+                    "⚫"
+                  ),
+                  div(
+                    className := "disabled-text",
+                    "YouTube Loading Disabled"
+                  ),
+                  div(
+                    className := "disabled-subtitle",
+                    "Enable loading toggle to view YouTube stream"
+                  )
+                )
               )
-            )
-          )
+            } else {
+              div(
+                className := "webcam-image-container",
+                div(
+                  className := "youtube-container",
+                  idAttr    := s"youtube-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
+                  onMountCallback(ctx =>
+                    val container = ctx.thisNode.ref
+                    dom.console.log(s"📺 Initializing YouTube webcam for ${webcam.name}")
+
+                    createYoutubeEmbed(container, webcam)
+
+                    dom.console.log(s"✅ YouTube webcam initialized for ${webcam.name}")
+                  )
+                )
+              )
+            }
+          }
         ),
 
         // Footer with webcam info (matching regular webcam structure)

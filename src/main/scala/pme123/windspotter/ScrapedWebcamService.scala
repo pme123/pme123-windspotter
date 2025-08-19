@@ -12,8 +12,14 @@ object ScrapedWebcamService:
 
   def scrapeAndLoadImage(
     webcam: Webcam,
-    stateVar: Var[WebcamState]
+    stateVar: Var[WebcamState],
+    loadingEnabledVar: Var[Boolean] = Var(true)
   ): Unit = {
+    // Check if loading is enabled
+    if (!loadingEnabledVar.now()) {
+      dom.console.log(s"⚫ Loading disabled for ${webcam.name} - skipping scrape")
+      return
+    }
     webcam.scrapingConfig match {
       case Some(config) =>
         dom.console.log(s"🕷️ Starting scrape for ${webcam.name}")

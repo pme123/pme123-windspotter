@@ -11,8 +11,11 @@ object LakeView {
     lake: Lake,
     webcamStates: Map[Webcam, Var[WebcamState]],
     slideshowControls: Map[Webcam, Var[Boolean]],
+    lakeLoadingStates: Map[Lake, Var[Boolean]],
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
+
+    val loadingStateVar = lakeLoadingStates.getOrElse(lake, Var(false))
 
     // Single card containing all webcams for this lake
       div(
@@ -26,7 +29,7 @@ object LakeView {
               case (Some(stateVar), Some(slideshowControlVar)) =>
                 div(
                   className := "webcam-item",
-                  WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
+                  WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar, loadingStateVar)
                 )
               case _ =>
                 div(

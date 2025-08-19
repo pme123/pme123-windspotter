@@ -17,7 +17,8 @@ object WindyWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean]
+      slideshowControlVar: Var[Boolean],
+      loadingEnabledVar: Var[Boolean] = Var(true)
   ): HtmlElement =
 
     val state = stateVar.signal
@@ -38,70 +39,109 @@ object WindyWebcamView:
             ),
             // Custom button using UI5 Icon but with custom styling
             div(
-              className := "webcam-reload-button-custom",
-              title     := "Reload Windy Player",
+              className <-- loadingEnabledVar.signal.map(enabled =>
+                if enabled then "webcam-reload-button-custom" else "webcam-reload-button-disabled"
+              ),
+              title <-- loadingEnabledVar.signal.map(enabled =>
+                if enabled then "Reload Windy Player"
+                else "Loading disabled - enable loading toggle first"
+              ),
               onClick --> { _ =>
-                reloadWindyPlayer(webcam)
+                if loadingEnabledVar.now() then
+                  WindyWebcamView.reloadWindyPlayer(webcam)
+                else
+                  dom.console.log(s"⚫ Reload blocked - loading disabled for ${webcam.name}")
               },
               Icon(_.name := IconName.`refresh`)
             ),
             // Capture button for adding current view to thumbnails
             div(
-              className := "webcam-capture-button-custom",
-              title     := "Capture current view and add to thumbnails",
+              className <-- loadingEnabledVar.signal.map(enabled =>
+                if enabled then "webcam-capture-button-custom" else "webcam-capture-button-disabled"
+              ),
+              title <-- loadingEnabledVar.signal.map(enabled =>
+                if enabled then "Capture current view and add to thumbnails"
+                else "Loading disabled - enable loading toggle first"
+              ),
               onClick --> { _ =>
-                dom.console.log(s"🔄 Manual capture requested for Windy webcam ${webcam.name}")
-                WebcamService.captureWindyWebcamImage(webcam, stateVar)
+                if loadingEnabledVar.now() then
+                  dom.console.log(s"🔄 Manual capture requested for Windy webcam ${webcam.name}")
+                  WebcamService.captureWindyWebcamImage(webcam, stateVar)
+                else
+                  dom.console.log(s"⚫ Capture blocked - loading disabled for ${webcam.name}")
               },
               Icon(_.name := IconName.`camera`)
             )
-          )
-        ),
+          ),
 
-        // Windy webcam display (replacing webcam-image-section)
-        div(
-          className := "webcam-image-section",
+          // Windy webcam display (replacing webcam-image-section)
           div(
-            className := "webcam-image-container",
-            div(
-              className := "windy-container",
-              idAttr    := s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
-              onMountCallback(ctx =>
-                val container = ctx.thisNode.ref
-                dom.console.log(s"🌬️ Initializing Windy webcam for ${webcam.name}")
-
-                createWindyEmbed(container, webcam)
-
-                dom.console.log(s"✅ Windy webcam initialized for ${webcam.name}")
-              )
-            )
-          )
-        ),
-
-        // Footer with webcam info (matching regular webcam structure)
-        div(
-          className := "webcam-footer",
-          div(
-            className := "footer-left",
-            span("Use reload button to refresh"),
-            webcam.mainPageLink
-              .map: videoUrl =>
-                span(
-                  " | For live video: ",
-                  a(
-                    className := "footer-left",
-                    href      := videoUrl,
-                    target    := "_blank",
-                    "Go to Main Page"
+            className := "webcam-image-section",
+            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
+              if !loadingEnabled then
+                // Loading disabled - show placeholder
+                div(
+                  className := "windy-disabled-placeholder",
+                  div(
+                    className := "disabled-content",
+                    div(
+                      className := "disabled-icon",
+                      "⚫"
+                    ),
+                    div(
+                      className := "disabled-text",
+                      "Windy Loading Disabled"
+                    ),
+                    div(
+                      className := "disabled-subtitle",
+                      "Enable loading toggle to view Windy webcam"
+                    )
                   )
                 )
-              .toSeq
+              else
+                div(
+                  className := "webcam-image-container",
+                  div(
+                    className := "windy-container",
+                    idAttr    := s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
+                    onMountCallback(ctx =>
+                      val container = ctx.thisNode.ref
+                      dom.console.log(s"🌬️ Initializing Windy webcam for ${webcam.name}")
+
+                      createWindyEmbed(container, webcam)
+
+                      dom.console.log(s"✅ Windy webcam initialized for ${webcam.name}")
+                    )
+                  )
+                )
+            }
           ),
-          a(
-            className := "footer-right",
-            href      := webcam.footer,
-            target    := "_blank",
-            webcam.footer
+
+          // Footer with webcam info (matching regular webcam structure)
+          div(
+            className := "webcam-footer",
+            div(
+              className := "footer-left",
+              span("Use reload button to refresh"),
+              webcam.mainPageLink
+                .map: videoUrl =>
+                  span(
+                    " | For live video: ",
+                    a(
+                      className := "footer-left",
+                      href      := videoUrl,
+                      target    := "_blank",
+                      "Go to Main Page"
+                    )
+                  )
+                .toSeq
+            ),
+            a(
+              className := "footer-right",
+              href      := webcam.footer,
+              target    := "_blank",
+              webcam.footer
+            )
           )
         )
       )

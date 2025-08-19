@@ -14,7 +14,8 @@ object VideoWebcamView {
 
   def apply(
     webcam: Webcam,
-    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
+    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit,
+    loadingEnabledVar: Var[Boolean] = Var(true)
   ): HtmlElement = {
 
     div(
@@ -30,7 +31,28 @@ object VideoWebcamView {
       // Video container
       div(
         className := "video-container",
-        if (webcam.url.contains("youtube") || webcam.url.contains("youtu.be")) {
+        child <-- loadingEnabledVar.signal.map { loadingEnabled =>
+          if (!loadingEnabled) {
+            // Loading disabled - show placeholder
+            div(
+              className := "video-disabled-placeholder",
+              div(
+                className := "disabled-content",
+                div(
+                  className := "disabled-icon",
+                  "⚫"
+                ),
+                div(
+                  className := "disabled-text",
+                  "Video Loading Disabled"
+                ),
+                div(
+                  className := "disabled-subtitle",
+                  "Enable loading toggle to view video stream"
+                )
+              )
+            )
+          } else if (webcam.url.contains("youtube") || webcam.url.contains("youtu.be")) {
           // For YouTube videos, show a message and link
           div(
             className := "video-placeholder",
@@ -141,14 +163,15 @@ object VideoWebcamView {
             }),
             "Your browser does not support HLS video streams."
           )
-        } else {
-          // For other video sources, try iframe
-          iframe(
-            src := webcam.url,
-            className := "video-iframe",
-            width := "100%",
-            height := "450"
-          )
+          } else {
+            // For other video sources, try iframe
+            iframe(
+              src := webcam.url,
+              className := "video-iframe",
+              width := "100%",
+              height := "450"
+            )
+          }
         }
       ),
       
