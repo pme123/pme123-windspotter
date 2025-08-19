@@ -1,10 +1,21 @@
+
 package pme123.windspotter
+
+import be.doeraene.webcomponents.ui5.*
+import be.doeraene.webcomponents.ui5.configkeys.*
+import com.raquo.laminar.api.L.{*, given}
+import org.scalajs.dom
+import scala.scalajs.js
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
+import scala.concurrent.Future
 
 sealed trait WebcamType
 case object ImageWebcam   extends WebcamType
 case object VideoWebcam   extends WebcamType
 case object WindyWebcam   extends WebcamType
 case object YoutubeWebcam extends WebcamType
+case object ScrapedWebcam extends WebcamType
 
 case class Webcam(
     name: String,
@@ -12,7 +23,14 @@ case class Webcam(
     reloadInMin: Int,
     footer: String,
     mainPageLink: Option[String] = None,
-    webcamType: WebcamType = ImageWebcam
+    webcamType: WebcamType = ImageWebcam,
+    scrapingConfig: Option[ScrapingConfig] = None
+)
+
+case class ScrapingConfig(
+    pageUrl: String,        // The webpage to scrape
+    imageRegex: String,     // Regex pattern to find image URLs
+    baseUrl: Option[String] = None  // Base URL to prepend to relative image URLs
 )
 
 case class Lake(
@@ -263,6 +281,20 @@ object WebcamData:
     footer = "https://vision-environnement.com",
     webcamType = YoutubeWebcam
   )
+
+  val sixFoursLeBruscWebcam = Webcam(
+    name = "Six Fours - Le Brusc",
+    url = "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html",
+    reloadInMin = 10,
+    footer = "https://www.winds-up.com",
+    mainPageLink = Some("https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html"),
+    webcamType = ScrapedWebcam,
+    scrapingConfig = Some(ScrapingConfig(
+      pageUrl = "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html",
+      imageRegex = """/webcam/49/49_\d+_\.jpg""",  // Match just the path, stop at word boundaries
+      baseUrl = Some("https://img.winds-up.com")   // Complete base URL
+    ))
+  )
   // Lakes
 
   val urnersee = Lake(
@@ -311,10 +343,11 @@ object WebcamData:
   val southOfFrance = Lake(
     name = "South of France",
     webcams = List(
-      almanarreHyeresWebcam,
+  /*    almanarreHyeresWebcam,
       estagnetsWebcam,
       madragueWebcam,
-      carroWebcam
+      carroWebcam,*/
+      sixFoursLeBruscWebcam
     )
   )
 
@@ -338,12 +371,12 @@ object WebcamData:
   )
 
   val lakes = List(
-    urnersee,
-    zugersee,
+  urnersee,
+/*     zugersee,
     sempachersee,
     // silvaplana,
     comersee,
-    gardasee,
+    gardasee,*/
     southOfFrance
   )
 
@@ -355,3 +388,4 @@ object WebcamData:
     lakes.find(_.name == name)
 
 end WebcamData
+

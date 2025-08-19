@@ -4,8 +4,12 @@ import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
+import scala.scalajs.js
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
+import scala.concurrent.Future
 
-object WebcamView:
+object ScrapedWebcamView:
 
   def apply(
       webcam: Webcam,
@@ -16,42 +20,15 @@ object WebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean] = Var(false)
+      slideshowControlVar: Var[Boolean]
   ): HtmlElement =
 
-    // Handle different webcam types
-    webcam.webcamType match
-    case VideoWebcam   =>
-      return VideoWebcamView(webcam, showImageOverlay)
-    case WindyWebcam   =>
-      return WindyWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
-    case YoutubeWebcam =>
-      return YoutubeWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
-    case ScrapedWebcam =>
-      return ScrapedWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
-    case ImageWebcam   =>
-      // Continue with existing image webcam logic
-    end match
+    val state = stateVar.signal
 
-    // Only start auto-refresh if this webcam doesn't have any images yet
-    val currentState = stateVar.now()
-    if currentState.imageHistory.isEmpty && !currentState.isAutoRefresh then
-      dom.window.setTimeout(
-        () =>
-          dom.console.log(s"🚀 Starting automatic loading for ${webcam.name}...")
-          WebcamService.startAutoRefresh(webcam, stateVar)
-        ,
-        100
-      )
-    else
-      dom.console.log(
-        s"📋 ${webcam.name} already has ${currentState.imageHistory.length} images, not reloading"
-      )
-    end if
     div(
       className := "image-upload-section",
 
-      // Webcam section
+      // Webcam section (matching regular webcam structure)
       div(
         className := "upload-method webcam-section",
         div(
@@ -62,20 +39,20 @@ object WebcamView:
               className := "webcam-title",
               webcam.name
             ),
-            // Custom reload button using same style as WindyWebcamView
+            // Custom reload button using same style as regular WebcamView
             div(
               className := "webcam-reload-button-custom",
-              title     := "Load current image and add to thumbnails",
+              title     := "Scrape current image and add to thumbnails",
               onClick --> { _ =>
-                dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
-                WebcamService.loadWebcamImage(webcam, stateVar)
+                dom.console.log(s"🔄 Manual scrape requested for webcam ${webcam.name}")
+                ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar)
               },
               Icon(_.name := IconName.`refresh`)
             )
           )
         ),
 
-        // Webcam image display
+        // Webcam image display (matching regular webcam structure)
         div(
           className := "webcam-image-section",
           child <-- stateVar.signal.map(_.selectedImage).map {
@@ -115,7 +92,7 @@ object WebcamView:
           }
         ),
 
-        // Thumbnail gallery component
+        // Thumbnail gallery component (using the same component as regular webcam)
         child <-- stateVar.signal.map { state =>
           if state.imageHistory.nonEmpty then
             ThumbnailGallery(
@@ -132,16 +109,15 @@ object WebcamView:
             emptyNode
         },
 
-        // Footer with webcam info
+        // Footer with webcam info (matching regular webcam structure)
         div(
           className := "webcam-footer",
           div(
             className := "footer-left",
             child <-- stateVar.signal.map(_.lastUpdate).map:
               case Some(time) =>
-                val nextLoadTime = calculateNextLoadTime(time, webcam.reloadInMin)
                 span(
-                  s"Next load: $nextLoadTime",
+                  s"Last scraped: $time",
                   webcam.mainPageLink
                     .map: overlayUrl =>
                       span(
@@ -156,7 +132,7 @@ object WebcamView:
                     .toSeq
                 )
               case None       =>
-                span("Loading...")
+                span("Click refresh to scrape image")
           ),
           a(
             className := "footer-right",
@@ -167,21 +143,5 @@ object WebcamView:
         )
       )
     )
-  end apply
 
-  private def calculateNextLoadTime(lastUpdateTime: String, reloadInMin: Int): String =
-    try
-      // Parse the last update time (format: "HH:MM")
-      val parts   = lastUpdateTime.split(":")
-      val hours   = parts(0).toInt
-      val minutes = parts(1).toInt
-
-      // Calculate next load time
-      val totalMinutes = hours * 60 + minutes + reloadInMin
-      val nextHours    = (totalMinutes / 60) % 24
-      val nextMinutes  = totalMinutes        % 60
-
-      f"$nextHours%02d:$nextMinutes%02d"
-    catch
-      case _: Exception => "Unknown"
-end WebcamView
+end ScrapedWebcamView
