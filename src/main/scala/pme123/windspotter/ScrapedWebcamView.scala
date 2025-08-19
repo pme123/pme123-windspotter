@@ -26,8 +26,27 @@ object ScrapedWebcamView:
 
     val state = stateVar.signal
 
+
+
     div(
       className := "image-upload-section",
+
+      // Auto-scrape when loading is enabled and manage periodic scraping
+      onMountCallback { ctx =>
+        loadingEnabledVar.signal.foreach { isEnabled =>
+          if (isEnabled) {
+            if (stateVar.now().selectedImage.isEmpty) {
+              dom.console.log(s"🔄 Auto-scraping ${webcam.name} on loading enable")
+              ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar, loadingEnabledVar)
+            }
+            // Start periodic scraping
+            ScrapedWebcamService.startAutoScraping(webcam, stateVar, loadingEnabledVar)
+          } else {
+            // Stop periodic scraping when loading is disabled
+            ScrapedWebcamService.stopAutoScraping(webcam)
+          }
+        }(ctx.owner)
+      },
 
       // Webcam section (matching regular webcam structure)
       div(
@@ -145,7 +164,7 @@ object ScrapedWebcamView:
             child <-- stateVar.signal.map(_.lastUpdate).map:
               case Some(time) =>
                 span(
-                  s"Last scraped: $time",
+                  time,
                   webcam.mainPageLink
                     .map: overlayUrl =>
                       span(

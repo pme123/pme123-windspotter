@@ -285,7 +285,7 @@ object WebcamData:
   val sixFoursLeBruscWebcam = Webcam(
     name = "Six Fours - Le Brusc",
     url = "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html",
-    reloadInMin = 10,
+    reloadInMin = 5,
     footer = "https://www.winds-up.com",
     mainPageLink = Some("https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html"),
     webcamType = ScrapedWebcam,

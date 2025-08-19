@@ -25,30 +25,34 @@ object WebcamView:
     case VideoWebcam   =>
       return VideoWebcamView(webcam, showImageOverlay, loadingEnabledVar)
     case WindyWebcam   =>
-      return WindyWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar, loadingEnabledVar)
+      return WindyWebcamView(
+        webcam,
+        stateVar,
+        showImageOverlay,
+        slideshowControlVar,
+        loadingEnabledVar
+      )
     case YoutubeWebcam =>
-      return YoutubeWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar, loadingEnabledVar)
+      return YoutubeWebcamView(
+        webcam,
+        stateVar,
+        showImageOverlay,
+        slideshowControlVar,
+        loadingEnabledVar
+      )
     case ScrapedWebcam =>
-      return ScrapedWebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar, loadingEnabledVar)
+      return ScrapedWebcamView(
+        webcam,
+        stateVar,
+        showImageOverlay,
+        slideshowControlVar,
+        loadingEnabledVar
+      )
     case ImageWebcam   =>
       // Continue with existing image webcam logic
     end match
 
-    // Only start auto-refresh if this webcam doesn't have any images yet
-    val currentState = stateVar.now()
-    if currentState.imageHistory.isEmpty && !currentState.isAutoRefresh then
-      dom.window.setTimeout(
-        () =>
-          dom.console.log(s"🚀 Starting automatic loading for ${webcam.name}...")
-          WebcamService.startAutoRefresh(webcam, stateVar)
-        ,
-        100
-      )
-    else
-      dom.console.log(
-        s"📋 ${webcam.name} already has ${currentState.imageHistory.length} images, not reloading"
-      )
-    end if
+
     div(
       className := "image-upload-section",
 
@@ -66,8 +70,10 @@ object WebcamView:
             // Custom reload button using same style as WindyWebcamView
             child <-- loadingEnabledVar.signal.map { loadingEnabled =>
               div(
-                className := (if loadingEnabled then "webcam-reload-button-custom" else "webcam-reload-button-disabled"),
-                title     := (if loadingEnabled then "Load current image and add to thumbnails" else "Loading disabled - enable loading toggle first"),
+                className := (if loadingEnabled then "webcam-reload-button-custom"
+                              else "webcam-reload-button-disabled"),
+                title     := (if loadingEnabled then "Load current image and add to thumbnails"
+                          else "Loading disabled - enable loading toggle first"),
                 onClick --> { _ =>
                   if loadingEnabled then
                     dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
@@ -85,7 +91,7 @@ object WebcamView:
         div(
           className := "webcam-image-section",
           child <-- loadingEnabledVar.signal.combineWith(stateVar.signal.map(_.selectedImage)).map {
-            case (false, _) =>
+            case (false, _)              =>
               // Loading disabled - show placeholder
               div(
                 className := "webcam-disabled-placeholder",
@@ -132,7 +138,7 @@ object WebcamView:
                   }
                 )
               )
-            case (true, None) =>
+            case (true, None)            =>
               // Loading enabled but no image yet
               div(
                 className := "webcam-loading",
@@ -144,20 +150,21 @@ object WebcamView:
         ),
 
         // Thumbnail gallery component
-        child <-- loadingEnabledVar.signal.combineWith(stateVar.signal).map { (loadingEnabled, state) =>
-          if loadingEnabled && state.imageHistory.nonEmpty then
-            ThumbnailGallery(
-              state.imageHistory,
-              state.selectedImage,
-              (newImage: ImageData) =>
-                val currentState = stateVar.now()
-                stateVar.set(currentState.copy(selectedImage = Some(newImage)))
-              ,
-              showImageOverlay,
-              slideshowControlVar
-            )
-          else
-            emptyNode
+        child <-- loadingEnabledVar.signal.combineWith(stateVar.signal).map {
+          (loadingEnabled, state) =>
+            if loadingEnabled && state.imageHistory.nonEmpty then
+              ThumbnailGallery(
+                state.imageHistory,
+                state.selectedImage,
+                (newImage: ImageData) =>
+                  val currentState = stateVar.now()
+                  stateVar.set(currentState.copy(selectedImage = Some(newImage)))
+                ,
+                showImageOverlay,
+                slideshowControlVar
+              )
+            else
+              emptyNode
         },
 
         // Footer with webcam info

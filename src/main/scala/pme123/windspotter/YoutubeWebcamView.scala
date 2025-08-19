@@ -23,6 +23,8 @@ object YoutubeWebcamView:
 
     val state = stateVar.signal
 
+
+
     div(
       className := "image-upload-section",
 

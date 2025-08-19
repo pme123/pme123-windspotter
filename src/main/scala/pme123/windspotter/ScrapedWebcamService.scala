@@ -10,6 +10,8 @@ import scala.util.matching.Regex
 
 object ScrapedWebcamService:
 
+  private var scrapingTimers: Map[String, Int] = Map.empty
+
   def scrapeAndLoadImage(
     webcam: Webcam,
     stateVar: Var[WebcamState],
@@ -139,6 +141,9 @@ object ScrapedWebcamService:
       ))
       
       dom.console.log(s"✅ Scraped image added to history for ${webcam.name}")
+
+      // Update next scrape time
+      updateNextScrapeTime(webcam, stateVar)
     }
     
     img.addEventListener("error", (_: dom.Event) => {
@@ -190,6 +195,61 @@ object ScrapedWebcamService:
     ))
 
     dom.console.log(s"❌ Error placeholder created for ${webcam.name}")
+  }
+
+  def startAutoScraping(
+    webcam: Webcam,
+    stateVar: Var[WebcamState],
+    loadingEnabledVar: Var[Boolean] = Var(true)
+  ): Unit = {
+    if (webcam.reloadInMin <= 0) {
+      dom.console.log(s"⏸️ Auto-scraping disabled for ${webcam.name} (reloadInMin: ${webcam.reloadInMin})")
+      return
+    }
+
+    // Clear any existing timer
+    stopAutoScraping(webcam)
+
+    val intervalMs = webcam.reloadInMin * 60 * 1000
+    dom.console.log(s"⏰ Starting auto-scraping for ${webcam.name} every ${webcam.reloadInMin} minutes")
+
+    val timerId = dom.window.setInterval(
+      () => {
+        if (loadingEnabledVar.now()) {
+          dom.console.log(s"🔄 Auto-scraping ${webcam.name} (scheduled)")
+          scrapeAndLoadImage(webcam, stateVar, loadingEnabledVar)
+        } else {
+          dom.console.log(s"⚫ Auto-scraping skipped for ${webcam.name} - loading disabled")
+        }
+      },
+      intervalMs
+    )
+
+    scrapingTimers = scrapingTimers + (webcam.name -> timerId)
+
+    // Update state with next scrape time
+    updateNextScrapeTime(webcam, stateVar)
+  }
+
+  def stopAutoScraping(webcam: Webcam): Unit = {
+    scrapingTimers.get(webcam.name).foreach { timerId =>
+      dom.window.clearInterval(timerId)
+      dom.console.log(s"⏹️ Stopped auto-scraping for ${webcam.name}")
+    }
+    scrapingTimers = scrapingTimers - webcam.name
+  }
+
+  private def updateNextScrapeTime(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+    if (webcam.reloadInMin > 0) {
+      val now = new js.Date()
+      val nextScrape = new js.Date(now.getTime() + (webcam.reloadInMin * 60 * 1000))
+      val nextScrapeString = f"${nextScrape.getHours().toInt}%02d:${nextScrape.getMinutes().toInt}%02d"
+
+      val currentState = stateVar.now()
+      stateVar.set(currentState.copy(
+        lastUpdate = Some(s"Next scrape: $nextScrapeString")
+      ))
+    }
   }
 
 end ScrapedWebcamService
