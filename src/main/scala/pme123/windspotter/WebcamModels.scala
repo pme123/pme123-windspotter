@@ -286,6 +286,16 @@ object WebcamData:
     webcamType = WebcamType.IframeWebcam
   )
 
+  // Westschweiz
+  val stBlaiseWebcam = Webcam(
+    name = "St. Blaise",
+    url = "https://lacdeneuchatel.roundshot.com/",
+    reloadInMin = 0, // No need to reload for iframe
+    footer = "https://lacdeneuchatel.roundshot.com",
+    mainPageLink = Some("https://lacdeneuchatel.roundshot.com/"),
+    webcamType = WebcamType.IframeWebcam
+  )
+
 
   val sixFoursLeBruscWebcam = Webcam(
     name = "Six Fours - Le Brusc",
@@ -396,10 +406,18 @@ object WebcamData:
     )
   )
 
+  val westschweiz = WebcamGroup(
+    name = "Westschweiz",
+    webcams = List(
+      stBlaiseWebcam
+    )
+  )
+
   val webcamGroups = List(
     urnersee,
     zugersee,
     sempachersee,
+    westschweiz,
     // silvaplana,
     comersee,
     gardasee,
