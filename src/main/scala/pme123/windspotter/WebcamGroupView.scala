@@ -5,26 +5,26 @@ import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 
-object LakeView {
+object WebcamGroupView:
 
   def apply(
-    lake: Lake,
+    webcamGroup: WebcamGroup,
     webcamStates: Map[Webcam, Var[WebcamState]],
     slideshowControls: Map[Webcam, Var[Boolean]],
-    lakeLoadingStates: Map[Lake, Var[Boolean]],
+    webcamGroupLoadingStates: Map[WebcamGroup, Var[Boolean]],
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
-  ): HtmlElement = {
+  ): HtmlElement =
 
-    val loadingStateVar = lakeLoadingStates.getOrElse(lake, Var(false))
+    val loadingStateVar = webcamGroupLoadingStates.getOrElse(webcamGroup, Var(false))
 
-    // Single card containing all webcams for this lake
+    // Single card containing all webcams for this webcam group
       div(
         className := "card-content",
 
         // All webcams listed in this single card
         div(
           className := "webcams-list",
-          lake.webcams.map { webcam =>
+          webcamGroup.webcams.map { webcam =>
             (webcamStates.get(webcam), slideshowControls.get(webcam)) match {
               case (Some(stateVar), Some(slideshowControlVar)) =>
                 div(
@@ -40,5 +40,3 @@ object LakeView {
           }
         )
       )
-  }
-}

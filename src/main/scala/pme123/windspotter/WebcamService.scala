@@ -177,13 +177,13 @@ object WebcamService {
 
   def startAutoRefresh(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
     // Skip auto-refresh for video webcams
-    if (webcam.webcamType == VideoWebcam) {
+    if (webcam.webcamType == WebcamType.VideoWebcam) {
       dom.console.log(s"📹 Skipping auto-refresh for video webcam: ${webcam.name}")
       return
     }
 
     // Handle Windy webcams differently
-    if (webcam.webcamType == WindyWebcam) {
+    if (webcam.webcamType == WebcamType.WindyWebcam) {
       dom.console.log(s"🌬️ Starting auto-capture for Windy webcam: ${webcam.name}")
       startWindyAutoCapture(webcam, stateVar)
       return

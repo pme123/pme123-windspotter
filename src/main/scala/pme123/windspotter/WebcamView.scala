@@ -22,43 +22,42 @@ object WebcamView:
 
     // Handle different webcam types
     webcam.webcamType match
-    case VideoWebcam   =>
-      return VideoWebcamView(webcam, showImageOverlay, loadingEnabledVar)
-    case WindyWebcam   =>
-      return WindyWebcamView(
-        webcam,
-        stateVar,
-        showImageOverlay,
-        slideshowControlVar,
-        loadingEnabledVar
-      )
-    case YoutubeWebcam =>
-      return YoutubeWebcamView(
-        webcam,
-        stateVar,
-        showImageOverlay,
-        slideshowControlVar,
-        loadingEnabledVar
-      )
-    case ScrapedWebcam =>
-      return ScrapedWebcamView(
-        webcam,
-        stateVar,
-        showImageOverlay,
-        slideshowControlVar,
-        loadingEnabledVar
-      )
-    case IframeWebcam =>
-      return IframeWebcamView(
-        webcam,
-        stateVar,
-        showImageOverlay,
-        slideshowControlVar,
-        loadingEnabledVar
-      )
-    case ImageWebcam   =>
-      // Continue with existing image webcam logic
-    end match
+      case WebcamType.VideoWebcam   =>
+        return VideoWebcamView(webcam, showImageOverlay, loadingEnabledVar)
+      case WebcamType.WindyWebcam   =>
+        return WindyWebcamView(
+          webcam,
+          stateVar,
+          showImageOverlay,
+          slideshowControlVar,
+          loadingEnabledVar
+        )
+      case WebcamType.YoutubeWebcam =>
+        return YoutubeWebcamView(
+          webcam,
+          stateVar,
+          showImageOverlay,
+          slideshowControlVar,
+          loadingEnabledVar
+        )
+      case WebcamType.ScrapedWebcam =>
+        return ScrapedWebcamView(
+          webcam,
+          stateVar,
+          showImageOverlay,
+          slideshowControlVar,
+          loadingEnabledVar
+        )
+      case WebcamType.IframeWebcam =>
+        return IframeWebcamView(
+          webcam,
+          stateVar,
+          showImageOverlay,
+          slideshowControlVar,
+          loadingEnabledVar
+        )
+      case WebcamType.ImageWebcam   =>
+        // Continue with existing image webcam logic
 
 
     div(

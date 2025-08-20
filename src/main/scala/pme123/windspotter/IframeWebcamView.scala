@@ -19,7 +19,6 @@ object IframeWebcamView:
       slideshowControlVar: Var[Boolean],
       loadingEnabledVar: Var[Boolean] = Var(true)
   ): HtmlElement =
-
     // Reactive variable to control iframe reloading
     val iframeSrcVar = Var(webcam.url)
 

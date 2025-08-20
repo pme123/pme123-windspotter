@@ -21,14 +21,14 @@ object Main:
   end main
 
   // Initialize shared state for the entire app
-  private val selectedLakeVar = Var(WebcamData.getDefaultLake)
-  private val lakeLoadingStates = WebcamData.lakes.map { lake =>
-    lake -> Var(false)
+  private val selectedWebcamGroupVar = Var(WebcamData.getDefaultWebcamGroup)
+  private val webcamGroupLoadingStates = WebcamData.webcamGroups.map { webcamGroup =>
+    webcamGroup -> Var(false)
   }.toMap
 
   // Log initial state
-  dom.console.log(s"🏔️ Initial selected lake: ${selectedLakeVar.now().name}")
-  dom.console.log(s"🗺️ Available lakes: ${WebcamData.lakes.map(_.name).mkString(", ")}")
+  dom.console.log(s"🏔️ Initial selected webcam group: ${selectedWebcamGroupVar.now().name}")
+  dom.console.log(s"🗺️ Available webcam groups: ${WebcamData.webcamGroups.map(_.name).mkString(", ")}")
 
   private lazy val page =
     div(
@@ -55,7 +55,7 @@ object Main:
             dom.console.log("🔐 Showing MainView")
             div(
               className := "main-content",
-              MainView(selectedLakeVar, lakeLoadingStates)
+              MainView(selectedWebcamGroupVar, webcamGroupLoadingStates)
             )
           }
       },

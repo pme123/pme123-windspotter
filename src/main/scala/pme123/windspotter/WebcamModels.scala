@@ -9,13 +9,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Success, Failure}
 import scala.concurrent.Future
 
-sealed trait WebcamType
-case object ImageWebcam   extends WebcamType
-case object VideoWebcam   extends WebcamType
-case object WindyWebcam   extends WebcamType
-case object YoutubeWebcam extends WebcamType
-case object ScrapedWebcam extends WebcamType
-case object IframeWebcam  extends WebcamType
+enum WebcamType:
+  case ImageWebcam, VideoWebcam, WindyWebcam, YoutubeWebcam, ScrapedWebcam, IframeWebcam
 
 case class Webcam(
     name: String,
@@ -23,7 +18,7 @@ case class Webcam(
     reloadInMin: Int,
     footer: String,
     mainPageLink: Option[String] = None,
-    webcamType: WebcamType = ImageWebcam,
+    webcamType: WebcamType = WebcamType.ImageWebcam,
     scrapingConfig: Option[ScrapingConfig] = None
 )
 
@@ -33,7 +28,7 @@ case class ScrapingConfig(
     baseUrl: Option[String] = None // Base URL to prepend to relative image URLs
 )
 
-case class Lake(
+case class WebcamGroup(
     name: String,
     webcams: List[Webcam]
 )
@@ -112,14 +107,14 @@ object WebcamData:
     url = "https://hd-auth.skylinewebcams.com/live.m3u8?a=t9018ai5oko7gonu3aviiugh22",
     reloadInMin = 0, // Videos don't need reloading
     footer = "https://www.silvaplana.ch",
-    webcamType = VideoWebcam
+    webcamType = WebcamType.VideoWebcam
   )
   val silvaplanaSurfcenterWebcam = Webcam(
     name = "Silvaplana Surfcenter",
     url = "https://hd-auth.skylinewebcams.com/live.m3u8",
     reloadInMin = 0, // Videos don't need reloading
     footer = "https://www.silvaplana.ch",
-    webcamType = VideoWebcam
+    webcamType = WebcamType.VideoWebcam
   )
 
   // Comersee
@@ -130,7 +125,7 @@ object WebcamData:
     reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/dervio-valmadrera"),
-    webcamType = WindyWebcam
+    webcamType = WebcamType.WindyWebcam
   )
   val cremiaWebcam = Webcam(
     name = "Cremia",
@@ -138,7 +133,7 @@ object WebcamData:
     reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
-    webcamType = WindyWebcam
+    webcamType = WebcamType.WindyWebcam
   )
   val colicoWebcam = Webcam(
     name = "Colico",
@@ -146,7 +141,7 @@ object WebcamData:
     reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/colico-piano"),
-    webcamType = WindyWebcam
+    webcamType = WebcamType.WindyWebcam
   )
   val leccoWebcam  = Webcam(
     name = "Lecco",
@@ -154,7 +149,7 @@ object WebcamData:
     reloadInMin = 10,   // Refresh every 10 minutes
     footer = "https://windy.com",
     mainPageLink = Some("https://vedetta.org/webcam/italia/lombardia/lecco/vista-lecco"),
-    webcamType = WindyWebcam
+    webcamType = WebcamType.WindyWebcam
   )
   val domasoWebcam = Webcam(
     name = "Domaso",
@@ -169,7 +164,7 @@ object WebcamData:
     url = "FDJcAc0zOl8", // Example YouTube video ID - replace with actual webcam stream
     reloadInMin = 0,     // YouTube videos don't need reloading
     footer = "https://www.youtube.com/@yachtclubimmensee",
-    webcamType = YoutubeWebcam
+    webcamType = WebcamType.YoutubeWebcam
   )
   val aegeriWebcam   = Webcam(
     name = "Aegerisee",
@@ -257,7 +252,7 @@ object WebcamData:
     url = "6nXr-WCejHc",
     reloadInMin = 10,
     footer = "https://vision-environnement.com",
-    webcamType = YoutubeWebcam
+    webcamType = WebcamType.YoutubeWebcam
   )
 
   val estagnetsWebcam = Webcam(
@@ -265,14 +260,14 @@ object WebcamData:
     url = "Tf5fxg4rWfE",
     reloadInMin = 10,
     footer = "https://vision-environnement.com",
-    webcamType = YoutubeWebcam
+    webcamType = WebcamType.YoutubeWebcam
   )
   val madragueWebcam  = Webcam(
     name = "Hyères - La Madrague",
     url = "ZlN7i9XP0x0",
     reloadInMin = 10,
     footer = "https://vision-environnement.com",
-    webcamType = YoutubeWebcam
+    webcamType = WebcamType.YoutubeWebcam
   )
   val carroWebcam = Webcam(
     name = "Carro",
@@ -280,7 +275,7 @@ object WebcamData:
     reloadInMin = 0, // No need to reload for iframe
     footer = "https://www.skaping.com",
     mainPageLink = Some("https://www.skaping.com/marseille/spot-de-carro/video"),
-    webcamType = IframeWebcam
+    webcamType = WebcamType.IframeWebcam
   )
   val grauDuRoiPlageSudWebcam = Webcam(
     name = "Grau du Roi - Plage Sud",
@@ -288,7 +283,7 @@ object WebcamData:
     reloadInMin = 0, // No need to reload for iframe
     footer = "https://letsgrau.com",
     mainPageLink = Some("https://letsgrau.com/webcam-grau-du-roi/"),
-    webcamType = IframeWebcam
+    webcamType = WebcamType.IframeWebcam
   )
 
 
@@ -300,7 +295,7 @@ object WebcamData:
     mainPageLink = Some(
       "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html"
     ),
-    webcamType = ScrapedWebcam,
+    webcamType = WebcamType.ScrapedWebcam,
     scrapingConfig = Some(ScrapingConfig(
       pageUrl =
         "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html",
@@ -310,7 +305,7 @@ object WebcamData:
   )
   // Lakes
 
-  val urnersee = Lake(
+  val urnersee = WebcamGroup(
     name = "Urnersee",
     webcams = List(
       sisikonBootshafenNordWebcam,
@@ -324,7 +319,7 @@ object WebcamData:
     )
   )
 
-  val silvaplana = Lake(
+  val silvaplana = WebcamGroup(
     name = "Silvaplana",
     webcams = List(
       silvaplanaMultsWebcam,
@@ -332,7 +327,7 @@ object WebcamData:
     )
   )
 
-  val comersee = Lake(
+  val comersee = WebcamGroup(
     name = "Comersee",
     webcams = List(
       leccoWebcam,
@@ -343,7 +338,7 @@ object WebcamData:
     )
   )
 
-  val gardasee = Lake(
+  val gardasee = WebcamGroup(
     name = "Gardasee",
     webcams = List(
       malcesineWebcam,
@@ -353,7 +348,7 @@ object WebcamData:
     )
   )
 
-  val southOfFrance = Lake(
+  val southOfFrance = WebcamGroup(
     name = "South of France",
     webcams = List(
       almanarreHyeresWebcam,
@@ -365,7 +360,7 @@ object WebcamData:
     )
   )
 
-  val zugersee = Lake(
+  val zugersee = WebcamGroup(
     name = "Zug",
     webcams = List(
       immenseeWebcam,
@@ -376,7 +371,7 @@ object WebcamData:
     )
   )
 
-  val sempachersee = Lake(
+  val sempachersee = WebcamGroup(
     name = "Luzern",
     webcams = List(
       eichWebcam,
@@ -384,7 +379,7 @@ object WebcamData:
     )
   )
 
-  val lakes = List(
+  val webcamGroups = List(
     urnersee,
     zugersee,
     sempachersee,
@@ -394,11 +389,11 @@ object WebcamData:
     southOfFrance
   )
 
-  def getDefaultLake: Lake = lakes.head
+  def getDefaultWebcamGroup: WebcamGroup = webcamGroups.head
 
-  def getAllWebcams: List[Webcam] = lakes.flatMap(_.webcams)
+  def getAllWebcams: List[Webcam] = webcamGroups.flatMap(_.webcams)
 
-  def findLakeByName(name: String): Option[Lake] =
-    lakes.find(_.name == name)
+  def findWebcamGroupByName(name: String): Option[WebcamGroup] =
+    webcamGroups.find(_.name == name)
 
 end WebcamData
