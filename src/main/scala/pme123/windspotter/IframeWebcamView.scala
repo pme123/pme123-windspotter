@@ -73,11 +73,7 @@ object IframeWebcamView:
                   className := "webcam-iframe",
                   width := "100%",
                   styleAttr := "border: none; border-radius: 8px; aspect-ratio: 16/9; min-height: 400px; max-height: 70vh; width: 100%; display: block;",
-                  title := s"${webcam.name} Webcam",
-                  onClick --> { _ =>
-                    // Show webcam in overlay for fullscreen view
-                    WebOverlayView.showWebOverlay(webcam.name, iframeSrcVar.now())
-                  }
+                  title := s"${webcam.name} Webcam"
                 )
               )
             } else {

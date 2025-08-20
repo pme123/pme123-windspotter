@@ -274,12 +274,13 @@ object WebcamData:
     footer = "https://vision-environnement.com",
     webcamType = YoutubeWebcam
   )
-  val carroWebcam     = Webcam(
+  val carroWebcam = Webcam(
     name = "Carro",
-    url = "k9gyMLsi_sE",
-    reloadInMin = 5,
-    footer = "https://vision-environnement.com",
-    webcamType = YoutubeWebcam
+    url = "https://www.skaping.com/marseille/spot-de-carro/video",
+    reloadInMin = 0, // No need to reload for iframe
+    footer = "https://www.skaping.com",
+    mainPageLink = Some("https://www.skaping.com/marseille/spot-de-carro/video"),
+    webcamType = IframeWebcam
   )
   val grauDuRoiPlageSudWebcam = Webcam(
     name = "Grau du Roi - Plage Sud",
@@ -289,6 +290,7 @@ object WebcamData:
     mainPageLink = Some("https://letsgrau.com/webcam-grau-du-roi/"),
     webcamType = IframeWebcam
   )
+
 
   val sixFoursLeBruscWebcam = Webcam(
     name = "Six Fours - Le Brusc",
@@ -359,12 +361,12 @@ object WebcamData:
       madragueWebcam,
       carroWebcam,
       sixFoursLeBruscWebcam,
-      grauDuRoiPlageSudWebcam
+      grauDuRoiPlageSudWebcam,
     )
   )
 
   val zugersee = Lake(
-    name = "Zugerseen",
+    name = "Zug",
     webcams = List(
       immenseeWebcam,
       walchwilWebcam,
