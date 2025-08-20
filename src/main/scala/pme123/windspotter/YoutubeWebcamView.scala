@@ -38,23 +38,7 @@ object YoutubeWebcamView:
             Title(
               className := "webcam-title",
               webcam.name
-            ),
-            // Custom capture button using same style as WindyWebcamView
-            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-              div(
-                className := (if loadingEnabled then "webcam-capture-button-custom" else "webcam-capture-button-disabled"),
-                title     := (if loadingEnabled then "Capture current frame and add to thumbnails" else "Loading disabled - enable loading toggle first"),
-                onClick --> { _ =>
-                  if loadingEnabled then
-                    dom.console.log(s"🔄 Manual capture requested for YouTube webcam ${webcam.name}")
-                    // For YouTube webcams, we can use the same capture logic as Windy
-                    WebcamService.captureWindyWebcamImage(webcam, stateVar)
-                  else
-                    dom.console.log(s"⚫ Capture blocked - loading disabled for ${webcam.name}")
-                },
-                Icon(_.name := IconName.`camera`)
-              )
-            }
+            )
           )
         ),
 
