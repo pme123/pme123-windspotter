@@ -55,24 +55,6 @@ object WindyWebcamView:
                   dom.console.log(s"⚫ Reload blocked - loading disabled for ${webcam.name}")
               },
               Icon(_.name := IconName.`refresh`)
-            ),
-            // Capture button for adding current view to thumbnails
-            div(
-              className <-- loadingEnabledVar.signal.map(enabled =>
-                if enabled then "webcam-capture-button-custom" else "webcam-capture-button-disabled"
-              ),
-              title <-- loadingEnabledVar.signal.map(enabled =>
-                if enabled then "Capture current view and add to thumbnails"
-                else "Loading disabled - enable loading toggle first"
-              ),
-              onClick --> { _ =>
-                if loadingEnabledVar.now() then
-                  dom.console.log(s"🔄 Manual capture requested for Windy webcam ${webcam.name}")
-                  WebcamService.captureWindyWebcamImage(webcam, stateVar)
-                else
-                  dom.console.log(s"⚫ Capture blocked - loading disabled for ${webcam.name}")
-              },
-              Icon(_.name := IconName.`camera`)
             )
           ),
 
