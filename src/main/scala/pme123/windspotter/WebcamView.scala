@@ -48,6 +48,14 @@ object WebcamView:
         slideshowControlVar,
         loadingEnabledVar
       )
+    case IframeWebcam =>
+      return IframeWebcamView(
+        webcam,
+        stateVar,
+        showImageOverlay,
+        slideshowControlVar,
+        loadingEnabledVar
+      )
     case ImageWebcam   =>
       // Continue with existing image webcam logic
     end match
@@ -65,7 +73,7 @@ object WebcamView:
             // startAutoRefresh will handle the first load, so we don't need to call loadWebcamImage separately
             WebcamService.startAutoRefresh(webcam, stateVar)
           }
-        }(ctx.owner)
+        }(using ctx.owner)
       },
 
       // Webcam section

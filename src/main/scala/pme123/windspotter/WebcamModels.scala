@@ -15,6 +15,7 @@ case object VideoWebcam   extends WebcamType
 case object WindyWebcam   extends WebcamType
 case object YoutubeWebcam extends WebcamType
 case object ScrapedWebcam extends WebcamType
+case object IframeWebcam  extends WebcamType
 
 case class Webcam(
     name: String,
@@ -280,6 +281,14 @@ object WebcamData:
     footer = "https://vision-environnement.com",
     webcamType = YoutubeWebcam
   )
+  val grauDuRoiPlageSudWebcam = Webcam(
+    name = "Grau du Roi - Plage Sud",
+    url = "https://grauduroi.roundshot.com/plage/",
+    reloadInMin = 0, // No need to reload for iframe
+    footer = "https://letsgrau.com",
+    mainPageLink = Some("https://letsgrau.com/webcam-grau-du-roi/"),
+    webcamType = IframeWebcam
+  )
 
   val sixFoursLeBruscWebcam = Webcam(
     name = "Six Fours - Le Brusc",
@@ -349,7 +358,8 @@ object WebcamData:
       estagnetsWebcam,
       madragueWebcam,
       carroWebcam,
-      sixFoursLeBruscWebcam
+      sixFoursLeBruscWebcam,
+      grauDuRoiPlageSudWebcam
     )
   )
 

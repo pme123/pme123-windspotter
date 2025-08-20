@@ -1,4 +1,4 @@
-package pme123.windspotter
+  package pme123.windspotter
 
 import be.doeraene.webcomponents.ui5.*
 import be.doeraene.webcomponents.ui5.configkeys.*
@@ -26,7 +26,7 @@ object MainView:
     selectedLakeVar.signal.foreach { newLake =>
       slideshowControls.values.foreach(_.set(false))
       dom.console.log(s"🛑 Stopped all slideshows when switching to ${newLake.name}")
-    }(OneTimeOwner(() => ()))
+    }(using OneTimeOwner(() => ()))
 
     div(
       className := "main-container",
