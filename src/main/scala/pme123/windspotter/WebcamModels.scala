@@ -303,6 +303,22 @@ object WebcamData:
       baseUrl = Some("https://img.winds-up.com")  // Complete base URL
     ))
   )
+  val leJaiWebcam = Webcam(
+    name = "Le Jaï",
+    url = "https://img.winds-up.com/webcam/26/26_1734700800_.jpg",
+    reloadInMin = 5,
+    footer = "https://www.winds-up.com",
+    mainPageLink = Some(
+      "https://www.winds-up.com/spot-le-jai-windsurf-kitesurf-26-webcam-live.html"
+    ),
+    webcamType = WebcamType.ScrapedWebcam,
+    scrapingConfig = Some(ScrapingConfig(
+      pageUrl =
+        "https://www.winds-up.com/spot-le-jai-windsurf-kitesurf-26-webcam-live.html",
+      imageRegex = """/webcam/26/26_\d+_\.jpg""", // Match just the path, stop at word boundaries
+      baseUrl = Some("https://img.winds-up.com")  // Complete base URL
+    ))
+  )
   // Lakes
 
   val urnersee = WebcamGroup(
@@ -356,6 +372,7 @@ object WebcamData:
       madragueWebcam,
       carroWebcam,
       sixFoursLeBruscWebcam,
+      leJaiWebcam,
       grauDuRoiPlageSudWebcam,
     )
   )
