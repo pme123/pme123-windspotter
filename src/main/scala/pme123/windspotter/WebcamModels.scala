@@ -414,12 +414,20 @@ object WebcamData:
     )
   )
 
+  val bielerseeWebcam = Webcam(
+    name = "Bielersee",
+    url = "https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
+    reloadInMin = 5,
+    footer = "https://bielersee.live"
+  )
+
   val west = WebcamGroup(
     name = "West",
     webcams = List(
       stBlaiseWebcam,
       conciseWebcam,
-      biseNoireWebcam
+      biseNoireWebcam,
+      bielerseeWebcam
     )
   )
 
