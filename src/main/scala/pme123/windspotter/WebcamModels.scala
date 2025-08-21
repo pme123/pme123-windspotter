@@ -369,10 +369,26 @@ object WebcamData:
     )
   )
 
+  // East Switzerland
+  val sihlseeWebcam = Webcam(
+    name = "Sihlsee",
+    url = "https://www.verkehrsverein-euthal.ch/webcam-steinbach",
+    reloadInMin = 10,
+    footer = "https://www.verkehrsverein-euthal.ch",
+    mainPageLink = Some("https://www.verkehrsverein-euthal.ch/webcam-steinbach"),
+    webcamType = WebcamType.ScrapedWebcam,
+    scrapingConfig = Some(ScrapingConfig(
+      pageUrl = "https://www.verkehrsverein-euthal.ch/webcam-steinbach",
+      imageRegex = """/modules/webcam2/[^"]+\.jpg""", // Match the webcam image path
+      baseUrl = Some("https://www.verkehrsverein-euthal.ch") // Base URL for relative paths
+    ))
+  )
+
   val east = WebcamGroup(
     name = "East",
     webcams = List(
       silvaplanaWebcam,
+      sihlseeWebcam
     )
   )
 
