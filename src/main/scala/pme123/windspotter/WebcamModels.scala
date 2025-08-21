@@ -311,6 +311,21 @@ object WebcamData:
     mainPageLink = Some("https://lacdeneuchatel.roundshot.com/"),
     webcamType = WebcamType.IframeWebcam
   )
+  val conciseWebcam = Webcam(
+    name = "Concise",
+    url = "1558446770", // Windy webcam ID
+    reloadInMin = 10,   // Refresh every 10 minutes
+    footer = "https://windy.com",
+    mainPageLink = Some("http://46.14.58.189/mjpg/video.mjpg"),
+    webcamType = WebcamType.WindyWebcam
+  )
+
+  val bielerseeWebcam = Webcam(
+    name = "Bielersee",
+    url = "https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
+    reloadInMin = 5,
+    footer = "https://bielersee.live"
+  )
   val biseNoireWebcam = Webcam(
     name = "Bise Noire",
     url = "https://www.bisenoire.ch/webcam/Bisenoire_BIG_00.jpg",
@@ -384,20 +399,28 @@ object WebcamData:
     ))
   )
 
-  val conciseWebcam = Webcam(
-    name = "Concise",
-    url = "1558446770", // Windy webcam ID
-    reloadInMin = 10,   // Refresh every 10 minutes
-    footer = "https://windy.com",
-    mainPageLink = Some("http://46.14.58.189/mjpg/video.mjpg"),
-    webcamType = WebcamType.WindyWebcam
+
+  val piposBarWebcam = Webcam(
+    name = "Pipo's Bar",
+    url = "https://webcam.pipos-bar.ch/mega.jpg",
+    reloadInMin = 5,
+    footer = "https://webcam.pipos-bar.ch"
+  )
+
+  val lindauWebcam = Webcam(
+    name = "Lindau",
+    url = "https://www.badschachen.de/webcam/bild.jpg",
+    reloadInMin = 5,
+    footer = "https://www.badschachen.de"
   )
 
   val east = WebcamGroup(
     name = "East",
     webcams = List(
       silvaplanaWebcam,
-      sihlseeWebcam
+      sihlseeWebcam,
+      piposBarWebcam,
+      lindauWebcam
     )
   )
 
@@ -412,13 +435,6 @@ object WebcamData:
       eichWebcam,
       alpnacherWebcam
     )
-  )
-
-  val bielerseeWebcam = Webcam(
-    name = "Bielersee",
-    url = "https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
-    reloadInMin = 5,
-    footer = "https://bielersee.live"
   )
 
   val west = WebcamGroup(
