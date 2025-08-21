@@ -45,7 +45,7 @@ object ScrapedWebcamView:
             // Stop periodic scraping when loading is disabled
             ScrapedWebcamService.stopAutoScraping(webcam)
           }
-        }(ctx.owner)
+        }(using ctx.owner)
       },
 
       // Webcam section (matching regular webcam structure)

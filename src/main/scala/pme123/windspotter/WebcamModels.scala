@@ -295,6 +295,14 @@ object WebcamData:
     mainPageLink = Some("https://lacdeneuchatel.roundshot.com/"),
     webcamType = WebcamType.IframeWebcam
   )
+  val biseNoireWebcam = Webcam(
+    name = "Bise Noire",
+    url = "https://www.bisenoire.ch/webcam/Bisenoire_BIG_00.jpg",
+    reloadInMin = 5,
+    footer = "https://www.bisenoire.ch",
+    mainPageLink = Some("https://www.bisenoire.ch/webcam/"),
+    webcamType = WebcamType.ImageWebcam
+  )
 
 
   val sixFoursLeBruscWebcam = Webcam(
@@ -409,7 +417,8 @@ object WebcamData:
   val westschweiz = WebcamGroup(
     name = "Westschweiz",
     webcams = List(
-      stBlaiseWebcam
+      stBlaiseWebcam,
+      biseNoireWebcam
     )
   )
 
