@@ -212,7 +212,7 @@ body {
 /* Constrained wrapper for TabContainer */
 .constrained-wrapper {
   width: 100%;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto 20px auto;
 }
 

@@ -125,7 +125,7 @@ object WebcamData:
 
   // Kitesailing.ch webcam (iframe approach)
   val silvaplanaWebcam = Webcam(
-    name = "Silvaplana Kitesailing",
+    name = "Silvaplana",
     url = "https://www.kitesailing.ch/spot/webcam",
     reloadInMin = 0,
     footer = "https://www.kitesailing.ch",
