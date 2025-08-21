@@ -414,13 +414,23 @@ object WebcamData:
     footer = "https://www.badschachen.de"
   )
 
+  val walenseeWebcam = Webcam(
+    name = "Walensee - Tiefenwinkel",
+    url = "https://www.walensee.cam/webcam/Tiefenwinkel%20-%20Wölkli",
+    reloadInMin = 0, // No need to reload for iframe
+    footer = "https://www.walensee.cam",
+    mainPageLink = Some("https://www.walensee.cam/webcam/Tiefenwinkel%20-%20Wölkli"),
+    webcamType = WebcamType.IframeWebcam
+  )
+
   val east = WebcamGroup(
     name = "East",
     webcams = List(
       silvaplanaWebcam,
       sihlseeWebcam,
       piposBarWebcam,
-      lindauWebcam
+      lindauWebcam,
+      walenseeWebcam
     )
   )
 
