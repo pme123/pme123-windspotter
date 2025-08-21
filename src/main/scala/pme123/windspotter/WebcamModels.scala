@@ -102,19 +102,35 @@ object WebcamData:
   )
 
   // Silvaplana
-  val silvaplanaMultsWebcam      = Webcam(
+  val silvaplanaMuletsWebcam      = Webcam(
     name = "Silvaplana Mulets",
-    url = "https://hd-auth.skylinewebcams.com/live.m3u8?a=t9018ai5oko7gonu3aviiugh22",
+    url = "https://hd-auth.skylinewebcams.com/livee.m3u8?a=ogpvks1vrujm74qcolu8ngnv50",
     reloadInMin = 0, // Videos don't need reloading
-    footer = "https://www.silvaplana.ch",
+    footer = "https://www.skylinewebcams.com",
+    mainPageLink = Some("https://www.skylinewebcams.com/webcam/schweiz/graubunden/silvaplana/silvaplana.html"),
     webcamType = WebcamType.VideoWebcam
   )
-  val silvaplanaSurfcenterWebcam = Webcam(
-    name = "Silvaplana Surfcenter",
-    url = "https://hd-auth.skylinewebcams.com/live.m3u8",
-    reloadInMin = 0, // Videos don't need reloading
-    footer = "https://www.silvaplana.ch",
-    webcamType = WebcamType.VideoWebcam
+
+  // Alternative iframe-based Silvaplana webcam (more reliable for skylinewebcams.com)
+  val silvaplanaIframeWebcam = Webcam(
+    name = "Silvaplana (Iframe)",
+    url = "https://www.skylinewebcams.com/webcam/schweiz/graubunden/silvaplana/silvaplana.html",
+    reloadInMin = 0, // No need to reload for iframe
+    footer = "https://www.skylinewebcams.com",
+    mainPageLink = Some("https://www.skylinewebcams.com/webcam/schweiz/graubunden/silvaplana/silvaplana.html"),
+    webcamType = WebcamType.IframeWebcam
+  )
+
+
+
+  // Kitesailing.ch webcam (iframe approach)
+  val silvaplanaWebcam = Webcam(
+    name = "Silvaplana Kitesailing",
+    url = "https://www.kitesailing.ch/spot/webcam",
+    reloadInMin = 0,
+    footer = "https://www.kitesailing.ch",
+    mainPageLink = Some("https://www.kitesailing.ch/spot/webcam"),
+    webcamType = WebcamType.IframeWebcam
   )
 
   // Comersee
@@ -353,28 +369,43 @@ object WebcamData:
     )
   )
 
-  val silvaplana = WebcamGroup(
-    name = "Silvaplana",
+  val east = WebcamGroup(
+    name = "East",
     webcams = List(
-      silvaplanaMultsWebcam,
-      silvaplanaSurfcenterWebcam
+      silvaplanaWebcam,
     )
   )
 
-  val comersee = WebcamGroup(
-    name = "Comersee",
+  val central = WebcamGroup(
+    name = "Central",
+    webcams = List(
+      immenseeWebcam,
+      walchwilWebcam,
+      zugWebcam,
+      chamWebcam,
+      aegeriWebcam,
+      eichWebcam,
+      alpnacherWebcam
+    )
+  )
+
+  val west = WebcamGroup(
+    name = "West",
+    webcams = List(
+      stBlaiseWebcam,
+      biseNoireWebcam
+    )
+  )
+
+  val italy = WebcamGroup(
+    name = "Italy",
     webcams = List(
       leccoWebcam,
       dervioWebcam,
       cremiaWebcam,
       colicoWebcam,
-      domasoWebcam
-    )
-  )
-
-  val gardasee = WebcamGroup(
-    name = "Gardasee",
-    webcams = List(
+      domasoWebcam,
+      // Gardasee
       malcesineWebcam,
       caporeamoloWebcam,
       torboleWebcam,
@@ -382,8 +413,8 @@ object WebcamData:
     )
   )
 
-  val southOfFrance = WebcamGroup(
-    name = "South of France",
+  val france = WebcamGroup(
+    name = "France",
     webcams = List(
       almanarreHyeresWebcam,
       estagnetsWebcam,
@@ -395,42 +426,13 @@ object WebcamData:
     )
   )
 
-  val zugersee = WebcamGroup(
-    name = "Zug",
-    webcams = List(
-      immenseeWebcam,
-      walchwilWebcam,
-      zugWebcam,
-      chamWebcam,
-      aegeriWebcam
-    )
-  )
-
-  val sempachersee = WebcamGroup(
-    name = "Luzern",
-    webcams = List(
-      eichWebcam,
-      alpnacherWebcam
-    )
-  )
-
-  val westschweiz = WebcamGroup(
-    name = "Westschweiz",
-    webcams = List(
-      stBlaiseWebcam,
-      biseNoireWebcam
-    )
-  )
-
   val webcamGroups = List(
     urnersee,
-    zugersee,
-    sempachersee,
-    westschweiz,
-    // silvaplana,
-    comersee,
-    gardasee,
-    southOfFrance
+    central,
+    west,
+    east,
+    italy,
+    france
   )
 
   def getDefaultWebcamGroup: WebcamGroup = webcamGroups.head
