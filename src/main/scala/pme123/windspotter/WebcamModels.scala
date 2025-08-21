@@ -384,6 +384,15 @@ object WebcamData:
     ))
   )
 
+  val conciseWebcam = Webcam(
+    name = "Concise",
+    url = "1558446770", // Windy webcam ID
+    reloadInMin = 10,   // Refresh every 10 minutes
+    footer = "https://windy.com",
+    mainPageLink = Some("http://46.14.58.189/mjpg/video.mjpg"),
+    webcamType = WebcamType.WindyWebcam
+  )
+
   val east = WebcamGroup(
     name = "East",
     webcams = List(
@@ -409,6 +418,7 @@ object WebcamData:
     name = "West",
     webcams = List(
       stBlaiseWebcam,
+      conciseWebcam,
       biseNoireWebcam
     )
   )
