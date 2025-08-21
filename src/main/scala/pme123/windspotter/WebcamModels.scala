@@ -423,6 +423,13 @@ object WebcamData:
     webcamType = WebcamType.IframeWebcam
   )
 
+  val staefaWebcam = Webcam(
+    name = "Stäfa",
+    url = "https://api.codetabs.com/v1/proxy?quest=http://scstaefa.noip.me:8080/snap.jpeg",
+    reloadInMin = 5,
+    footer = "https://www.scstaefa.ch"
+  )
+
   val east = WebcamGroup(
     name = "East",
     webcams = List(
@@ -430,7 +437,8 @@ object WebcamData:
       sihlseeWebcam,
       piposBarWebcam,
       lindauWebcam,
-      walenseeWebcam
+      walenseeWebcam,
+      staefaWebcam
     )
   )
 
