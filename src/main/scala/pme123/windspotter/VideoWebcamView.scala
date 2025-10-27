@@ -14,8 +14,7 @@ object VideoWebcamView {
 
   def apply(
     webcam: Webcam,
-    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit,
-    loadingEnabledVar: Var[Boolean] = Var(true)
+    showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement = {
 
     div(
@@ -31,28 +30,7 @@ object VideoWebcamView {
       // Video container
       div(
         className := "video-container",
-        child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-          if (!loadingEnabled) {
-            // Loading disabled - show placeholder
-            div(
-              className := "video-disabled-placeholder",
-              div(
-                className := "disabled-content",
-                div(
-                  className := "disabled-icon",
-                  "⚫"
-                ),
-                div(
-                  className := "disabled-text",
-                  "Video Loading Disabled"
-                ),
-                div(
-                  className := "disabled-subtitle",
-                  "Enable loading toggle to view video stream"
-                )
-              )
-            )
-          } else if (webcam.url.contains("youtube") || webcam.url.contains("youtu.be")) {
+        if (webcam.url.contains("youtube") || webcam.url.contains("youtu.be")) {
           // For YouTube videos, show a message and link
           div(
             className := "video-placeholder",
@@ -172,7 +150,6 @@ object VideoWebcamView {
               height := "450"
             )
           }
-        }
       ),
       
       // Footer with webcam info

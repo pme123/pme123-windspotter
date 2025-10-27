@@ -17,8 +17,7 @@ object YoutubeWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean],
-      loadingEnabledVar: Var[Boolean] = Var(true)
+      slideshowControlVar: Var[Boolean]
   ): HtmlElement =
 
     val state = stateVar.signal
@@ -45,45 +44,21 @@ object YoutubeWebcamView:
         // YouTube webcam display (replacing webcam-image-section)
         div(
           className := "webcam-image-section",
-          child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-            if (!loadingEnabled) {
-              // Loading disabled - show placeholder
-              div(
-                className := "youtube-disabled-placeholder",
-                div(
-                  className := "disabled-content",
-                  div(
-                    className := "disabled-icon",
-                    "⚫"
-                  ),
-                  div(
-                    className := "disabled-text",
-                    "YouTube Loading Disabled"
-                  ),
-                  div(
-                    className := "disabled-subtitle",
-                    "Enable loading toggle to view YouTube stream"
-                  )
-                )
-              )
-            } else {
-              div(
-                className := "webcam-image-container",
-                div(
-                  className := "youtube-container",
-                  idAttr    := s"youtube-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
-                  onMountCallback(ctx =>
-                    val container = ctx.thisNode.ref
-                    dom.console.log(s"📺 Initializing YouTube webcam for ${webcam.name}")
+          div(
+            className := "webcam-image-container",
+            div(
+              className := "youtube-container",
+              idAttr    := s"youtube-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
+              onMountCallback(ctx =>
+                val container = ctx.thisNode.ref
+                dom.console.log(s"📺 Initializing YouTube webcam for ${webcam.name}")
 
-                    createYoutubeEmbed(container, webcam)
+                createYoutubeEmbed(container, webcam)
 
-                    dom.console.log(s"✅ YouTube webcam initialized for ${webcam.name}")
-                  )
-                )
+                dom.console.log(s"✅ YouTube webcam initialized for ${webcam.name}")
               )
-            }
-          }
+            )
+          )
         ),
 
         // Footer with webcam info (matching regular webcam structure)

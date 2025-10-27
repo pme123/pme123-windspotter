@@ -16,45 +16,40 @@ object WebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean] = Var(false),
-      loadingEnabledVar: Var[Boolean] = Var(true)
+      slideshowControlVar: Var[Boolean] = Var(false)
   ): HtmlElement =
 
     // Handle different webcam types
     webcam.webcamType match
       case WebcamType.VideoWebcam   =>
-        return VideoWebcamView(webcam, showImageOverlay, loadingEnabledVar)
+        return VideoWebcamView(webcam, showImageOverlay)
       case WebcamType.WindyWebcam   =>
         return WindyWebcamView(
           webcam,
           stateVar,
           showImageOverlay,
-          slideshowControlVar,
-          loadingEnabledVar
+          slideshowControlVar
         )
       case WebcamType.YoutubeWebcam =>
         return YoutubeWebcamView(
           webcam,
           stateVar,
           showImageOverlay,
-          slideshowControlVar,
-          loadingEnabledVar
+          slideshowControlVar
         )
       case WebcamType.ScrapedWebcam =>
         return ScrapedWebcamView(
           webcam,
           stateVar,
           showImageOverlay,
-          slideshowControlVar,
-          loadingEnabledVar
+          slideshowControlVar
         )
       case WebcamType.IframeWebcam =>
         return IframeWebcamView(
           webcam,
           stateVar,
           showImageOverlay,
-          slideshowControlVar,
-          loadingEnabledVar
+          slideshowControlVar
         )
       case WebcamType.ImageWebcam   =>
         // Continue with existing image webcam logic
@@ -63,16 +58,14 @@ object WebcamView:
     div(
       className := "image-upload-section",
 
-      // Auto-start refresh when loading is enabled and no image exists yet
+      // Auto-start refresh when mounted and no image exists yet
       onMountCallback { ctx =>
-        loadingEnabledVar.signal.foreach { isEnabled =>
-          val currentState = stateVar.now()
-          if (isEnabled && currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {
-            dom.console.log(s"🚀 Starting automatic refresh for ${webcam.name}...")
-            // startAutoRefresh will handle the first load, so we don't need to call loadWebcamImage separately
-            WebcamService.startAutoRefresh(webcam, stateVar)
-          }
-        }(using ctx.owner)
+        val currentState = stateVar.now()
+        if (currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {
+          dom.console.log(s"🚀 Starting automatic refresh for ${webcam.name}...")
+          // startAutoRefresh will handle the first load, so we don't need to call loadWebcamImage separately
+          WebcamService.startAutoRefresh(webcam, stateVar)
+        }
       },
 
       // Webcam section
@@ -86,52 +79,25 @@ object WebcamView:
               className := "webcam-title",
               webcam.name
             ),
-            // Custom reload button using same style as WindyWebcamView
-            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-              div(
-                className := (if loadingEnabled then "webcam-reload-button-custom"
-                              else "webcam-reload-button-disabled"),
-                title     := (if loadingEnabled then "Load current image and add to thumbnails"
-                          else "Loading disabled - enable loading toggle first"),
-                onClick --> { _ =>
-                  if loadingEnabled then
-                    dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
-                    WebcamService.loadWebcamImage(webcam, stateVar, loadingEnabledVar)
-                  else
-                    dom.console.log(s"⚫ Reload blocked - loading disabled for ${webcam.name}")
-                },
-                Icon(_.name := IconName.`refresh`)
-              )
-            }
+            // Custom reload button
+            div(
+              className := "webcam-reload-button-custom",
+              title     := "Load current image and add to thumbnails",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
+                WebcamService.loadWebcamImage(webcam, stateVar)
+              },
+              Icon(_.name := IconName.`refresh`)
+            )
           )
         ),
 
         // Webcam image display
         div(
           className := "webcam-image-section",
-          child <-- loadingEnabledVar.signal.combineWith(stateVar.signal.map(_.selectedImage)).map {
-            case (false, _)              =>
-              // Loading disabled - show placeholder
-              div(
-                className := "webcam-disabled-placeholder",
-                div(
-                  className := "disabled-content",
-                  div(
-                    className := "disabled-icon",
-                    "⚫"
-                  ),
-                  div(
-                    className := "disabled-text",
-                    "Loading Disabled"
-                  ),
-                  div(
-                    className := "disabled-subtitle",
-                    "Enable loading toggle to view webcam"
-                  )
-                )
-              )
-            case (true, Some(imageData)) =>
-              // Loading enabled and image available
+          child <-- stateVar.signal.map(_.selectedImage).map {
+            case Some(imageData) =>
+              // Image available
               div(
                 className := "webcam-image-container",
                 img(
@@ -157,8 +123,8 @@ object WebcamView:
                   }
                 )
               )
-            case (true, None)            =>
-              // Loading enabled but no image yet
+            case None            =>
+              // No image yet
               div(
                 className := "webcam-loading",
                 div(
@@ -169,21 +135,20 @@ object WebcamView:
         ),
 
         // Thumbnail gallery component
-        child <-- loadingEnabledVar.signal.combineWith(stateVar.signal).map {
-          (loadingEnabled, state) =>
-            if loadingEnabled && state.imageHistory.nonEmpty then
-              ThumbnailGallery(
-                state.imageHistory,
-                state.selectedImage,
-                (newImage: ImageData) =>
-                  val currentState = stateVar.now()
-                  stateVar.set(currentState.copy(selectedImage = Some(newImage)))
-                ,
-                showImageOverlay,
-                slideshowControlVar
-              )
-            else
-              emptyNode
+        child <-- stateVar.signal.map { state =>
+          if state.imageHistory.nonEmpty then
+            ThumbnailGallery(
+              state.imageHistory,
+              state.selectedImage,
+              (newImage: ImageData) =>
+                val currentState = stateVar.now()
+                stateVar.set(currentState.copy(selectedImage = Some(newImage)))
+              ,
+              showImageOverlay,
+              slideshowControlVar
+            )
+          else
+            emptyNode
         },
 
         // Footer with webcam info

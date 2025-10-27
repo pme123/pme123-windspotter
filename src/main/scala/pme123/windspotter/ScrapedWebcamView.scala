@@ -20,8 +20,7 @@ object ScrapedWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean],
-      loadingEnabledVar: Var[Boolean] = Var(true)
+      slideshowControlVar: Var[Boolean]
   ): HtmlElement =
 
     val state = stateVar.signal
@@ -31,21 +30,14 @@ object ScrapedWebcamView:
     div(
       className := "image-upload-section",
 
-      // Auto-scrape when loading is enabled and manage periodic scraping
+      // Auto-scrape when mounted and manage periodic scraping
       onMountCallback { ctx =>
-        loadingEnabledVar.signal.foreach { isEnabled =>
-          if (isEnabled) {
-            if (stateVar.now().selectedImage.isEmpty) {
-              dom.console.log(s"🔄 Auto-scraping ${webcam.name} on loading enable")
-              ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar, loadingEnabledVar)
-            }
-            // Start periodic scraping
-            ScrapedWebcamService.startAutoScraping(webcam, stateVar, loadingEnabledVar)
-          } else {
-            // Stop periodic scraping when loading is disabled
-            ScrapedWebcamService.stopAutoScraping(webcam)
-          }
-        }(using ctx.owner)
+        if (stateVar.now().selectedImage.isEmpty) {
+          dom.console.log(s"🔄 Auto-scraping ${webcam.name} on mount")
+          ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar)
+        }
+        // Start periodic scraping
+        ScrapedWebcamService.startAutoScraping(webcam, stateVar)
       },
 
       // Webcam section (matching regular webcam structure)
@@ -60,49 +52,24 @@ object ScrapedWebcamView:
               webcam.name
             ),
             // Custom reload button using same style as regular WebcamView
-            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-              div(
-                className := (if loadingEnabled then "webcam-reload-button-custom" else "webcam-reload-button-disabled"),
-                title     := (if loadingEnabled then "Scrape current image and add to thumbnails" else "Loading disabled - enable loading toggle first"),
-                onClick --> { _ =>
-                  if loadingEnabled then
-                    dom.console.log(s"🔄 Manual scrape requested for webcam ${webcam.name}")
-                    ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar, loadingEnabledVar)
-                  else
-                    dom.console.log(s"⚫ Scrape blocked - loading disabled for ${webcam.name}")
-                },
-                Icon(_.name := IconName.`refresh`)
-              )
-            }
+            div(
+              className := "webcam-reload-button-custom",
+              title     := "Scrape current image and add to thumbnails",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual scrape requested for webcam ${webcam.name}")
+                ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar)
+              },
+              Icon(_.name := IconName.`refresh`)
+            )
           )
         ),
 
         // Webcam image display (matching regular webcam structure)
         div(
           className := "webcam-image-section",
-          child <-- loadingEnabledVar.signal.combineWith(stateVar.signal.map(_.selectedImage)).map {
-            case (false, _) =>
-              // Loading disabled - show placeholder
-              div(
-                className := "webcam-disabled-placeholder",
-                div(
-                  className := "disabled-content",
-                  div(
-                    className := "disabled-icon",
-                    "⚫"
-                  ),
-                  div(
-                    className := "disabled-text",
-                    "Scraping Disabled"
-                  ),
-                  div(
-                    className := "disabled-subtitle",
-                    "Enable loading toggle to scrape webcam images"
-                  )
-                )
-              )
-            case (true, Some(imageData)) =>
-              // Loading enabled and image available
+          child <-- stateVar.signal.map(_.selectedImage).map {
+            case Some(imageData) =>
+              // Image available
               div(
                 className := "webcam-image-container",
                 img(
@@ -128,8 +95,8 @@ object ScrapedWebcamView:
                   }
                 )
               )
-            case (true, None) =>
-              // Loading enabled but no image yet
+            case None =>
+              // No image yet
               div(
                 className := "webcam-loading",
                 div(
@@ -140,8 +107,8 @@ object ScrapedWebcamView:
         ),
 
         // Thumbnail gallery component (using the same component as regular webcam)
-        child <-- loadingEnabledVar.signal.combineWith(stateVar.signal).map { (loadingEnabled, state) =>
-          if loadingEnabled && state.imageHistory.nonEmpty then
+        child <-- stateVar.signal.map { state =>
+          if state.imageHistory.nonEmpty then
             ThumbnailGallery(
               state.imageHistory,
               state.selectedImage,

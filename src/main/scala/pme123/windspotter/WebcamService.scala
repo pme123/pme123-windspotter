@@ -60,14 +60,8 @@ object WebcamService {
 
   def loadWebcamImage(
     webcam: Webcam,
-    stateVar: Var[WebcamState],
-    loadingEnabledVar: Var[Boolean] = Var(true)
+    stateVar: Var[WebcamState]
   ): Unit = {
-    // Check if loading is enabled
-    if (!loadingEnabledVar.now()) {
-      dom.console.log(s"⚫ Loading disabled for ${webcam.name} - skipping image load")
-      return
-    }
     val now = new Date()
     val timeString = f"${now.getHours().toInt}%02d:${now.getMinutes().toInt}%02d"
     val currentUrl = generateWebcamUrl(webcam)

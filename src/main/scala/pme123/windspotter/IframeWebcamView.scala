@@ -16,8 +16,7 @@ object IframeWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean],
-      loadingEnabledVar: Var[Boolean] = Var(true)
+      slideshowControlVar: Var[Boolean]
   ): HtmlElement =
     // Reactive variable to control iframe reloading
     val iframeSrcVar = Var(webcam.url)
@@ -37,65 +36,35 @@ object IframeWebcamView:
               webcam.name
             ),
             // Refresh button for iframe webcams
-            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-              div(
-                className := (if loadingEnabled then "webcam-reload-button-custom"
-                              else "webcam-reload-button-disabled"),
-                title := (if loadingEnabled then "Reload webcam iframe"
-                          else "Loading disabled - enable loading toggle first"),
-                onClick --> { _ =>
-                  if loadingEnabled then
-                    dom.console.log(s"🔄 Manual iframe reload requested for ${webcam.name}")
-                    // Force iframe reload by updating the src with a timestamp
-                    val baseUrl = webcam.url
-                    val separator = if baseUrl.contains("?") then "&" else "?"
-                    val newSrc = s"$baseUrl${separator}t=${System.currentTimeMillis()}"
-                    iframeSrcVar.set(newSrc)
-                  else
-                    dom.console.log(s"⚫ Iframe reload blocked - loading disabled for ${webcam.name}")
-                },
-                Icon(_.name := IconName.`refresh`)
-              )
-            }
+            div(
+              className := "webcam-reload-button-custom",
+              title := "Reload webcam iframe",
+              onClick --> { _ =>
+                dom.console.log(s"🔄 Manual iframe reload requested for ${webcam.name}")
+                // Force iframe reload by updating the src with a timestamp
+                val baseUrl = webcam.url
+                val separator = if baseUrl.contains("?") then "&" else "?"
+                val newSrc = s"$baseUrl${separator}t=${System.currentTimeMillis()}"
+                iframeSrcVar.set(newSrc)
+              },
+              Icon(_.name := IconName.`refresh`)
+            )
           )
         ),
 
         // Webcam iframe display
         div(
           className := "webcam-image-section",
-          child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-            if (loadingEnabled) {
-              div(
-                className := "webcam-image-container",
-                iframe(
-                  src <-- iframeSrcVar.signal,
-                  className := "webcam-iframe",
-                  width := "100%",
-                  styleAttr := "border: none; border-radius: 8px; aspect-ratio: 16/9; min-height: 400px; max-height: 70vh; width: 100%; display: block;",
-                  title := s"${webcam.name} Webcam"
-                )
-              )
-            } else {
-              div(
-                className := "webcam-disabled-placeholder",
-                div(
-                  className := "disabled-content",
-                  div(
-                    className := "disabled-icon",
-                    "⚫"
-                  ),
-                  div(
-                    className := "disabled-text",
-                    "Loading Disabled"
-                  ),
-                  div(
-                    className := "disabled-subtitle",
-                    "Enable loading toggle to view webcam"
-                  )
-                )
-              )
-            }
-          }
+          div(
+            className := "webcam-image-container",
+            iframe(
+              src <-- iframeSrcVar.signal,
+              className := "webcam-iframe",
+              width := "100%",
+              styleAttr := "border: none; border-radius: 8px; aspect-ratio: 16/9; min-height: 400px; max-height: 70vh; width: 100%; display: block;",
+              title := s"${webcam.name} Webcam"
+            )
+          )
         ),
 
         // Footer with webcam info (matching WebcamView structure)

@@ -9,8 +9,7 @@ import org.scalajs.dom
 object MainView:
 
   def apply(
-    selectedWebcamGroupVar: Var[WebcamGroup],
-    webcamGroupLoadingStates: Map[WebcamGroup, Var[Boolean]]
+    selectedWebcamGroupVar: Var[WebcamGroup]
   ): HtmlElement =
     // Initialize webcam states and slideshow controls for all webcams
     val allWebcams   = WebcamData.getAllWebcams
@@ -54,13 +53,6 @@ object MainView:
                 val selectedWebcamGroup = WebcamData.webcamGroups(tabIndex)
                 dom.console.log(s"🏔️ Selecting webcam group by index: ${selectedWebcamGroup.name}")
 
-                // Auto-enable loading for the selected webcam group if it's currently disabled
-                val loadingStateVar = webcamGroupLoadingStates.getOrElse(selectedWebcamGroup, Var(false))
-                if (!loadingStateVar.now()) {
-                  dom.console.log(s"🔄 Auto-enabling loading for ${selectedWebcamGroup.name}")
-                  loadingStateVar.set(true)
-                }
-
                 selectedWebcamGroupVar.set(selectedWebcamGroup)
               } else {
                 dom.console.log(s"❌ Tab index $tabIndex out of range for ${WebcamData.webcamGroups.length} webcam groups")
@@ -71,28 +63,7 @@ object MainView:
                 Tab(
                   _.text     := webcamGroup.name,
                   _.selected := (webcamGroup == WebcamData.getDefaultWebcamGroup),
-                  WebcamGroupView(webcamGroup, webcamStates, slideshowControls, webcamGroupLoadingStates, ImageOverlayView.showImageOverlay)
-                )
-              )
-            }
-          ),
-
-          // Loading toggle on the right
-          div(
-            className := "tabs-toggle-container",
-            child <-- selectedWebcamGroupVar.signal.map { selectedWebcamGroup =>
-              dom.console.log(s"🔄 Toggle now controlling: ${selectedWebcamGroup.name}")
-              val loadingStateVar = webcamGroupLoadingStates.getOrElse(selectedWebcamGroup, Var(false))
-              dom.console.log(s"🎛️ Current loading state for ${selectedWebcamGroup.name}: ${loadingStateVar.now()}")
-              div(
-                className := "tabs-toggle-wrapper",
-                Switch(
-                  _.checked <-- loadingStateVar.signal,
-                  _.events.onChange.mapTo(loadingStateVar.now()).map(!_) --> { newState =>
-                    dom.console.log(s"🎛️ Toggle changed for ${selectedWebcamGroup.name}: $newState")
-                    loadingStateVar.writer.onNext(newState)
-                  },
-                  _.design := SwitchDesign.Graphical
+                  WebcamGroupView(webcamGroup, webcamStates, slideshowControls, ImageOverlayView.showImageOverlay)
                 )
               )
             }

@@ -17,8 +17,7 @@ object WindyWebcamView:
           Option[Int],
           Option[ImageData => Unit]
       ) => Unit,
-      slideshowControlVar: Var[Boolean],
-      loadingEnabledVar: Var[Boolean] = Var(true)
+      slideshowControlVar: Var[Boolean]
   ): HtmlElement =
 
     val state = stateVar.signal
@@ -41,18 +40,10 @@ object WindyWebcamView:
             ),
             // Custom button using UI5 Icon but with custom styling
             div(
-              className <-- loadingEnabledVar.signal.map(enabled =>
-                if enabled then "webcam-reload-button-custom" else "webcam-reload-button-disabled"
-              ),
-              title <-- loadingEnabledVar.signal.map(enabled =>
-                if enabled then "Reload Windy Player"
-                else "Loading disabled - enable loading toggle first"
-              ),
+              className := "webcam-reload-button-custom",
+              title := "Reload Windy Player",
               onClick --> { _ =>
-                if loadingEnabledVar.now() then
-                  WindyWebcamView.reloadWindyPlayer(webcam)
-                else
-                  dom.console.log(s"⚫ Reload blocked - loading disabled for ${webcam.name}")
+                WindyWebcamView.reloadWindyPlayer(webcam)
               },
               Icon(_.name := IconName.`refresh`)
             )
@@ -61,44 +52,21 @@ object WindyWebcamView:
           // Windy webcam display (replacing webcam-image-section)
           div(
             className := "webcam-image-section",
-            child <-- loadingEnabledVar.signal.map { loadingEnabled =>
-              if !loadingEnabled then
-                // Loading disabled - show placeholder
-                div(
-                  className := "windy-disabled-placeholder",
-                  div(
-                    className := "disabled-content",
-                    div(
-                      className := "disabled-icon",
-                      "⚫"
-                    ),
-                    div(
-                      className := "disabled-text",
-                      "Windy Loading Disabled"
-                    ),
-                    div(
-                      className := "disabled-subtitle",
-                      "Enable loading toggle to view Windy webcam"
-                    )
-                  )
-                )
-              else
-                div(
-                  className := "webcam-image-container",
-                  div(
-                    className := "windy-container",
-                    idAttr    := s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
-                    onMountCallback(ctx =>
-                      val container = ctx.thisNode.ref
-                      dom.console.log(s"🌬️ Initializing Windy webcam for ${webcam.name}")
+            div(
+              className := "webcam-image-container",
+              div(
+                className := "windy-container",
+                idAttr    := s"windy-${webcam.name.replaceAll("[^a-zA-Z0-9]", "")}",
+                onMountCallback(ctx =>
+                  val container = ctx.thisNode.ref
+                  dom.console.log(s"🌬️ Initializing Windy webcam for ${webcam.name}")
 
-                      createWindyEmbed(container, webcam)
+                  createWindyEmbed(container, webcam)
 
-                      dom.console.log(s"✅ Windy webcam initialized for ${webcam.name}")
-                    )
-                  )
+                  dom.console.log(s"✅ Windy webcam initialized for ${webcam.name}")
                 )
-            }
+              )
+            )
           ),
 
           // Footer with webcam info (matching regular webcam structure)

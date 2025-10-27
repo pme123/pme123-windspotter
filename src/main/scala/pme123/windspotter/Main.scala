@@ -22,9 +22,6 @@ object Main:
 
   // Initialize shared state for the entire app
   private val selectedWebcamGroupVar = Var(WebcamData.getDefaultWebcamGroup)
-  private val webcamGroupLoadingStates = WebcamData.webcamGroups.map { webcamGroup =>
-    webcamGroup -> Var(false)
-  }.toMap
 
   // Log initial state
   dom.console.log(s"🏔️ Initial selected webcam group: ${selectedWebcamGroupVar.now().name}")
@@ -55,7 +52,7 @@ object Main:
             dom.console.log("🔐 Showing MainView")
             div(
               className := "main-content",
-              MainView(selectedWebcamGroupVar, webcamGroupLoadingStates)
+              MainView(selectedWebcamGroupVar)
             )
           }
       },

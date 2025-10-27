@@ -11,11 +11,8 @@ object WebcamGroupView:
     webcamGroup: WebcamGroup,
     webcamStates: Map[Webcam, Var[WebcamState]],
     slideshowControls: Map[Webcam, Var[Boolean]],
-    webcamGroupLoadingStates: Map[WebcamGroup, Var[Boolean]],
     showImageOverlay: (String, Option[List[ImageData]], Option[Int], Option[ImageData => Unit]) => Unit
   ): HtmlElement =
-
-    val loadingStateVar = webcamGroupLoadingStates.getOrElse(webcamGroup, Var(false))
 
     // Single card containing all webcams for this webcam group
       div(
@@ -29,7 +26,7 @@ object WebcamGroupView:
               case (Some(stateVar), Some(slideshowControlVar)) =>
                 div(
                   className := "webcam-item",
-                  WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar, loadingStateVar)
+                  WebcamView(webcam, stateVar, showImageOverlay, slideshowControlVar)
                 )
               case _ =>
                 div(

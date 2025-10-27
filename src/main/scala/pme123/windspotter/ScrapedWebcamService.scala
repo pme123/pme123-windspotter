@@ -14,14 +14,8 @@ object ScrapedWebcamService:
 
   def scrapeAndLoadImage(
     webcam: Webcam,
-    stateVar: Var[WebcamState],
-    loadingEnabledVar: Var[Boolean] = Var(true)
+    stateVar: Var[WebcamState]
   ): Unit = {
-    // Check if loading is enabled
-    if (!loadingEnabledVar.now()) {
-      dom.console.log(s"⚫ Loading disabled for ${webcam.name} - skipping scrape")
-      return
-    }
     webcam.scrapingConfig match {
       case Some(config) =>
         dom.console.log(s"🕷️ Starting scrape for ${webcam.name}")
@@ -199,8 +193,7 @@ object ScrapedWebcamService:
 
   def startAutoScraping(
     webcam: Webcam,
-    stateVar: Var[WebcamState],
-    loadingEnabledVar: Var[Boolean] = Var(true)
+    stateVar: Var[WebcamState]
   ): Unit = {
     if (webcam.reloadInMin <= 0) {
       dom.console.log(s"⏸️ Auto-scraping disabled for ${webcam.name} (reloadInMin: ${webcam.reloadInMin})")
@@ -215,12 +208,8 @@ object ScrapedWebcamService:
 
     val timerId = dom.window.setInterval(
       () => {
-        if (loadingEnabledVar.now()) {
-          dom.console.log(s"🔄 Auto-scraping ${webcam.name} (scheduled)")
-          scrapeAndLoadImage(webcam, stateVar, loadingEnabledVar)
-        } else {
-          dom.console.log(s"⚫ Auto-scraping skipped for ${webcam.name} - loading disabled")
-        }
+        dom.console.log(s"🔄 Auto-scraping ${webcam.name} (scheduled)")
+        scrapeAndLoadImage(webcam, stateVar)
       },
       intervalMs
     )
