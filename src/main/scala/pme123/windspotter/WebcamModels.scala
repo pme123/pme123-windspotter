@@ -265,25 +265,25 @@ object WebcamData:
   // South of France
   val almanarreHyeresWebcam = Webcam(
     name = "Hyères - L'Almanarre",
-    url = "6nXr-WCejHc",
-    reloadInMin = 10,
+    url = "https://www.vision-environnement.com/live/player/hyeres30.php",
+    reloadInMin = 0,
     footer = "https://vision-environnement.com",
-    webcamType = WebcamType.YoutubeWebcam
+    webcamType = WebcamType.IframeWebcam
   )
 
   val estagnetsWebcam = Webcam(
     name = "Hyères - Les Estagnets",
-    url = "Tf5fxg4rWfE",
-    reloadInMin = 10,
+    url = "https://www.vision-environnement.com/live/player/hyereskite.php",
+    reloadInMin = 0,
     footer = "https://vision-environnement.com",
-    webcamType = WebcamType.YoutubeWebcam
+    webcamType = WebcamType.IframeWebcam
   )
   val madragueWebcam  = Webcam(
     name = "Hyères - La Madrague",
-    url = "ZlN7i9XP0x0",
+    url = "https://www.vision-environnement.com/live/player/madrague0.php",
     reloadInMin = 10,
     footer = "https://vision-environnement.com",
-    webcamType = WebcamType.YoutubeWebcam
+    webcamType = WebcamType.IframeWebcam
   )
   val carroWebcam = Webcam(
     name = "Carro",
@@ -322,10 +322,12 @@ object WebcamData:
 
   val bielerseeWebcam = Webcam(
     name = "Bielersee",
-    url = "https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
+    url = "https://api.codetabs.com/v1/proxy?quest=https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
     reloadInMin = 5,
-    footer = "https://bielersee.live"
+    footer = "https://bielersee.live",
+    webcamType = WebcamType.ImageWebcam
   )
+
   val biseNoireWebcam = Webcam(
     name = "Bise Noire",
     url = "https://www.bisenoire.ch/webcam/Bisenoire_BIG_00.jpg",
@@ -378,7 +380,7 @@ object WebcamData:
       gruonbachWebcam,
       axeneggWebcam,
       brunnenWebcam,
-      // bolzbachWebcam,
+      bolzbachWebcam,
       sisikonBootshafenSuedWebcam
       // windsurfingUrnerseeWebcam
     )
@@ -488,7 +490,7 @@ object WebcamData:
       estagnetsWebcam,
       madragueWebcam,
       carroWebcam,
-      sixFoursLeBruscWebcam,
+     //TODO not worrking sixFoursLeBruscWebcam,
       leJaiWebcam,
       grauDuRoiPlageSudWebcam,
     )
