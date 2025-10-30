@@ -69,6 +69,18 @@ The application will automatically reload when you make changes to the Scala cod
    npm run preview
    ```
 
+3. Deploy to GitHub Pages (automated):
+   ```bash
+   scala helper.scala
+   ```
+   
+   This script will:
+   - Build the optimized Scala.js bundle
+   - Create the production build
+   - Adjust asset paths for GitHub Pages
+   - Copy assets to the docs directory
+   - Commit and push changes to deploy
+
 ## Project Structure
 
 ```

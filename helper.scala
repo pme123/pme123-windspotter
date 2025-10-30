@@ -10,12 +10,13 @@ def main(args: String*) =
   os.proc("sbt", s"${proc}LinkJS").call()
   os.proc("npm", "run", "build").call()
   println("Adjusting file")
-  val indexPath = os.pwd / "dist" / "index.html"
+  val indexPath = os.pwd / "docs" / "index.html"
   val index = os.read(indexPath)
   os.write.over(indexPath, index.replace("\"/assets/", "\"assets/"))
-  os.remove.all(os.pwd / "docs")
-  os.copy(os.pwd / "dist", os.pwd / "docs")
   println("Copying the assets")
   os.copy.over(os.pwd / "public", os.pwd / "docs" / "public")
-  //os.copy.over(os.pwd / "target" / "scala-3.6.2" / s"pme123-weather-${proc.replace("full", "")}opt.js", os.pwd / "pme123-weather.js")
+  println("Committing and pushing changes")
+  os.proc("git", "add", "docs/").call()
+  os.proc("git", "commit", "-m", "Update GitHub Pages deployment").call()
+  os.proc("git", "push").call()
   println("Done")
