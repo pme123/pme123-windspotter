@@ -12,7 +12,7 @@ object MainView:
     selectedWebcamGroupVar: Var[WebcamGroup]
   ): HtmlElement =
     // Initialize webcam states and slideshow controls for all webcams
-    val allWebcams   = WebcamData.getAllWebcams
+    val allWebcams   = groups.getAllWebcams
     val webcamStates = allWebcams.map { webcam =>
       webcam -> Var(WebcamState(webcam))
     }.toMap
@@ -49,20 +49,20 @@ object MainView:
 
               dom.console.log(s"📋 Tab selected at index: $tabIndex")
 
-              if (tabIndex < WebcamData.webcamGroups.length) {
-                val selectedWebcamGroup = WebcamData.webcamGroups(tabIndex)
+              if (tabIndex < groups.webcamGroups.length) {
+                val selectedWebcamGroup = groups.webcamGroups(tabIndex)
                 dom.console.log(s"🏔️ Selecting webcam group by index: ${selectedWebcamGroup.name}")
 
                 selectedWebcamGroupVar.set(selectedWebcamGroup)
               } else {
-                dom.console.log(s"❌ Tab index $tabIndex out of range for ${WebcamData.webcamGroups.length} webcam groups")
+                dom.console.log(s"❌ Tab index $tabIndex out of range for ${groups.webcamGroups.length} webcam groups")
               }
             },
-            WebcamData.webcamGroups.zipWithIndex.map { case (webcamGroup, index) =>
+            groups.webcamGroups.zipWithIndex.map { case (webcamGroup, index) =>
               Seq(
                 Tab(
                   _.text     := webcamGroup.name,
-                  _.selected := (webcamGroup == WebcamData.getDefaultWebcamGroup),
+                  _.selected := (webcamGroup == groups.getDefaultWebcamGroup),
                   WebcamGroupView(webcamGroup, webcamStates, slideshowControls, ImageOverlayView.showImageOverlay)
                 )
               )

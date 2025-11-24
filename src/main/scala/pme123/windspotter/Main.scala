@@ -21,11 +21,11 @@ object Main:
   end main
 
   // Initialize shared state for the entire app
-  private val selectedWebcamGroupVar = Var(WebcamData.getDefaultWebcamGroup)
+  private val selectedWebcamGroupVar = Var(groups.getDefaultWebcamGroup)
 
   // Log initial state
   dom.console.log(s"🏔️ Initial selected webcam group: ${selectedWebcamGroupVar.now().name}")
-  dom.console.log(s"🗺️ Available webcam groups: ${WebcamData.webcamGroups.map(_.name).mkString(", ")}")
+  dom.console.log(s"🗺️ Available webcam groups: ${groups.webcamGroups.map(_.name).mkString(", ")}")
 
   private lazy val page =
     div(
