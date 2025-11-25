@@ -6,6 +6,9 @@ import scala.scalajs.js.Date
 
 object WebcamService {
 
+  // Track active refresh timers for each webcam
+  private var refreshTimers: Map[String, Int] = Map.empty
+
   def generateWebcamUrl(webcam: Webcam): String = {
     webcam.url match {
       case url if url.contains("foto-webcam.eu") =>
@@ -152,23 +155,6 @@ object WebcamService {
     img.src = currentUrl
   }
 
-  def setupAutoRefresh(
-    webcam: Webcam,
-    stateVar: Var[WebcamState]
-  ): Unit = {
-    def scheduleNext(): Unit = {
-      dom.window.setTimeout(() => {
-        val currentState = stateVar.now()
-        if (currentState.isAutoRefresh) {
-          loadWebcamImage(webcam, stateVar)
-          scheduleNext()
-        }
-      }, webcam.reloadInMin * 60 * 1000) // Convert minutes to milliseconds
-    }
-    
-    scheduleNext()
-  }
-
   def startAutoRefresh(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
     // Skip auto-refresh for video webcams
     if (webcam.webcamType == WebcamType.VideoWebcam) {
@@ -183,25 +169,52 @@ object WebcamService {
       return
     }
 
+    if (webcam.reloadInMin <= 0) {
+      dom.console.log(s"⏸️ Auto-refresh disabled for ${webcam.name} (reloadInMin: ${webcam.reloadInMin})")
+      return
+    }
+
+    // Clear any existing timer for this webcam
+    stopAutoRefresh(webcam)
+
     val currentState = stateVar.now()
     stateVar.set(currentState.copy(isAutoRefresh = true))
 
     // Load first image immediately
     loadWebcamImage(webcam, stateVar)
-    
-    // Setup auto-refresh
-    setupAutoRefresh(webcam, stateVar)
-    
-    dom.console.log(s"🚀 Started auto-refresh for ${webcam.name} (every ${webcam.reloadInMin} min)")
+
+    // Setup interval for auto-refresh
+    val intervalMs = webcam.reloadInMin * 60 * 1000
+    dom.console.log(s"🚀 Starting auto-refresh for ${webcam.name} every ${webcam.reloadInMin} minutes")
+
+    val timerId = dom.window.setInterval(
+      () => {
+        dom.console.log(s"🔄 Auto-refreshing ${webcam.name} (scheduled)")
+        loadWebcamImage(webcam, stateVar)
+      },
+      intervalMs
+    )
+
+    refreshTimers = refreshTimers + (webcam.name -> timerId)
   }
 
-  def stopAutoRefresh(stateVar: Var[WebcamState]): Unit = {
-    val currentState = stateVar.now()
-    stateVar.set(currentState.copy(isAutoRefresh = false))
-    dom.console.log(s"⏹️ Stopped auto-refresh")
+  def stopAutoRefresh(webcam: Webcam): Unit = {
+    refreshTimers.get(webcam.name).foreach { timerId =>
+      dom.window.clearInterval(timerId)
+      dom.console.log(s"⏹️ Stopped auto-refresh for ${webcam.name}")
+    }
+    refreshTimers = refreshTimers - webcam.name
   }
 
   private def startWindyAutoCapture(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
+    if (webcam.reloadInMin <= 0) {
+      dom.console.log(s"⏸️ Auto-capture disabled for ${webcam.name} (reloadInMin: ${webcam.reloadInMin})")
+      return
+    }
+
+    // Clear any existing timer for this webcam
+    stopAutoRefresh(webcam)
+
     val currentState = stateVar.now()
     stateVar.set(currentState.copy(isAutoRefresh = true))
 
@@ -211,18 +224,18 @@ object WebcamService {
     }, 3000)
 
     // Set up interval for regular captures
-    def scheduleNext(): Unit = {
-      dom.window.setTimeout(() => {
-        val state = stateVar.now()
-        if (state.isAutoRefresh) {
-          captureWindyWebcamImage(webcam, stateVar)
-          scheduleNext()
-        }
-      }, webcam.reloadInMin * 60 * 1000)
-    }
+    val intervalMs = webcam.reloadInMin * 60 * 1000
+    dom.console.log(s"🌬️ Starting auto-capture for ${webcam.name} every ${webcam.reloadInMin} minutes")
 
-    scheduleNext()
-    dom.console.log(s"Started auto-capture for ${webcam.name} (every ${webcam.reloadInMin} min)")
+    val timerId = dom.window.setInterval(
+      () => {
+        dom.console.log(s"📸 Auto-capturing ${webcam.name} (scheduled)")
+        captureWindyWebcamImage(webcam, stateVar)
+      },
+      intervalMs
+    )
+
+    refreshTimers = refreshTimers + (webcam.name -> timerId)
   }
 
   def captureWindyWebcamImage(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {

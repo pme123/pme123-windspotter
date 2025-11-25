@@ -58,16 +58,6 @@ object WebcamView:
     div(
       className := "image-upload-section",
 
-      // Auto-start refresh when mounted and no image exists yet
-      onMountCallback { ctx =>
-        val currentState = stateVar.now()
-        if (currentState.imageHistory.isEmpty && !currentState.isAutoRefresh) {
-          dom.console.log(s"🚀 Starting automatic refresh for ${webcam.name}...")
-          // startAutoRefresh will handle the first load, so we don't need to call loadWebcamImage separately
-          WebcamService.startAutoRefresh(webcam, stateVar)
-        }
-      },
-
       // Webcam section
       div(
         className := "upload-method webcam-section",

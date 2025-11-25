@@ -30,16 +30,6 @@ object ScrapedWebcamView:
     div(
       className := "image-upload-section",
 
-      // Auto-scrape when mounted and manage periodic scraping
-      onMountCallback { ctx =>
-        if (stateVar.now().selectedImage.isEmpty) {
-          dom.console.log(s"🔄 Auto-scraping ${webcam.name} on mount")
-          ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar)
-        }
-        // Start periodic scraping
-        ScrapedWebcamService.startAutoScraping(webcam, stateVar)
-      },
-
       // Webcam section (matching regular webcam structure)
       div(
         className := "upload-method webcam-section",
