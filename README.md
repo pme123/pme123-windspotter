@@ -60,26 +60,17 @@ The application will automatically reload when you make changes to the Scala cod
 
 1. Create an optimized production build:
    ```bash
-   sbt fullLinkJS
-   npm run build
+   git commit -m "My commit message"
    ```
 
-2. Preview the production build:
+2. Deploy to GitHub Pages (automated):
    ```bash
-   npm run preview
-   ```
-
-3. Deploy to GitHub Pages (automated):
-   ```bash
-   scala helper.scala
+   git push
    ```
    
-   This script will:
-   - Build the optimized Scala.js bundle
-   - Create the production build
-   - Adjust asset paths for GitHub Pages
-   - Copy assets to the docs directory
-   - Commit and push changes to deploy
+   This triggers the GitHub Actions workflow to:
+   - creates a production build
+   - deploys to GitHub Pages
 
 ## Project Structure
 
