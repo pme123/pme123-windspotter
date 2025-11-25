@@ -9,6 +9,9 @@ def main(args: String*) =
   println(s"Running ${proc}LinkJS")
   os.proc("sbt", s"${proc}LinkJS").call()
   os.proc("npm", "run", "build").call()
+  println("Creating docs directory")
+  os.remove.all(os.pwd / "docs")
+  os.copy(os.pwd / "dist", os.pwd / "docs")
   println("Adjusting file")
   val indexPath = os.pwd / "docs" / "index.html"
   val index = os.read(indexPath)
