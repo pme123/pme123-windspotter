@@ -492,10 +492,10 @@ body {
 
 .webcam-item {
   border-bottom: 1px solid var(--border);
-  padding: 16px 0;
+  padding: 16px;
 }
-.webcam-item:last-child { border-bottom: none; padding-bottom: 0; }
-.webcam-item:first-child { padding-top: 0; }
+.webcam-item:last-child { border-bottom: none; }
+.webcam-item:first-child { padding-top: 8px; }
 
 /* flatten the old nested wrappers */
 .image-upload-section,
