@@ -1,10 +1,7 @@
 package pme123.windspotter
 
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
-import scala.scalajs.js
 
 import scala.scalajs.js.annotation.JSExportTopLevel
 
@@ -13,19 +10,10 @@ object Main:
   @JSExportTopLevel("main")
   def main(args: Array[String] = Array.empty): Unit =
     lazy val appContainer = dom.document.querySelector("#app")
-
-    // Initialize authentication
-    AuthService.initialize()
-
     renderOnDomContentLoaded(appContainer, page)
   end main
 
-  // Initialize shared state for the entire app
   private val selectedWebcamGroupVar = Var(groups.getDefaultWebcamGroup)
-
-  // Log initial state
-  dom.console.log(s"🏔️ Initial selected webcam group: ${selectedWebcamGroupVar.now().name}")
-  dom.console.log(s"🗺️ Available webcam groups: ${groups.webcamGroups.map(_.name).mkString(", ")}")
 
   private lazy val page =
     div(
@@ -33,32 +21,38 @@ object Main:
       height := "100%",
       className := "app-container",
       HeaderBar(),
-      child <-- AuthService.isAuthenticatedVar.signal.combineWith(AuthService.isAuthorizedVar.signal).map {
-        case (isAuthenticated, isAuthorized) =>
-          dom.console.log(s"🔐 Rendering based on auth state: $isAuthenticated, authorized: $isAuthorized")
-          if (!isAuthenticated) {
-            dom.console.log("🔐 Showing LoginView")
-            div(
-              className := "main-content login-required",
-              LoginView()
-            )
-          } else if (!isAuthorized) {
-            dom.console.log("🔐 Showing UnauthorizedView")
-            div(
-              className := "main-content login-required",
-              UnauthorizedView()
-            )
-          } else {
-            dom.console.log("🔐 Showing MainView")
-            div(
-              className := "main-content",
-              MainView(selectedWebcamGroupVar)
-            )
-          }
-      },
       div(
-        className := "footer",
-        p("Built with Scala.js + Laminar + UI5 Web Components")
+        className := "main-content",
+        MainView(selectedWebcamGroupVar)
+      ),
+      footerTag(
+        className := "z9-footer",
+        div(
+          className := "z9-footer-inner",
+          div(className := "z9-copyright", "© 2026 z9nai GmbH // Alle Rechte vorbehalten"),
+          div(
+            className := "footer-right",
+            DatenschutzDialog(),
+            span(className := "footer-sep-mono", "//"),
+            a(
+              href      := "mailto:hallo@z9nai.ch",
+              className := "z9-mail-icon",
+              title     := "hallo@z9nai.ch",
+              svg.svg(
+                svg.viewBox        := "0 0 24 24",
+                svg.fill           := "none",
+                svg.stroke         := "currentColor",
+                svg.strokeWidth    := "2",
+                svg.strokeLineCap  := "round",
+                svg.strokeLineJoin := "round",
+                svg.width  := "16",
+                svg.height := "16",
+                svg.rect(svg.width := "20", svg.height := "16", svg.x := "2", svg.y := "4", svg.rx := "2"),
+                svg.path(svg.d := "m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7")
+              )
+            )
+          )
+        )
       )
     )
 end Main

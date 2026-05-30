@@ -1,7 +1,5 @@
 package pme123.windspotter
 
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 
@@ -11,53 +9,33 @@ object LoginView:
     dom.console.log("🔐 Creating LoginView")
     div(
       className := "login-container",
-      Card(
-        _.slots.header := CardHeader(
-          _.titleText := "Authentication Required",
-          _.subtitleText := "Please sign in with your GitHub account to access the application"
-        ),
+      div(
+        className := "login-content",
+        h2(styleAttr := "margin: 0 0 8px; font-size: 1.1rem; color: var(--text);", "Authentication Required"),
+        p(styleAttr := "margin: 0 0 24px; font-size: 0.82rem; color: var(--muted);",
+          "Sign in with your GitHub account to access wind conditions and personalized features."),
         div(
-          className := "login-content",
-          div(
-            className := "login-description",
-            p("This application requires GitHub authentication to access wind condition data and personalized features."),
-            p("Your GitHub account will be used only for authentication purposes.")
+          className := "login-actions",
+          button(
+            styleAttr := "background: var(--accent); color: #0f172a; border: none; border-radius: 8px; padding: 10px 22px; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: opacity 0.15s;",
+            "Sign in with GitHub",
+            onClick --> { _ => AuthService.login() }
           ),
-          div(
-            className := "login-actions",
-            Button(
-              _.design := ButtonDesign.Emphasized,
-              _.icon := IconName.`source-code`,
-              "Sign in with GitHub",
-              onClick --> { _ =>
-                AuthService.login()
-              }
-            ),
-            // Only show demo mode in development (localhost)
-            {
-              val isLocalhost = dom.window.location.origin.contains("localhost") ||
-                               dom.window.location.origin.contains("127.0.0.1")
-              if (isLocalhost) {
-                div(
-                  className := "demo-section",
-                  p(
-                    className := "demo-text",
-                    "Or try the demo mode:"
-                  ),
-                  Button(
-                    _.design := ButtonDesign.Default,
-                    _.icon := IconName.`play`,
-                    "Demo Login",
-                    onClick --> { _ =>
-                      AuthService.demoLogin()
-                    }
-                  )
+          {
+            val isLocalhost = dom.window.location.origin.contains("localhost") ||
+                              dom.window.location.origin.contains("127.0.0.1")
+            if (isLocalhost)
+              div(
+                className := "demo-section",
+                p(className := "demo-text", "Or try demo mode:"),
+                button(
+                  styleAttr := "background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 8px; padding: 8px 18px; font-size: 0.82rem; cursor: pointer;",
+                  "Demo Login",
+                  onClick --> { _ => AuthService.demoLogin() }
                 )
-              } else {
-                emptyNode
-              }
-            }
-          )
+              )
+            else emptyNode
+          }
         )
       )
     )

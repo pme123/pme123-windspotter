@@ -1,7 +1,5 @@
 package pme123.windspotter
 
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 import scala.scalajs.js
@@ -37,19 +35,12 @@ object ScrapedWebcamView:
           className := "webcam-header",
           div(
             className := "webcam-title-row",
-            Title(
-              className := "webcam-title",
-              webcam.name
-            ),
-            // Custom reload button using same style as regular WebcamView
-            div(
+            span(className := "webcam-title", webcam.name),
+            button(
               className := "webcam-reload-button-custom",
-              title     := "Scrape current image and add to thumbnails",
-              onClick --> { _ =>
-                dom.console.log(s"🔄 Manual scrape requested for webcam ${webcam.name}")
-                ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar)
-              },
-              Icon(_.name := IconName.`refresh`)
+              title     := "Scrape current image",
+              onClick --> { _ => ScrapedWebcamService.scrapeAndLoadImage(webcam, stateVar) },
+              "↻"
             )
           )
         ),

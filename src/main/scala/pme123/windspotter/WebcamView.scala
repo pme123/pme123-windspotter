@@ -1,7 +1,5 @@
 package pme123.windspotter
 
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import org.scalajs.dom
 
@@ -65,19 +63,12 @@ object WebcamView:
           className := "webcam-header",
           div(
             className := "webcam-title-row",
-            Title(
-              className := "webcam-title",
-              webcam.name
-            ),
-            // Custom reload button
-            div(
+            span(className := "webcam-title", webcam.name),
+            button(
               className := "webcam-reload-button-custom",
-              title     := "Load current image and add to thumbnails",
-              onClick --> { _ =>
-                dom.console.log(s"🔄 Manual reload requested for ${webcam.name}")
-                WebcamService.loadWebcamImage(webcam, stateVar)
-              },
-              Icon(_.name := IconName.`refresh`)
+              title     := "Load current image",
+              onClick --> { _ => WebcamService.loadWebcamImage(webcam, stateVar) },
+              "↻"
             )
           )
         ),

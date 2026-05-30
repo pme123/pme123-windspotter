@@ -1,7 +1,5 @@
-  package pme123.windspotter
+package pme123.windspotter
 
-import be.doeraene.webcomponents.ui5.*
-import be.doeraene.webcomponents.ui5.configkeys.*
 import com.raquo.laminar.api.L.{*, given}
 import com.raquo.airstream.ownership.OneTimeOwner
 import org.scalajs.dom
@@ -67,47 +65,26 @@ object MainView:
     }(using OneTimeOwner(() => ()))
 
     div(
-      className := "main-container",
-
-      // Constrained wrapper for entire TabContainer with toggle
+      // Tab bar
       div(
-        className := "constrained-wrapper",
-
-        // Tabs bar with toggle on the right
-        div(
-          className := "tabs-bar-container",
-
-          // Webcam Group tabs
-          TabContainer(
-            className := "webcam-group-tabs",
-            _.events.onTabSelect.map(_.detail.tab) --> { tab =>
-              // Get the tab index instead of text content to avoid getting all the content
-              val tabContainer = tab.parentElement
-              val allTabs = tabContainer.querySelectorAll("ui5-tab")
-              val tabIndex = (0 until allTabs.length).find(i => allTabs(i) == tab).getOrElse(0)
-
-              dom.console.log(s"📋 Tab selected at index: $tabIndex")
-
-              if (tabIndex < groups.webcamGroups.length) {
-                val selectedWebcamGroup = groups.webcamGroups(tabIndex)
-                dom.console.log(s"🏔️ Selecting webcam group by index: ${selectedWebcamGroup.name}")
-
-                selectedWebcamGroupVar.set(selectedWebcamGroup)
-              } else {
-                dom.console.log(s"❌ Tab index $tabIndex out of range for ${groups.webcamGroups.length} webcam groups")
-              }
-            },
-            groups.webcamGroups.zipWithIndex.map { case (webcamGroup, index) =>
-              Seq(
-                Tab(
-                  _.text     := webcamGroup.name,
-                  _.selected := (webcamGroup == groups.getDefaultWebcamGroup),
-                  WebcamGroupView(webcamGroup, webcamStates, slideshowControls, ImageOverlayView.showImageOverlay)
-                )
-              )
-            }
+        className := "tabs",
+        groups.webcamGroups.map { webcamGroup =>
+          button(
+            className <-- selectedWebcamGroupVar.signal.map(sel =>
+              if sel == webcamGroup then "tab active" else "tab"
+            ),
+            onClick --> { _ => selectedWebcamGroupVar.set(webcamGroup) },
+            span(className := "tab-dot ok"),
+            span(className := "tab-name", webcamGroup.name)
           )
-        )
+        }
+      ),
+      // Tab content panel
+      div(
+        className := "weather-container",
+        child <-- selectedWebcamGroupVar.signal.map { webcamGroup =>
+          WebcamGroupView(webcamGroup, webcamStates, slideshowControls, ImageOverlayView.showImageOverlay)
+        }
       )
     )
   end apply
