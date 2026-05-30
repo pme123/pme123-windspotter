@@ -90,8 +90,6 @@ object groups:
       wc.france.estagnets,
       wc.france.madrague,
       wc.france.carro,
-      wc.france.sixFoursLeBrusc,
-      wc.france.leJai,
       wc.france.grauDuRoiPlageSud
     )
   )
@@ -182,9 +180,9 @@ object webcams:
     )
     lazy val aegeri   = Webcam(
       name = "Aegerisee",
-      url = "https://scae.ch/webcam/image.jpg",
+      url = "https://api.codetabs.com/v1/proxy?quest=https://cam.aegerisee.net/latest.php",
       reloadInMin = 5,
-      footer = "https://scae.ch"
+      footer = "https://cam.aegerisee.net"
     )
 
     lazy val walchwil = Webcam(
@@ -441,8 +439,8 @@ object webcams:
       scrapingConfig = Some(ScrapingConfig(
         pageUrl =
           "https://www.winds-up.com/spot-six-fours-le-brusc-windsurf-kitesurf-49-webcam-live.html",
-        imageRegex = """/webcam/49/49_\d+_\.jpg""", // Match just the path, stop at word boundaries
-        baseUrl = Some("https://img.winds-up.com")  // Complete base URL
+        imageRegex = """/webcam/\d+\.jpg""",
+        baseUrl = Some("https://www.winds-up.com")
       ))
     )
 
@@ -458,8 +456,8 @@ object webcams:
       scrapingConfig = Some(ScrapingConfig(
         pageUrl =
           "https://www.winds-up.com/spot-le-jai-windsurf-kitesurf-26-webcam-live.html",
-        imageRegex = """/webcam/26/26_\d+_\.jpg""", // Match just the path, stop at word boundaries
-        baseUrl = Some("https://img.winds-up.com")  // Complete base URL
+        imageRegex = """/webcam/\d+\.jpg""",
+        baseUrl = Some("https://www.winds-up.com")
       ))
     )
 

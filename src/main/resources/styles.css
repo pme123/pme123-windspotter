@@ -539,13 +539,14 @@ body {
   border: none;
 }
 
-.webcam-image-container { width: 100%; }
+.webcam-image-container { width: 100%; text-align: center; }
 
 .webcam-image {
   max-width: 100%;
   height: auto;
   border-radius: 6px;
   display: block;
+  margin: 0 auto;
   cursor: pointer;
   transition: opacity 0.2s;
 }
