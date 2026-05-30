@@ -99,11 +99,9 @@ object groups:
       wc.winter.riemenstalden,
       wc.winter.wildspitz,
       wc.winter.rigiRotstock,
-      wc.winter.rigiKulm,
       wc.winter.rigiScheidegg,
       wc.winter.eggberge,
       wc.winter.oberalppass,
-      wc.winter.realp,
       wc.winter.naetschen
     )
   )

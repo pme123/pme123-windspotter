@@ -35,19 +35,16 @@ object IframeWebcamView:
               className := "webcam-title",
               webcam.name
             ),
-            // Refresh button for iframe webcams
-            div(
+            button(
               className := "webcam-reload-button-custom",
               title := "Reload webcam iframe",
               onClick --> { _ =>
-                dom.console.log(s"🔄 Manual iframe reload requested for ${webcam.name}")
-                // Force iframe reload by updating the src with a timestamp
                 val baseUrl = webcam.url
                 val separator = if baseUrl.contains("?") then "&" else "?"
-                val newSrc = s"$baseUrl${separator}t=${System.currentTimeMillis()}"
+                val newSrc = s"$baseUrl${separator}t=${new scala.scalajs.js.Date().getTime().toLong}"
                 iframeSrcVar.set(newSrc)
               },
-              Icon(_.name := IconName.`refresh`)
+              "↻"
             )
           )
         ),

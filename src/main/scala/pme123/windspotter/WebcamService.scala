@@ -12,8 +12,10 @@ object WebcamService {
   def generateWebcamUrl(webcam: Webcam): String = {
     webcam.url match {
       case url if url.contains("foto-webcam.eu") =>
-        // Handle time-based webcam URLs
-        generateTimeBasedUrl(url)
+        // Handle time-based webcam URLs, always add cache-busting
+        val timestamp = new Date().getTime().toLong
+        val timeBasedUrl = generateTimeBasedUrl(url)
+        s"$timeBasedUrl?t=$timestamp"
       case url if url.contains("api.codetabs.com") =>
         // Handle codetabs proxy URLs - add timestamp and URL encode
         val timestamp = new Date().getTime().toLong

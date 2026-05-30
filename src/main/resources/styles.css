@@ -894,15 +894,18 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  padding: 8px;
+  padding: 4px 6px;
   border-radius: 4px;
   transition: color 0.2s;
   background: none;
   border: none;
   outline: none;
   color: var(--muted);
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
 }
-.webcam-reload-button-custom { margin-left: 8px; flex-shrink: 0; font-size: 1rem; line-height: 1; }
+.webcam-reload-button-custom { margin-left: 8px; }
 .webcam-capture-button-custom { margin-left: 8px; }
 .webcam-reload-button-custom:hover,
 .webcam-capture-button-custom:hover { color: var(--accent); }
