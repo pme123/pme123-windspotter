@@ -39,7 +39,7 @@ object ScrapedWebcamService:
 
   private def scrapeImageUrl(config: ScrapingConfig): Future[Try[String]] = {
     // Use a CORS proxy to fetch the webpage content
-    val proxyUrl = s"https://api.codetabs.com/v1/proxy?quest=${js.URIUtils.encodeURIComponent(config.pageUrl)}"
+    val proxyUrl = s"https://corsproxy.io/?url=${js.URIUtils.encodeURIComponent(config.pageUrl)}"
     
     dom.console.log(s"🕷️ Fetching page via proxy: $proxyUrl")
     

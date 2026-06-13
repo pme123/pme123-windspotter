@@ -90,7 +90,9 @@ object groups:
       wc.france.estagnets,
       wc.france.madrague,
       wc.france.carro,
-      wc.france.grauDuRoiPlageSud
+      wc.france.grauDuRoiPlageSud,
+    //  wc.france.leJai,
+    //  wc.france.sixFoursLeBrusc
     )
   )
   lazy val winter = WebcamGroup(
@@ -147,14 +149,14 @@ object webcams:
 
     lazy val sisikonBootshafenSued = Webcam(
       name = "Sisikon Bootshafen Süd",
-      url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera05.jpg",
+      url = "https://wsrv.nl/?url=http://bhsboots.myhostpoint.ch/kamera05.jpg",
       reloadInMin = 2,
       footer = "https://www.bhs.swiss"
     )
 
     lazy val sisikonBootshafenNord = Webcam(
       name = "Sisikon Bootshafen Nord",
-      url = "https://api.codetabs.com/v1/proxy?quest=http://bhsboots.myhostpoint.ch/kamera04.jpg",
+      url = "https://wsrv.nl/?url=http://bhsboots.myhostpoint.ch/kamera04.jpg",
       reloadInMin = 2,
       footer = "https://www.bhs.swiss"
     )
@@ -178,14 +180,14 @@ object webcams:
     )
     lazy val aegeri   = Webcam(
       name = "Aegerisee",
-      url = "https://api.codetabs.com/v1/proxy?quest=https://cam.aegerisee.net/latest.php",
+      url = "https://cam.aegerisee.net/latest.php",
       reloadInMin = 5,
       footer = "https://cam.aegerisee.net"
     )
 
     lazy val walchwil = Webcam(
       name = "Walchwil",
-      url = "https://api.codetabs.com/v1/proxy?quest=http://109.164.203.165/record/current.jpg",
+      url = "https://wsrv.nl/?url=http://109.164.203.165/record/current.jpg",
       reloadInMin = 5,
       footer = "https://www.weisszahnarzt.ch",
       mainPageLink = Some("http://109.164.203.165/cgi-bin/guestimage.html")
@@ -229,9 +231,9 @@ object webcams:
       mainPageLink = Some("https://www.verkehrsverein-euthal.ch/webcam-steinbach"),
       webcamType = WebcamType.ScrapedWebcam,
       scrapingConfig = Some(ScrapingConfig(
-        pageUrl = "https://www.verkehrsverein-euthal.ch/webcam-steinbach",
-        imageRegex = """/modules/webcam2/[^"]+\.jpg""",        // Match the webcam image path
-        baseUrl = Some("https://www.verkehrsverein-euthal.ch") // Base URL for relative paths
+        pageUrl = "https://www.verkehrsverein-euthal.ch/modules/webcams/steinbach.php",
+        imageRegex = """/modules/webcam2/[^"]+\.jpg""",
+        baseUrl = Some("https://www.verkehrsverein-euthal.ch")
       ))
     )
 
@@ -269,7 +271,7 @@ object webcams:
 
     lazy val staefa = Webcam(
       name = "Stäfa",
-      url = "https://api.codetabs.com/v1/proxy?quest=http://scstaefa.noip.me:8080/snap.jpeg",
+      url = "https://wsrv.nl/?url=http://scstaefa.noip.me:8080/snap.jpeg",
       reloadInMin = 5,
       footer = "https://www.scstaefa.ch"
     )
@@ -296,11 +298,11 @@ object webcams:
 
     lazy val bielersee = Webcam(
       name = "Bielersee",
-      url =
-        "https://api.codetabs.com/v1/proxy?quest=https://bielersee.live/latestuploads/cams/hafenbiel.jpg",
-      reloadInMin = 5,
+      url = "https://bielersee.live",
+      reloadInMin = 0,
       footer = "https://bielersee.live",
-      webcamType = WebcamType.ImageWebcam
+      mainPageLink = Some("https://bielersee.live"),
+      webcamType = WebcamType.IframeWebcam
     )
 
     lazy val biseNoire = Webcam(
