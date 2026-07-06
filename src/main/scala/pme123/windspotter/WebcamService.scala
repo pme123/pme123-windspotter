@@ -208,6 +208,14 @@ object WebcamService {
     refreshTimers = refreshTimers - webcam.name
   }
 
+  def stopAllAutoRefresh(): Unit = {
+    refreshTimers.foreach { case (name, timerId) =>
+      dom.window.clearInterval(timerId)
+      dom.console.log(s"⏹️ Stopped auto-refresh for $name")
+    }
+    refreshTimers = Map.empty
+  }
+
   private def startWindyAutoCapture(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
     if (webcam.reloadInMin <= 0) {
       dom.console.log(s"⏸️ Auto-capture disabled for ${webcam.name} (reloadInMin: ${webcam.reloadInMin})")

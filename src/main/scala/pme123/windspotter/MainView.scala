@@ -7,10 +7,11 @@ import org.scalajs.dom
 object MainView:
 
   def apply(
+    config: WebcamConfig,
     selectedWebcamGroupVar: Var[WebcamGroup]
   ): HtmlElement =
     // Initialize webcam states and slideshow controls for all webcams
-    val allWebcams   = groups.getAllWebcams
+    val allWebcams   = config.groups.flatMap(_.webcams).distinct
     val webcamStates = allWebcams.map { webcam =>
       webcam -> Var(WebcamState(webcam))
     }.toMap
@@ -68,7 +69,7 @@ object MainView:
       // Tab bar
       div(
         className := "tabs",
-        groups.webcamGroups.map { webcamGroup =>
+        config.groups.map { webcamGroup =>
           button(
             className <-- selectedWebcamGroupVar.signal.map(sel =>
               if sel == webcamGroup then "tab active" else "tab"

@@ -13,17 +13,27 @@ object Main:
     renderOnDomContentLoaded(appContainer, page)
   end main
 
-  private val selectedWebcamGroupVar = Var(groups.getDefaultWebcamGroup)
-
   private lazy val page =
     div(
       width := "100%",
       height := "100%",
       className := "app-container",
       HeaderBar(),
+      ConfigEditorDialog(),
       div(
         className := "main-content",
-        MainView(selectedWebcamGroupVar)
+        // Rebuild the main view whenever another configuration is activated
+        child <-- ConfigService.activeConfigVar.signal.map { config =>
+          config.groups match
+            case Nil =>
+              div(
+                className := "empty-config-hint",
+                s"The configuration '${config.name}' has no webcam groups yet. ",
+                "Open the configuration editor (gear icon) to add some."
+              )
+            case firstGroup :: _ =>
+              MainView(config, Var(firstGroup))
+        }
       ),
       footerTag(
         className := "z9-footer",

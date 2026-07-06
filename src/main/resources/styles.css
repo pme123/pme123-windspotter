@@ -1051,3 +1051,351 @@ body {
   .video-iframe, .video-player { height: 250px; }
   .youtube-container, .windy-container { min-height: 200px; }
 }
+
+/* ── Configuration editor ── */
+.header-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.empty-config-hint {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.config-modal {
+  max-width: 900px;
+  max-height: 88vh;
+}
+
+.config-modal .info-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cfg-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cfg-toolbar-label {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.cfg-toolbar-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.cfg-select,
+.cfg-input {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.78rem;
+  font-family: inherit;
+}
+
+.cfg-select:focus,
+.cfg-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.cfg-input:disabled,
+.cfg-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cfg-btn {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+
+.cfg-btn:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cfg-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cfg-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.cfg-btn.primary:hover:not(:disabled) {
+  color: #0f172a;
+  filter: brightness(1.1);
+}
+
+.cfg-btn.danger:hover:not(:disabled) {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+.cfg-active-badge {
+  color: var(--green);
+  font-size: 0.72rem;
+  border: 1px solid var(--green);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.cfg-hint {
+  color: var(--muted);
+  font-size: 0.78rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  line-height: 1.5;
+}
+
+.cfg-name-field { max-width: 320px; }
+
+.cfg-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.cfg-tab {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.cfg-tab.active {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cfg-editor {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.cfg-groups {
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cfg-webcams {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cfg-panel-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cfg-group-list,
+.cfg-webcam-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cfg-group-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface2);
+  cursor: pointer;
+}
+
+.cfg-group-row.selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.cfg-group-name {
+  flex: 1;
+  min-width: 0;
+  padding: 3px 6px;
+}
+
+.cfg-count {
+  color: var(--muted);
+  font-size: 0.72rem;
+  padding: 0 2px;
+}
+
+.cfg-icon-btn {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.cfg-icon-btn:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--surface);
+}
+
+.cfg-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cfg-webcam-row {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface2);
+}
+
+.cfg-webcam-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.cfg-webcam-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.82rem;
+}
+
+.cfg-webcam-type {
+  color: var(--muted);
+  font-size: 0.68rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 8px;
+  white-space: nowrap;
+}
+
+.cfg-webcam-form {
+  padding: 10px;
+  border-top: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 10px;
+}
+
+.cfg-scraping-form {
+  grid-column: 1 / -1;
+  padding: 8px 0 0;
+  border-top: 1px dashed var(--border);
+}
+
+.cfg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cfg-field-label {
+  font-size: 0.68rem;
+  color: var(--muted);
+}
+
+.cfg-add-webcam {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cfg-json {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.cfg-json-area {
+  width: 100%;
+  min-height: 340px;
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.cfg-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+  padding-top: 10px;
+}
+
+.cfg-message { min-height: 1em; }
+
+.cfg-msg { font-size: 0.78rem; }
+.cfg-msg.ok { color: var(--green); }
+.cfg-msg.error { color: var(--red); }
+
+.cfg-footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 700px) {
+  .cfg-editor { flex-direction: column; }
+  .cfg-groups { width: 100%; }
+  .cfg-webcam-form { grid-template-columns: 1fr; }
+  .cfg-toolbar-actions { margin-left: 0; }
+}

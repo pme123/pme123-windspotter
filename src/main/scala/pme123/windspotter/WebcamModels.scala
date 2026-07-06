@@ -33,6 +33,11 @@ case class WebcamGroup(
     webcams: List[Webcam]
 )
 
+case class WebcamConfig(
+    name: String,
+    groups: List[WebcamGroup]
+)
+
 case class ImageData(
     name: String,
     url: String,

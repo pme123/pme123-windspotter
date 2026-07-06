@@ -228,6 +228,14 @@ object ScrapedWebcamService:
     scrapingTimers = scrapingTimers - webcam.name
   }
 
+  def stopAllScraping(): Unit = {
+    scrapingTimers.foreach { case (name, timerId) =>
+      dom.window.clearInterval(timerId)
+      dom.console.log(s"⏹️ Stopped auto-scraping for $name")
+    }
+    scrapingTimers = Map.empty
+  }
+
   private def updateNextScrapeTime(webcam: Webcam, stateVar: Var[WebcamState]): Unit = {
     if (webcam.reloadInMin > 0) {
       val now = new js.Date()
