@@ -19,7 +19,8 @@ case class Webcam(
     footer: String,
     mainPageLink: Option[String] = None,
     webcamType: WebcamType = WebcamType.ImageWebcam,
-    scrapingConfig: Option[ScrapingConfig] = None
+    scrapingConfig: Option[ScrapingConfig] = None,
+    hidden: Boolean = false
 )
 
 case class ScrapingConfig(
@@ -30,13 +31,21 @@ case class ScrapingConfig(
 
 case class WebcamGroup(
     name: String,
-    webcams: List[Webcam]
+    webcams: List[Webcam],
+    hidden: Boolean = false
 )
 
 case class WebcamConfig(
     name: String,
     groups: List[WebcamGroup]
-)
+):
+  // The configuration as shown in the app: hidden groups/webcams removed
+  def visible: WebcamConfig =
+    copy(groups =
+      groups
+        .filterNot(_.hidden)
+        .map(group => group.copy(webcams = group.webcams.filterNot(_.hidden)))
+    )
 
 case class ImageData(
     name: String,

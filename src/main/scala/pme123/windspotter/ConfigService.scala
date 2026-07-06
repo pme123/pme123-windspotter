@@ -60,6 +60,7 @@ object ConfigService:
         else current :+ config
       customConfigsVar.set(updated)
       persist()
+      ConfigFolderService.writeConfig(config)
       // Keep the active configuration in sync when it was edited
       if activeConfigVar.now().name == config.name then activate(config)
 
@@ -69,6 +70,7 @@ object ConfigService:
       val wasActive = activeConfigVar.now().name == oldName
       customConfigsVar.update(_.map(c => if c.name == oldName then config else c))
       persist()
+      ConfigFolderService.deleteConfigFile(oldName)
       if wasActive then activate(config)
     saveConfig(config)
 
@@ -76,7 +78,26 @@ object ConfigService:
     if !isDefault(name) then
       customConfigsVar.update(_.filterNot(_.name == name))
       persist()
+      ConfigFolderService.deleteConfigFile(name)
       if activeConfigVar.now().name == name then activate(defaultConfig)
+
+  // Merges configurations read from the linked folder: folder versions win
+  // over local ones with the same name, local-only configs are kept.
+  def mergeFromFolder(folderConfigs: List[WebcamConfig]): Unit =
+    val valid = folderConfigs.filterNot(c => c.name.trim.isEmpty || isDefault(c.name))
+    if valid.nonEmpty then
+      val current = customConfigsVar.now()
+      val merged  =
+        current.map(c => valid.find(_.name == c.name).getOrElse(c)) ++
+          valid.filterNot(c => current.exists(_.name == c.name))
+      customConfigsVar.set(merged)
+      persist()
+      // Refresh the active configuration if the folder changed it
+      val active = activeConfigVar.now()
+      if !isDefault(active.name) then
+        merged.find(_.name == active.name).foreach { updated =>
+          if updated != active then activate(updated)
+        }
 
   def activate(config: WebcamConfig): Unit =
     // Stop all running refresh timers before the UI is rebuilt

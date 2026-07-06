@@ -10,6 +10,7 @@ object Main:
   @JSExportTopLevel("main")
   def main(args: Array[String] = Array.empty): Unit =
     lazy val appContainer = dom.document.querySelector("#app")
+    ConfigFolderService.init()
     renderOnDomContentLoaded(appContainer, page)
   end main
 
@@ -24,15 +25,16 @@ object Main:
         className := "main-content",
         // Rebuild the main view whenever another configuration is activated
         child <-- ConfigService.activeConfigVar.signal.map { config =>
-          config.groups match
+          val visibleConfig = config.visible
+          visibleConfig.groups match
             case Nil =>
               div(
                 className := "empty-config-hint",
-                s"The configuration '${config.name}' has no webcam groups yet. ",
-                "Open the configuration editor (gear icon) to add some."
+                s"The configuration '${config.name}' has no visible webcam groups. ",
+                "Open the configuration editor (gear icon) to add or show some."
               )
             case firstGroup :: _ =>
-              MainView(config, Var(firstGroup))
+              MainView(visibleConfig, Var(firstGroup))
         }
       ),
       footerTag(

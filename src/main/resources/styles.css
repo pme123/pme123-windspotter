@@ -1399,3 +1399,37 @@ body {
   .cfg-webcam-form { grid-template-columns: 1fr; }
   .cfg-toolbar-actions { margin-left: 0; }
 }
+
+/* ── Config editor: hidden items + folder link ── */
+.cfg-group-row.cfg-hidden .cfg-group-name,
+.cfg-group-row.cfg-hidden .cfg-count,
+.cfg-webcam-row.cfg-hidden .cfg-webcam-name,
+.cfg-webcam-row.cfg-hidden .cfg-webcam-type {
+  opacity: 0.45;
+}
+
+.cfg-webcam-row.cfg-hidden .cfg-webcam-name {
+  text-decoration: line-through;
+}
+
+.cfg-group-row.cfg-hidden .cfg-group-name {
+  text-decoration: line-through;
+}
+
+.cfg-folder {
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.cfg-folder-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.cfg-folder-status .muted { color: var(--muted); }
+
+.cfg-folder-linked { color: var(--green); }

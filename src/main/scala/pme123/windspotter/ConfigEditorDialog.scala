@@ -186,6 +186,7 @@ object ConfigEditorDialog:
         div(
           className := "info-modal-body",
           toolbar(),
+          folderRow(),
           nameRow(),
           tabsRow(),
           child <-- jsonModeVar.signal.distinct.map {
@@ -273,6 +274,60 @@ object ConfigEditorDialog:
       )
     )
 
+  private def folderRow(): HtmlElement =
+    import ConfigFolderService.FolderStatus
+    div(
+      className := "cfg-folder",
+      child <-- ConfigFolderService.statusVar.signal.map {
+        case FolderStatus.NotSupported =>
+          span(
+            className := "cfg-folder-status muted",
+            "Configurations are stored in this browser. ",
+            "Saving to a folder is not supported by this browser — use Export/Import to keep JSON files."
+          )
+        case FolderStatus.NotLinked =>
+          span(
+            className := "cfg-folder-status",
+            span(className := "muted", "Configurations are stored in this browser. "),
+            button(
+              className := "cfg-btn",
+              "Link folder…",
+              title := "Also save your configurations as JSON files in a folder of your choice",
+              onClick --> { _ => ConfigFolderService.linkFolder() }
+            )
+          )
+        case FolderStatus.NeedsPermission(folderName) =>
+          span(
+            className := "cfg-folder-status",
+            span(className := "muted", s"Folder '$folderName' is linked but needs permission. "),
+            button(
+              className := "cfg-btn",
+              "Reconnect",
+              onClick --> { _ => ConfigFolderService.reconnect() }
+            ),
+            button(
+              className := "cfg-btn",
+              "Unlink",
+              onClick --> { _ => ConfigFolderService.unlink() }
+            )
+          )
+        case FolderStatus.Linked(folderName) =>
+          span(
+            className := "cfg-folder-status",
+            span(className := "cfg-folder-linked", s"✓ Saving to folder '$folderName'"),
+            child <-- ConfigFolderService.messageVar.signal.map {
+              case Some(msg) => span(className := "muted", s" — $msg")
+              case None      => emptyNode
+            },
+            button(
+              className := "cfg-btn",
+              "Unlink",
+              onClick --> { _ => ConfigFolderService.unlink() }
+            )
+          )
+      }
+    )
+
   private def nameRow(): HtmlElement =
     div(
       child <-- readOnlySignal.map {
@@ -351,6 +406,7 @@ object ConfigEditorDialog:
     div(
       className := "cfg-group-row",
       cls("selected") <-- selectedGroupIdxVar.signal.map(_ == idx),
+      cls("cfg-hidden") <-- groupSig.map(_.hidden),
       onClick --> { _ =>
         if selectedGroupIdxVar.now() != idx then
           selectedGroupIdxVar.set(idx)
@@ -364,6 +420,13 @@ object ConfigEditorDialog:
         onChange.mapToValue --> { v => updateGroup(idx)(_.copy(name = v)) }
       ),
       span(className := "cfg-count", child.text <-- groupSig.map(_.webcams.length.toString)),
+      button(
+        className := "cfg-icon-btn",
+        disabled <-- readOnlySignal,
+        title <-- groupSig.map(g => if g.hidden then "Show group" else "Hide group"),
+        child.text <-- groupSig.map(g => if g.hidden then "⊘" else "👁"),
+        onClick.stopPropagation --> { _ => updateGroup(idx)(g => g.copy(hidden = !g.hidden)) }
+      ),
       button(
         className := "cfg-icon-btn",
         disabled <-- readOnlySignal,
@@ -419,6 +482,7 @@ object ConfigEditorDialog:
 
     div(
       className := "cfg-webcam-row",
+      cls("cfg-hidden") <-- camSig.map(_.hidden),
       div(
         className := "cfg-webcam-head",
         onClick --> { _ =>
@@ -426,6 +490,13 @@ object ConfigEditorDialog:
         },
         span(className := "cfg-webcam-name", child.text <-- camSig.map(_.name)),
         span(className := "cfg-webcam-type", child.text <-- camSig.map(_.webcamType.toString)),
+        button(
+          className := "cfg-icon-btn",
+          disabled <-- readOnlySignal,
+          title <-- camSig.map(cam => if cam.hidden then "Show webcam" else "Hide webcam"),
+          child.text <-- camSig.map(cam => if cam.hidden then "⊘" else "👁"),
+          onClick.stopPropagation --> { _ => upd(cam => cam.copy(hidden = !cam.hidden)) }
+        ),
         button(
           className := "cfg-icon-btn",
           disabled <-- readOnlySignal,
