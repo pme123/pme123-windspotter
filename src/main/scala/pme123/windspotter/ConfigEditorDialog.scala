@@ -19,6 +19,45 @@ object ConfigEditorDialog:
   private val jsonModeVar         = Var(false)
   private val jsonTextVar         = Var("")
   private val statusVar           = Var(Option.empty[(String, Boolean)])
+  private val typeHelpVar         = Var(false)
+
+  private val typeDescriptions: List[(WebcamType, String, String)] = List(
+    (
+      WebcamType.ImageWebcam,
+      "Still image",
+      "Loads a single image (e.g. JPG) from the URL and reloads it on the configured interval. " +
+        "Use this when the webcam provides a direct image link."
+    ),
+    (
+      WebcamType.VideoWebcam,
+      "Video stream",
+      "Plays a video stream (e.g. HLS). The stream runs continuously, so no reload interval is needed."
+    ),
+    (
+      WebcamType.WindyWebcam,
+      "Windy.com webcam",
+      "Embeds a webcam from windy.com. Put the numeric Windy webcam ID into the URL field " +
+        "(e.g. 1564004172)."
+    ),
+    (
+      WebcamType.YoutubeWebcam,
+      "YouTube live stream",
+      "Embeds a YouTube live stream. Put the YouTube video ID into the URL field " +
+        "(the part after 'watch?v='). Set reload to 0."
+    ),
+    (
+      WebcamType.ScrapedWebcam,
+      "Scraped image",
+      "For webcams without a stable image link: the current image URL is extracted from a web page " +
+        "with a regular expression. Fill in the scraping fields (page URL, image regex, optional base URL)."
+    ),
+    (
+      WebcamType.IframeWebcam,
+      "Embedded page",
+      "Embeds the whole web page in an iframe — useful for roundshot or player pages. " +
+        "Set reload to 0; the page manages its own updates."
+    )
+  )
 
   private val readOnlySignal: Signal[Boolean] =
     selectedNameVar.signal.map(ConfigService.isDefault).distinct
@@ -194,6 +233,43 @@ object ConfigEditorDialog:
             case false => editorPanel()
           },
           footerRow()
+        )
+      ),
+      child <-- typeHelpVar.signal.map {
+        case false => emptyNode
+        case true  => typeHelpDialog()
+      }
+    )
+
+  private def typeHelpDialog(): HtmlElement =
+    div(
+      className := "info-modal-overlay cfg-help-overlay",
+      onClick --> { _ => typeHelpVar.set(false) },
+      div(
+        className := "info-modal cfg-help-modal",
+        onClick --> { ev => ev.stopPropagation() },
+        div(
+          className := "info-modal-header",
+          span(className := "info-modal-title", "Webcam Types"),
+          button(
+            className := "info-modal-close",
+            "✕",
+            onClick --> { _ => typeHelpVar.set(false) }
+          )
+        ),
+        div(
+          className := "info-modal-body",
+          typeDescriptions.map { case (tpe, title, description) =>
+            div(
+              className := "cfg-type-help",
+              div(
+                className := "cfg-type-help-title",
+                span(className := "cfg-webcam-type", tpe.toString),
+                span(title)
+              ),
+              p(className := "cfg-type-help-text", description)
+            )
+          }
         )
       )
     )
@@ -551,7 +627,17 @@ object ConfigEditorDialog:
       textField("Name", camSig.map(_.name), v => upd(_.copy(name = v))),
       div(
         className := "cfg-field",
-        label(className := "cfg-field-label", "Type"),
+        label(
+          className := "cfg-field-label",
+          "Type",
+          button(
+            className := "cfg-help-btn",
+            typ       := "button",
+            title     := "What do the webcam types mean?",
+            "?",
+            onClick --> { _ => typeHelpVar.set(true) }
+          )
+        ),
         select(
           className := "cfg-input",
           disabled <-- readOnlySignal,

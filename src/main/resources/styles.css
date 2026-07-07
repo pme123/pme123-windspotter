@@ -1433,3 +1433,50 @@ body {
 .cfg-folder-status .muted { color: var(--muted); }
 
 .cfg-folder-linked { color: var(--green); }
+
+/* ── Config editor: webcam type help ── */
+.cfg-help-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 0.62rem;
+  line-height: 1;
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.cfg-help-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cfg-help-overlay { z-index: 300; }
+
+.cfg-help-modal { max-width: 560px; }
+
+.cfg-type-help {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.cfg-type-help:last-child { border-bottom: none; }
+
+.cfg-type-help-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cfg-type-help-text {
+  font-size: 0.76rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 4px 0 0;
+}
