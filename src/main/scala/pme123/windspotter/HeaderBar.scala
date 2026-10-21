@@ -15,12 +15,12 @@ object HeaderBar:
         div(
           className := "z9-logo-wrap",
           img(
-            src       := "https://z9nai.ch/assets/logo_new-DwOlNuuy.png",
+            src       := "z9nai-logo.png",
             alt       := "z9nai",
             className := "z9-logo-color"
           ),
           img(
-            src       := "https://z9nai.ch/assets/logo_new_white-BXK2S0Ym.png",
+            src       := "z9nai-logo-white.png",
             alt       := "z9nai",
             className := "z9-logo-white"
           )
