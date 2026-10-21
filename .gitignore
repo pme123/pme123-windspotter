@@ -67,3 +67,4 @@ jspm_packages/
 /test.txt
 /project/metals.sbt
 /test.json
+/.claude/
